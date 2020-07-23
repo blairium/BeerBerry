@@ -7,7 +7,7 @@ import logo from '../../assets/logo.png'
 
 
 export default function Ticker() {
-  const [ticker, setTicker] = React.useState('')
+  const [ticker, setTicker] = React.useState('test')
 
   React.useEffect(() => {
     window.addEventListener('pywebviewready', function() {

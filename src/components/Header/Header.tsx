@@ -10,9 +10,6 @@ export default function Header() {
       <img className='logo' src={logo} alt='pywebview'/>
       <h2>pywebview</h2>
 
-      <div className='links'>
-        <a href='https://pywebview.flowrl.com/' target='_blank'>Documentation</a>
-      </div>
     </div>
   );
 };

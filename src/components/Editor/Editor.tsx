@@ -3,15 +3,27 @@ import * as React from 'react'
 import './Editor.scss'
 
 
+
+
 export default function Header() {
-  const [content, saveContent] =
-    React.useState('Using Python as backend, you can perform operations that are not allowed in Javascript, for example disk access. Click button below to save this content to hard drive.')
+  const [content, updateContent] = React.useState("Load and Save Data")
 
   return (
     <div className='editor-container'>
-      <textarea className='textarea' value={content} onChange={(e) => {
-        saveContent(e.target.value)
-      }}/><br/>
+      <div>
+      {content}
+      </div>
+        <br/>
+
+      <button className='button' onClick={() => {
+            async function openFile()
+            {
+              const x = await window.pywebview.api.open_file_dialog()
+              updateContent(x)
+            }
+            openFile()
+
+      }}>Load</button>
 
       <button className='button' onClick={() => {
         window.pywebview.api.save_content(content)

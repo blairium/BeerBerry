@@ -1,6 +1,7 @@
 import os
 import threading
 import webview
+from pathlib import Path
 
 from time import time
 
@@ -19,6 +20,23 @@ class Api:
 
     def ls(self):
         return os.listdir('.')
+
+    def open_file_dialog(self):
+        file_types = ('csv (*.csv)', 'All files (*.*)')
+        filename = webview.windows[0].create_file_dialog(webview.OPEN_DIALOG, allow_multiple=True, file_types=file_types)
+        x = filename[0]
+        filename = Path(x)
+        print(filename.exists())
+
+
+        
+
+        f = open(filename, "r")
+        line = f.read()
+
+
+        return line
+
 
 
 def get_entrypoint():
@@ -53,16 +71,8 @@ def set_interval(interval):
         return wrapper
     return decorator
 
-
-
 entry = get_entrypoint()
 
-@set_interval(1)
-def update_ticker():
-    if len(webview.windows) > 0:
-        webview.windows[0].evaluate_js('window.pywebview.state.setTicker("%d")' % time())
-
-
 if __name__ == '__main__':
-    window = webview.create_window('pywebview', entry, js_api=Api())
-    webview.start(update_ticker, debug=True)
+    window = webview.create_window('pywebview-react boilerplate', entry, js_api=Api())
+    webview.start()

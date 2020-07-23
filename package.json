@@ -26,7 +26,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/dr3wy98/pywebview.git"
+    "url": "git+https://github.com/r0x0r/pywebview-react-boilerplate.git"
   },
   "keywords": [
     "pywebview",
@@ -34,15 +34,16 @@
     "python",
     "javascript"
   ],
-  "author": "Andrew Durnford",
-  "license": "MIT",
+  "author": "Roman Sirokov",
+  "license": "BSD-3-Clause",
   "bugs": {
-    "url": "https://github.com/dr3wy98/pywebview/issues"
+    "url": "https://github.com/r0x0r/pywebview-react-boilerplate/issues"
   },
-  "homepage": "https://github.com/dr3wy98/pywebview#readme",
+  "homepage": "https://github.com/r0x0r/pywebview-react-boilerplate#readme",
   "dependencies": {
     "react": "16.12.0",
-    "react-dom": "16.12.0"
+    "react-dom": "16.12.0",
+    "virtualenv": "^0.3.1"
   },
   "devDependencies": {
     "parcel-bundler": "1.12.4",
