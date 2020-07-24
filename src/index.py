@@ -1,10 +1,12 @@
 import os
 import threading
 import webview
+
+import numpy as np
+import pandas as pd
+
 from pathlib import Path
-
 from time import time
-
 
 class Api:
     def fullscreen(self):
@@ -28,12 +30,11 @@ class Api:
         filename = Path(x)
         print(filename.exists())
 
-
-        
-
         f = open(filename, "r")
         line = f.read()
 
+        #f = pd.read_csv(filename, sep=" ", header=None)
+        #line = np.asarray(f)
 
         return line
 
