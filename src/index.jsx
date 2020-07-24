@@ -2,13 +2,15 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 
 import Editor from './components/Editor/Editor'
+import Graph from './components/Graph/Graph'
 
 import './index.scss'
 
-const App = function() {
+const App = function () {
   return (
     <>
       <Editor />
+      <Graph />
     </>
   )
 }
