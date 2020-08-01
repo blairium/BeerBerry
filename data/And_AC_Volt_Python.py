@@ -52,8 +52,33 @@ sample_freq_pert = freq_pert*2/sample_rate*nod
 sample_lpf_bw = sec_har_bw/sample_rate*nod
 #blanking of fft date
 p_filtered = p
-p_filtered(1:(sample_freq_pert-sample_lpf_bw/2))=0.0
-p_filtered((sample_freq_pert+sample_lpf_bw/2):(nod-sample_freq_pert-sample_lpf_bw/2))=0.0
-p_filtered((nod-sample_freq_pert+sample_lpf_bw/2):nod)=0.0
+for x in range(0,int(sample_freq_pert-sample_lpf_bw/2)):
+    p_filtered[x]=0.0
+
+for x in range(int((sample_freq_pert+sample_lpf_bw/2)-1),int(nod-sample_freq_pert-sample_lpf_bw/2)):
+    p_filtered[x]=0.0
+
+for x in range(int((nod-sample_freq_pert+sample_lpf_bw/2)-1),nod):
+    p_filtered[x]=0.0
+
 #time domain waveform
-p_wave = real(ifft(p_filtered));
+p_wave = np.fft.ifft(p_filtered)
+p_wave = p_wave.real
+
+# Filter size
+n = 2046
+
+# Display range
+d1 = 001
+d2 = 10001
+
+# Low pass cut off
+
+fc = freq_pert*har_num
+bw = sec_har_bw
+
+# Full ADC rate
+
+fs2 = sample_rate/2
+ff = [0 (fc-bw)/fs2*0.99 (fc-bw)/fs2 (fc+bw)/fs2 (fc+bw)/fs2*1.01 1]
+m = [0 0 1 1 0 0]
