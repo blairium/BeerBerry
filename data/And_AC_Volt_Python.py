@@ -1,5 +1,7 @@
 import numpy as np
 import pandas as pd
+import scipy as sp
+from scipy import signal
 
 file_input = pd.read_csv("10ppm.data", sep=" ", header=None)
 
@@ -52,6 +54,7 @@ sample_freq_pert = freq_pert*2/sample_rate*nod
 sample_lpf_bw = sec_har_bw/sample_rate*nod
 #blanking of fft date
 p_filtered = p
+
 for x in range(0,int(sample_freq_pert-sample_lpf_bw/2)):
     p_filtered[x]=0.0
 
@@ -69,16 +72,24 @@ p_wave = p_wave.real
 n = 2046
 
 # Display range
-d1 = 001
+d1 = 1
 d2 = 10001
 
 # Low pass cut off
-
 fc = freq_pert*har_num
 bw = sec_har_bw
 
 # Full ADC rate
-
 fs2 = sample_rate/2
-ff = [0 (fc-bw)/fs2*0.99 (fc-bw)/fs2 (fc+bw)/fs2 (fc+bw)/fs2*1.01 1]
-m = [0 0 1 1 0 0]
+ff = [0.0,((fc-bw)/fs2*0.99), ((fc-bw)/fs2), ((fc+bw)/fs2), ((fc+bw)/fs2*1.01), 1.0]
+m = [0, 0, 1, 1, 0, 0]
+b=sp.signal.firwin2(n,ff,m, nfreqs=None, nyq=1.0, antisymmetric=False)
+print(b)
+
+def get_time_values(amps):
+    sample_rate = 8000.0
+    dt = 1/sample_rate
+    nod = len(amps.index)
+    n = np.arange(1, nod)
+    t = n*dt
+    return t
