@@ -1,6 +1,7 @@
 import PySimpleGUI as gui
 import pandas as pd
 import matplotlib.pyplot as plt
+import NateFunc as nFunc
 
 
 layout = [[gui.Text('Document to open')],
