@@ -20,8 +20,8 @@ while True:
     data = pd.read_csv(fname, header=None, delimiter=r"\s+")
     volts = data.iloc[:,0].to_numpy()
     amps = data.iloc[:,1].to_numpy()
-    
-    
+
+
 
     if event == gui.WIN_CLOSED or event == 'Exit':
         break

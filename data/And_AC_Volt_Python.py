@@ -2,8 +2,9 @@ import numpy as np
 import pandas as pd
 import scipy as sp
 from scipy import signal
+import matplotlib.pyplot as plt
 
-file_input = pd.read_csv("10ppm.data", sep=" ", header=None)
+file_input = pd.read_csv("5ppm.data", sep=" ", header=None)
 
 
 freq_pert = 60               #Frequency perturbation
@@ -27,10 +28,10 @@ print(nod)
 dt = 1/sample_rate           # Distance between the data points
 df = sample_rate/nod         # Sample rate
 
-n = np.arange(1, nod)
+n = np.arange(1, nod+1)
 print(n)
 t = n*dt
-print(t)
+print(t.size)
 f = n*df
 print(f)
 
@@ -83,8 +84,66 @@ bw = sec_har_bw
 fs2 = sample_rate/2
 ff = [0.0,((fc-bw)/fs2*0.99), ((fc-bw)/fs2), ((fc+bw)/fs2), ((fc+bw)/fs2*1.01), 1.0]
 m = [0, 0, 1, 1, 0, 0]
-b=sp.signal.firwin2(n,ff,m, nfreqs=None, nyq=1.0, antisymmetric=False)
-print(b)
+n_freq_in = int(2**(np.ceil(np.log(n)/np.log(2))))
+print(n_freq_in)
+b=sp.signal.firwin2(n+1,ff,m, nfreqs=None, window="hamming", antisymmetric=False)
+
+c= b/np.max(b)
+
+w,h = sp.signal.freqz(c,1,worN=100001);
+gain = (np.max(np.absolute(h)))
+c = c/gain;
+ifilt = sp.signal.lfilter(c,1,i)
+Imagfilt = (np.abs(np.fft.fft(ifilt)/nod*2))
+
+#-------------------------------
+
+i2sin = np.sin(2*np.pi*fc*t)
+i2cosin = np.cos(2*np.pi*fc*t)
+
+ixsin = ifilt*i2sin
+print(ixsin)
+ixcosin = ifilt*i2cosin
+
+fc2 = lpf_bw;
+ff = [0, fc2/fs2, fc2/fs2*1.01, 1]
+m = [0, 0, 1, 1]
+b = sp.signal.firwin2(n+1,ff,m, nfreqs=None, window="hamming", antisymmetric=False)
+c = b/np.max(b);
+w,h = sp.signal.freqz(c,1,worN=100001)
+gain = (np.max(np.absolute(h)))
+c = c/gain;
+
+ixsin_filt = sp.signal.lfilter(c,1,ixsin)
+ixcosin_filt = sp.signal.lfilter(c,1,ixcosin)
+
+ienv = 2*np.sqrt(ixsin_filt * ixsin_filt + ixcosin_filt * ixcosin_filt);
+int_ienv = np.cumsum(ienv);
+
+testmax = 0.0
+
+for x in range(max_index_l-1,max_index_u):
+    if ienv[x]>testmax:
+        testmax= ienv[x]
+
+second_test = 0.0
+for x in range(int(round(nod*0.1))-1,int(round(nod*0.9))):
+    if ienv[x]>second_test:
+        second_test = ienv[x]
+second_test = testmax / second_test * 100
+
+print(testmax)
+print(second_test)
+
+doff = 0
+
+# Filter ienv
+filter_length = 200
+ienv_filtered = ienv[doff:nod-1]
+ienv_filtered = sp.signal.filtfilt(np.ones(filter_length)/filter_length,1,ienv_filtered);
+
+plt.plot(t, ienv)
+plt.show()
 
 def get_time_values(amps):
     sample_rate = 8000.0
