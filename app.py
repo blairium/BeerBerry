@@ -2,7 +2,7 @@ import PySimpleGUI as gui
 import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
-import Helper as Helper
+import Helper
 import os as os
 
 layout = [[gui.Text('Document to open')],
@@ -11,44 +11,28 @@ layout = [[gui.Text('Document to open')],
 
 window = gui.Window('Window that stays open', layout)
 
-
-def draw_plot(volts, amps):
-    plt.plot(volts, amps)
-    plt.show(block=False)
-
-
-def get_time_values(volts):
-    sample_rate = 8000.0
-    dt = 1 / sample_rate
-    nod = len(amps) + 1
-    n = np.arange(1, nod)
-    t = n * dt
-    return t
-
-
 while True:
     event, values = window.read()
 
     fname = values[0]
     ext = os.path.splitext(fname)[-1].lower()
     if ext == ".data":
-        data = pd.read_csv(fname, header=None, delimiter=r"\s+")
-
+        data = Helper.data_read(fname)
     elif ext == ".bin":
         data = Helper.binary_Read(fname)
-    elif ext == ".xlsm":
-        pd.read_excel(fname)
+    elif ext == ".csv":
+        data = Helper.csv_read(fname)
 
 
     volts = data.iloc[:, 0].to_numpy()
     amps = data.iloc[:, 1].to_numpy()
-    time = get_time_values(volts)
+    time = Helper.get_time_values(volts)
 
     if event == gui.WIN_CLOSED or event == 'Exit':
         break
     elif event == 'plot':
-        draw_plot(time, amps)
+        Helper.draw_plot(time, amps)
     elif event == 'save':
-        Helper.binary_Write(data)
+        Helper.csv_Write(data)
 
 window.close()
