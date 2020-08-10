@@ -2,6 +2,9 @@
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
+import matplotlib
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+matplotlib.use('TkAgg')
 
 def binary_Write(df):
     df.to_pickle("myfile.bin")
@@ -34,4 +37,6 @@ def get_time_values(volts):
     t = n * dt
     return t
 
-
+def draw_plot(time, amps):
+    plt.plot(time, amps)
+    plt.show(block=False)

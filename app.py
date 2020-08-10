@@ -4,12 +4,27 @@ import matplotlib.pyplot as plt
 import numpy as np
 import Helper
 import os as os
+import matplotlib
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+from matplotlib.figure import Figure
+from data.And_AC_Volt_Python import major_function
+matplotlib.use('TkAgg')
+
+def draw_figure(canvas, figure):
+    figure_canvas_agg = FigureCanvasTkAgg(figure, canvas)
+    figure_canvas_agg.draw()
+    figure_canvas_agg.get_tk_widget().pack(side='top', fill='both', expand=1)
+    return figure_canvas_agg
+
 
 layout = [[gui.Text('Document to open')],
           [gui.In(), gui.FileBrowse()],
-          [gui.Button('plot'), gui.Button('save'), gui.Cancel()]]
+          [gui.Canvas(key='-CANVAS-')],
+          [gui.Button('plot'), gui.Button('save'), gui.Button('calculate'), gui.Cancel()]]
 
-window = gui.Window('Window that stays open', layout)
+window = gui.Window('BeerBerry', layout, element_justification='center', font='Helvetica 18')
+
+t,i,f,Imag,Imagfilt,ifilt,ienv,int_ienv,ienv = ([] for i in range(9))
 
 while True:
     event, values = window.read()
@@ -23,16 +38,15 @@ while True:
     elif ext == ".csv":
         data = Helper.csv_read(fname)
 
-
-    volts = data.iloc[:, 0].to_numpy()
-    amps = data.iloc[:, 1].to_numpy()
-    time = Helper.get_time_values(volts)
-
     if event == gui.WIN_CLOSED or event == 'Exit':
         break
     elif event == 'plot':
-        Helper.draw_plot(time, amps)
+        fig = matplotlib.figure.Figure(figsize=(5, 4), dpi=100)
+        fig.add_subplot(111).plot(t, ienv)
+        fig_canvas_agg = draw_figure(window['-CANVAS-'].TKCanvas, fig)
     elif event == 'save':
         Helper.csv_Write(data)
+    elif event == 'calculate':
+        t,i,f,Imag,Imagfilt,ifilt,ienv,int_ienv,ienv = major_function(60,10,10,2,1.5,0.2,8000.0,data)
 
 window.close()
