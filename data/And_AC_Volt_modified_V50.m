@@ -11,7 +11,7 @@
 
 % ------------------------------Data Analysis-----------------------------%
 
-y = load('LTUSensorNewTue Sep 10 14-37-32 CE 3.data');       % File name in .data format
+y = load('5ppm.data');       % File name in .data format
 %testy = load('../atesty.txt');
 %testi = load('../atesti.txt');
 %testc = load('../atestc.txt');

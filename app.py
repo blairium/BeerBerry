@@ -16,7 +16,7 @@ matplotlib.use('TkAgg')
 
 xdata = []
 ydata = []
-def onclick(event, enter = True):
+def onclick(event):
     #print('%s click: button=%d, x=%d, y=%d, xdata=%f, ydata=%f' %
      #     ('double' if event.dblclick else 'single', event.button,
       #     event.x, event.y, event.xdata, event.ydata))
@@ -29,14 +29,20 @@ def onclick(event, enter = True):
 def draw_figure(canvas, figure):
     figure_canvas_agg = FigureCanvasTkAgg(figure, canvas)
     figure_canvas_agg.draw()
-    toolbar = NavigationToolbar2Tk(figure_canvas_agg, canvas)
+    #toolbar = NavigationToolbar2Tk(figure_canvas_agg, canvas)
     figure_canvas_agg.get_tk_widget().pack(side='top', fill='both', expand=1)
     return figure_canvas_agg
 
-layout = [[gui.Text('Document to open')],
-          [gui.In(), gui.FileBrowse()],
-          [gui.Canvas(size = (400,500), key='-CANVAS-')],
-          [gui.Button('plot'), gui.Button('save'), gui.Button('calculate'), gui.Cancel()]]
+tab1 = [[gui.Canvas(size = (700,500), key='-CANVAS-')],
+        [gui.Button('baseline')]]
+tab2 = [[gui.Canvas(size = (700,500), key='-CANVAS2-')]]
+tab3 = [[gui.Canvas(size = (700,500), key='-CANVAS3-')]]
+
+
+
+layout = [[gui.In(), gui.FileBrowse()],
+          [gui.TabGroup([[gui.Tab('tab 1', tab1), gui.Tab('tab 2', tab2), gui.Tab('tab 3', tab3)]])],
+          [gui.Button('plot'), gui.Button('save'), gui.Button('calculate')]]        
 
 window = gui.Window('BeerBerry', layout, element_justification='center', font='Helvetica 18')
 
@@ -57,12 +63,29 @@ while True:
     if event == gui.WIN_CLOSED or event == 'Exit':
         break
     elif event == 'plot':
-        fig = matplotlib.figure.Figure(figsize=(5, 4), dpi=100)
+        fig = matplotlib.figure.Figure(figsize=(10, 5), dpi=100)
         fig.add_subplot(111).plot(t, ienv)
+
+        fig2 = matplotlib.figure.Figure(figsize=(10, 5), dpi=100)
+        fig2.add_subplot(111).plot(t, i)
+
+        fig3 = matplotlib.figure.Figure(figsize=(10, 5), dpi=100)
+        fig3.add_subplot(221).plot(f, Imag)
+        fig3.add_subplot(223).plot(t, ifilt)
+        fig3.add_subplot(222).plot(f, Imagfilt)
+        fig3.add_subplot(224).plot(t, int_ienv)
+
         fig_canvas_agg = draw_figure(window['-CANVAS-'].TKCanvas, fig)
-        clickEvent = fig_canvas_agg.mpl_connect('button_press_event', onclick)
+
+        fig_canvas_agg = draw_figure(window['-CANVAS2-'].TKCanvas, fig2)
+
+        fig_canvas_agg = draw_figure(window['-CANVAS3-'].TKCanvas, fig3)
+        fig_exists = True
     elif event == 'save':
         Helper.csv_Write(data)
     elif event == 'calculate':
         t,i,f,Imag,Imagfilt,ifilt,ienv,int_ienv,ienv = major_function(60,10,10,2,1.5,0.2,8000.0,data)
+    elif event == 'baseline':
+        clickEvent = fig_canvas_agg.mpl_connect('button_press_event', onclick)
+
 window.close()
