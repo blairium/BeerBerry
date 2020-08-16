@@ -3,7 +3,6 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
 import Helper
-import os as os
 import matplotlib
 from matplotlib.backends.backend_tkagg import (FigureCanvasTkAgg, NavigationToolbar2Tk)
 from matplotlib.figure import Figure
@@ -45,9 +44,10 @@ def destroy_figure(fig_canvas_agg):
 
 
 layout = [[gui.In(), gui.FileBrowse()],
-          #[gui.TabGroup([[gui.Tab('tab 1', tab1), gui.Tab('tab 2', tab2), gui.Tab('tab 3', tab3)]])],
           [gui.Canvas(size = (700,500), key='-CANVAS-')],
-          [gui.Button('plot'), gui.Button('plot2'), gui.Button('plot3'), gui.Button('baseline'), gui.Button('save'), gui.Button('calculate')]]        
+          [gui.Button('plot'), gui.Button('plot2'), gui.Button('plot3'), gui.Button('baseline'),
+           gui.FileSaveAs(button_text='save', disabled=True, target='save', enable_events=True, key='save', file_types=(('All Files', '*.*'), ('DATA', '.data'), ('CSV', '.csv'), ('BIN', '.bin') )),
+           gui.Button('calculate')]]
 
 window = gui.Window('BeerBerry', layout, element_justification='center', font='Helvetica 18')
 
@@ -58,19 +58,21 @@ while True:
     event, values = window.read()
     fig_exists = False
     fname = values[0]
-    ext = os.path.splitext(fname)[-1].lower()
-    if ext == ".data":
-        data = Helper.data_read(fname)
-    elif ext == ".bin":
-        data = Helper.binary_Read(fname)
-    elif ext == ".csv":
-        data = Helper.csv_read(fname)
 
+    data = Helper.readFile(fname)
+
+
+
+
+    print(event)
     if event == gui.WIN_CLOSED or event == 'Exit':
         break
     elif event == 'plot':
         if fig_canvas_agg:
             destroy_figure(fig_canvas_agg)
+        if data is not None:
+            window.find_element('save').Update(disabled=False)
+
         fig = matplotlib.figure.Figure(figsize=(10, 5), dpi=100)
         fig.add_subplot(111).plot(t, ienv)
 
@@ -101,7 +103,11 @@ while True:
         fig_exists = True
 
     elif event == 'save':
-        Helper.csv_Write(data)
+
+        outFile = values['save']
+        Helper.writeFile(outFile, data)
+
+
     elif event == 'calculate':
         t,i,f,Imag,Imagfilt,ifilt,ienv,int_ienv,ienv = major_function(60,10,10,2,1.5,0.2,8000.0,data)
     elif event == 'baseline':
