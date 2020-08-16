@@ -36,16 +36,9 @@ def destroy_figure(fig_canvas_agg):
         fig_canvas_agg.get_tk_widget().forget()
         plt.close('all')
 
-#ab1 = [[gui.Canvas(size = (700,500), key='-CANVAS-')],
-#       [gui.Button('baseline')]]
-#tab2 = [[gui.Canvas(size = (700,500), key='-CANVAS2-')]]
-#tab3 = [[gui.Canvas(size = (700,500), key='-CANVAS3-')]]
-
-
-
 layout = [[gui.In(), gui.FileBrowse()],
-          [gui.Canvas(size = (700,500), key='-CANVAS-')],
-          [gui.Button('plot', disabled=True,), gui.Button('plot2', disabled=True,), gui.Button('plot3', disabled=True,), gui.Button('baseline', disabled=True,),
+          [gui.Canvas(size = (1000,500), key='-CANVAS-')],
+          [gui.Button('plot', disabled=True), gui.Button('plot2', disabled=True), gui.Button('plot3', disabled=True), gui.Button('baseline', disabled=True,),
            gui.FileSaveAs(button_text='save', disabled=True, target='save', enable_events=True, key='save', file_types=(('DATA', '.data'), ('BIN', '.bin'), ('CSV', '.csv'), ('All Files', '*.*'))),
            gui.Button('calculate'), gui.Button('Exit')]]
 
@@ -111,10 +104,13 @@ while True:
 
 
     elif event == 'calculate':
-        t,i,f,Imag,Imagfilt,ifilt,ienv,int_ienv,ienv = major_function(60,10,10,2,1.5,0.2,8000.0,data)
+        t,i,f,Imag,Imagfilt,ifilt,ienv,int_ienv,ienv_filtered = major_function(60,10,10,2,1.5,0.2,8000.0,data)
+
         window.find_element('plot').Update(disabled=False)
         window.find_element('plot2').Update(disabled=False)
         window.find_element('plot3').Update(disabled=False)
+
+        df = pd.DataFrame(columns = ['t','i','f','Imag', 'Imagfilt', 'ifilt', 'ienv','int_ienv','ienv_filtered'])
     elif event == 'baseline':
         if (len(xdata) >= 2):
             xdata = []

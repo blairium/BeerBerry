@@ -73,9 +73,9 @@ def major_function(freq_pert,sec_har_bw,lpf_bw,
 
     c= b/np.max(b)
 
-    w,h = sp.signal.freqz(c,1,worN=100001);
+    w,h = sp.signal.freqz(c,1,worN=10001)
     gain = (np.max(np.absolute(h)))
-    c = c/gain;
+    c = c/gain
     ifilt = sp.signal.lfilter(c,1,i)
     Imagfilt = (np.abs(np.fft.fft(ifilt)/nod*2))
 
@@ -88,20 +88,20 @@ def major_function(freq_pert,sec_har_bw,lpf_bw,
     print(ixsin)
     ixcosin = ifilt*i2cosin
 
-    fc2 = lpf_bw;
+    fc2 = lpf_bw
     ff = [0, fc2/fs2, fc2/fs2*1.01, 1]
     m = [0, 0, 1, 1]
     b = sp.signal.firwin2(n+1,ff,m, nfreqs=None, window="hamming", antisymmetric=False)
-    c = b/np.max(b);
-    w,h = sp.signal.freqz(c,1,worN=100001)
+    c = b/np.max(b)
+    w,h = sp.signal.freqz(c,1,worN=10001)
     gain = (np.max(np.absolute(h)))
-    c = c/gain;
+    c = c/gain
 
     ixsin_filt = sp.signal.lfilter(c,1,ixsin)
     ixcosin_filt = sp.signal.lfilter(c,1,ixcosin)
 
     ienv = 2*np.sqrt(ixsin_filt * ixsin_filt + ixcosin_filt * ixcosin_filt);
-    int_ienv = np.cumsum(ienv);
+    int_ienv = np.cumsum(ienv)
 
     testmax = 0.0
 
