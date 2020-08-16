@@ -45,9 +45,9 @@ def destroy_figure(fig_canvas_agg):
 
 layout = [[gui.In(), gui.FileBrowse()],
           [gui.Canvas(size = (700,500), key='-CANVAS-')],
-          [gui.Button('plot'), gui.Button('plot2'), gui.Button('plot3'), gui.Button('baseline'),
-           gui.FileSaveAs(button_text='save', disabled=True, target='save', enable_events=True, key='save', file_types=(('All Files', '*.*'), ('DATA', '.data'), ('CSV', '.csv'), ('BIN', '.bin') )),
-           gui.Button('calculate')]]
+          [gui.Button('plot', disabled=True,), gui.Button('plot2', disabled=True,), gui.Button('plot3', disabled=True,), gui.Button('baseline', disabled=True,),
+           gui.FileSaveAs(button_text='save', disabled=True, target='save', enable_events=True, key='save', file_types=(('DATA', '.data'), ('BIN', '.bin'), ('CSV', '.csv'), ('All Files', '*.*'))),
+           gui.Button('calculate'), gui.Button('Exit')]]
 
 window = gui.Window('BeerBerry', layout, element_justification='center', font='Helvetica 18')
 
@@ -56,7 +56,6 @@ fig_canvas_agg = None
 
 while True:
     event, values = window.read()
-    fig_exists = False
     fname = values[0]
 
     data = Helper.readFile(fname)
@@ -73,25 +72,29 @@ while True:
         if data is not None:
             window.find_element('save').Update(disabled=False)
 
+        window.find_element('baseline').Update(disabled=False)
+
         fig = matplotlib.figure.Figure(figsize=(10, 5), dpi=100)
         fig.add_subplot(111).plot(t, ienv)
 
         fig_canvas_agg = draw_figure(window['-CANVAS-'].TKCanvas, fig)
-        fig_exists = True
 
     elif event == 'plot2':
         if fig_canvas_agg:
             destroy_figure(fig_canvas_agg)
+        
+        window.find_element('baseline').Update(disabled=True)
 
         fig = matplotlib.figure.Figure(figsize=(10, 5), dpi=100)
         fig.add_subplot(111).plot(t, i)
 
         fig_canvas_agg = draw_figure(window['-CANVAS-'].TKCanvas, fig)
-        fig_exists = True
 
     elif event == 'plot3':
         if fig_canvas_agg:
             destroy_figure(fig_canvas_agg)
+
+        window.find_element('baseline').Update(disabled=True)
 
         fig = matplotlib.figure.Figure(figsize=(10, 5), dpi=100)
         fig.add_subplot(221).plot(f, Imag)
@@ -100,7 +103,6 @@ while True:
         fig.add_subplot(224).plot(t, int_ienv)
 
         fig_canvas_agg = draw_figure(window['-CANVAS-'].TKCanvas, fig)
-        fig_exists = True
 
     elif event == 'save':
 
@@ -110,8 +112,15 @@ while True:
 
     elif event == 'calculate':
         t,i,f,Imag,Imagfilt,ifilt,ienv,int_ienv,ienv = major_function(60,10,10,2,1.5,0.2,8000.0,data)
+        window.find_element('plot').Update(disabled=False)
+        window.find_element('plot2').Update(disabled=False)
+        window.find_element('plot3').Update(disabled=False)
     elif event == 'baseline':
+        if (len(xdata) >= 2):
+            xdata = []
+            ydata = []
         clickEvent = fig_canvas_agg.mpl_connect('button_press_event', onclick)
+
 
 
 window.close()
