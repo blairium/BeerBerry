@@ -46,7 +46,7 @@ window = gui.Window('BeerBerry', layout, element_justification='center', font='H
 
 t,i,f,Imag,Imagfilt,ifilt,ienv,int_ienv,ienv = ([] for i in range(9))
 fig_canvas_agg = None
-
+df = None
 while True:
     event, values = window.read()
     fname = values[0]
@@ -62,8 +62,6 @@ while True:
     elif event == 'plot':
         if fig_canvas_agg:
             destroy_figure(fig_canvas_agg)
-        if data is not None:
-            window.find_element('save').Update(disabled=False)
 
         window.find_element('baseline').Update(disabled=False)
 
@@ -96,21 +94,39 @@ while True:
         fig.add_subplot(224).plot(t, int_ienv)
 
         fig_canvas_agg = draw_figure(window['-CANVAS-'].TKCanvas, fig)
-
-    elif event == 'save':
-
-        outFile = values['save']
-        Helper.writeFile(outFile, data)
-
-
     elif event == 'calculate':
         t,i,f,Imag,Imagfilt,ifilt,ienv,int_ienv,ienv_filtered = major_function(60,10,10,2,1.5,0.2,8000.0,data)
 
         window.find_element('plot').Update(disabled=False)
         window.find_element('plot2').Update(disabled=False)
         window.find_element('plot3').Update(disabled=False)
+        
+        
 
-        df = pd.DataFrame(columns = ['t','i','f','Imag', 'Imagfilt', 'ifilt', 'ienv','int_ienv','ienv_filtered'])
+        
+        d = {
+            't':t,
+            'i':i,
+            'f':f,
+            'Imag':Imag,
+            'Imagfilt':Imagfilt,
+            'ifilt':ifilt,
+            'ienv':ienv,
+            'int_ienv':int_ienv,
+            'ienv_filtered':ienv_filtered
+            }
+        df = pd.DataFrame(d)
+        print(type(df))
+        if df is not None:
+            window.find_element('save').Update(disabled=False)
+
+    elif event == 'save':
+
+        outFile = values['save']
+        Helper.writeFile(outFile, df)
+
+
+    
     elif event == 'baseline':
         if (len(xdata) >= 2):
             xdata = []
