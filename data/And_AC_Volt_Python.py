@@ -55,10 +55,6 @@ def major_function(freq_pert,sec_har_bw,lpf_bw,
     # Filter size
     n = 2046
 
-    # Display range
-    d1 = 1
-    d2 = 10001
-
     # Low pass cut off
     fc = freq_pert*har_num
     bw = sec_har_bw
@@ -73,7 +69,7 @@ def major_function(freq_pert,sec_har_bw,lpf_bw,
 
     c= b/np.max(b)
 
-    w,h = sp.signal.freqz(c,1,worN=100001);
+    w,h = sp.signal.freqz(c,1,worN=10001);
     gain = (np.max(np.absolute(h)))
     c = c/gain;
     ifilt = sp.signal.lfilter(c,1,i)
@@ -93,7 +89,7 @@ def major_function(freq_pert,sec_har_bw,lpf_bw,
     m = [0, 0, 1, 1]
     b = sp.signal.firwin2(n+1,ff,m, nfreqs=None, window="hamming", antisymmetric=False)
     c = b/np.max(b);
-    w,h = sp.signal.freqz(c,1,worN=100001)
+    w,h = sp.signal.freqz(c,1,worN=10001)
     gain = (np.max(np.absolute(h)))
     c = c/gain;
 

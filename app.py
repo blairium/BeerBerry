@@ -43,15 +43,15 @@ def destroy_figure(fig_canvas_agg):
 
 
 
-layout = [[gui.In(), gui.FileBrowse()],
+layout = [[gui.In(), gui.FileBrowse(), gui.Button('Log in')],
           [gui.Canvas(size = (700,500), key='-CANVAS-')],
           [gui.Button('plot', disabled=True,), gui.Button('plot2', disabled=True,), gui.Button('plot3', disabled=True,), gui.Button('baseline', disabled=True,),
            gui.FileSaveAs(button_text='save', disabled=True, target='save', enable_events=True, key='save', file_types=(('DATA', '.data'), ('BIN', '.bin'), ('CSV', '.csv'), ('All Files', '*.*'))),
            gui.Button('calculate'), gui.Button('Exit')]]
 
-window = gui.Window('BeerBerry', layout, element_justification='center', font='Helvetica 18')
+window = gui.Window('BeerBerry', layout, element_justification='center', font='ComicSans 18')
 
-t,i,f,Imag,Imagfilt,ifilt,ienv,int_ienv,ienv = ([] for i in range(9))
+t,i,f,Imag,Imagfilt,ifilt,ienv,int_ienv,ienv_filtered = ([] for i in range(9))
 fig_canvas_agg = None
 
 while True:
@@ -59,9 +59,6 @@ while True:
     fname = values[0]
 
     data = Helper.readFile(fname)
-
-
-
 
     print(event)
     if event == gui.WIN_CLOSED or event == 'Exit':
@@ -82,7 +79,7 @@ while True:
     elif event == 'plot2':
         if fig_canvas_agg:
             destroy_figure(fig_canvas_agg)
-        
+
         window.find_element('baseline').Update(disabled=True)
 
         fig = matplotlib.figure.Figure(figsize=(10, 5), dpi=100)
@@ -121,6 +118,7 @@ while True:
             ydata = []
         clickEvent = fig_canvas_agg.mpl_connect('button_press_event', onclick)
 
-
+    elif event == 'Log In':
+        
 
 window.close()
