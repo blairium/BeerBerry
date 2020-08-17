@@ -146,8 +146,8 @@ while True:
         window.find_element('baseline').Update(disabled=False)
 
         fig = matplotlib.figure.Figure(figsize=(10, 5), dpi=100)
-        fig.add_subplot(111).plot(t, ienv)
-
+        fig.add_subplot(111, xlabel = 'Time (s)', ylabel = 'Current (S.U)').plot(t, ienv)
+        fig.suptitle('Results', fontsize=16)
         fig_canvas_agg = draw_figure(window['-CANVAS-'].TKCanvas, fig)
 
     elif event == 'plot2':
@@ -155,9 +155,8 @@ while True:
             destroy_figure(fig_canvas_agg)
 
         window.find_element('baseline').Update(disabled=True)
-
         fig = matplotlib.figure.Figure(figsize=(10, 5), dpi=100)
-        fig.add_subplot(111).plot(t, i)
+        fig.add_subplot(111, xlabel = 'Time (s)', ylabel = 'Current' ).plot(t, i)
 
         fig_canvas_agg = draw_figure(window['-CANVAS-'].TKCanvas, fig)
 
