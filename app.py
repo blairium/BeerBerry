@@ -232,5 +232,6 @@ while True:
             window.close()
             window = None
             save_parameters(PARAMETERS_FILE, parameters, values)
+            fig_canvas_agg = None
 
 window.close()
