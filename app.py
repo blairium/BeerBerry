@@ -131,7 +131,7 @@ print(parameters)
 while True:
 
     if window is None:
-        window = create_main_window(parameters,password_attempt,fig)
+        window = create_main_window(parameters,password_attempt)
 
     event, values = window.read()
     fname = values[0]
