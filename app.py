@@ -13,13 +13,6 @@ from matplotlib.widgets import PolygonSelector
 from matplotlib.axes import Axes
 matplotlib.use('TkAgg')
 
-PASSWORD = '1245'
-PARAMETERS_FILE = path.join(path.dirname(__file__), r'parameters_file.cfg')
-DEFAULT_SETTINGS = {'freq_pert': 60, 'bandwith_window': 10 , 'lpf_bw': 10, 'harmonic' : 2, 'max_time' : 1.5, 'max_width' : 0.2, 'sample_rate': 8000.0}
-# "Map" from the settings dictionary keys to the window's element keys
-PARAMETER_KEYS_TO_ELEMENT_KEYS = {'freq_pert': '-FREQ PERT-', 'bandwith_window': '-BW WINDOW-' ,'lpf_bw': '-LPF BW-', 'harmonic': '-HARMONIC-',
-                                'max_time': '-MAX TIME-', 'max_width': '-MAX WIDTH-','sample_rate': '-SAMPLE RATE-'}
-
 sg.LOOK_AND_FEEL_TABLE['BeerBerry'] =  {'BACKGROUND': '#FFFFFF',
                                         'TEXT': '#000000',
                                         'INPUT': '#C4C4C4',
@@ -29,29 +22,35 @@ sg.LOOK_AND_FEEL_TABLE['BeerBerry'] =  {'BACKGROUND': '#FFFFFF',
                                         'PROGRESS': ('#01826B', '#D0D0D0'),
                                         'BORDER': 1, 'SLIDER_DEPTH': 0, 'PROGRESS_DEPTH': 0,
                                         }
-sg.theme('BeerBerry')
+PASSWORD = '1245'
+PARAMETERS_FILE = path.join(path.dirname(__file__), r'parameters_file.cfg')
+DEFAULT_SETTINGS = {'freq_pert': 60, 'bandwith_window': 10 , 'lpf_bw': 10, 'harmonic' : 2, 'max_time' : 1.5,
+                    'max_width' : 0.2, 'sample_rate': 8000.0, 'theme': sg.theme('BeerBerry')}
+# "Map" from the settings dictionary keys to the window's element keys
+PARAMETER_KEYS_TO_ELEMENT_KEYS = {'freq_pert': '-FREQ PERT-', 'bandwith_window': '-BW WINDOW-' ,'lpf_bw': '-LPF BW-', 'harmonic': '-HARMONIC-',
+                                'max_time': '-MAX TIME-', 'max_width': '-MAX WIDTH-','sample_rate': '-SAMPLE RATE-','theme': '-THEME-' }
 
 xdata = []
 ydata = []
 
 ###### Load/Save Parameters File ##########################################
-def load_settings(parameters_file, default_parameters):
+def load_parameters(parameters_file, default_parameters):
     try:
         with open(parameters_file, 'r') as f:
             parameters = jsonload(f)
     except Exception as e:
-        sg.popup_quick_message(f'exception {e}', 'No settings file found... will create one for you', keep_on_top=True, background_color='red', text_color='white')
+        sg.popup_quick_message(f'exception {e}', 'No parameters file found... will create one for you', keep_on_top=True, background_color='red', text_color='white')
         parameters = default_parameters
-        save_settings(parameters_file, parameters, None)
+        save_parameters(parameters_file, parameters, None)
     return parameters
 
-def save_settings(parameters_file, parameters, values):
+def save_parameters(parameters_file, parameters, values):
     if values:      # if there are stuff specified by another window, fill in those values
         for key in PARAMETER_KEYS_TO_ELEMENT_KEYS:  # update window with the values read from settings file
             try:
                 parameters[key] = values[PARAMETER_KEYS_TO_ELEMENT_KEYS[key]]
             except Exception as e:
-                print(f'Problem updating settings from window values. Key = {key}')
+                print(f'Problem updating parameters from window values. Key = {key}')
 
     with open(parameters_file, 'w') as f:
         jsondump(parameters, f)
@@ -86,17 +85,19 @@ def destroy_figure(fig_canvas_agg):
 
 ####### Creating the Main Window ################################
 def create_main_window(parameters, password_attempt):
+    sg.theme(parameters['theme'])
     layout = [[sg.In(), sg.FileBrowse(), sg.Button('Log in', visible = False if password_attempt==PASSWORD else True), sg.Button('Logout', visible = True if password_attempt==PASSWORD else False)],
-              [sg.Button('Insert Parameters', visible = True if password_attempt==PASSWORD else False)],
+              [sg.Button('Load'), sg.Button('Insert Parameters', visible = True if password_attempt==PASSWORD else False)],
               [sg.Canvas(size = (700,500), key='-CANVAS-')],
               [sg.Button('plot', disabled=True,), sg.Button('plot2', disabled=True,), sg.Button('plot3', disabled=True,), sg.Button('baseline', disabled=True,),
                sg.FileSaveAs(button_text='save', disabled=True, target='save', enable_events=True, key='save', file_types=(('DATA', '.data'), ('BIN', '.bin'), ('CSV', '.csv'), ('All Files', '*.*'))),
-               sg.Button('calculate'), sg.Button('Exit')]]
+               sg.Button('Exit')]]
 
     return sg.Window('BeerBerry', layout, element_justification='center', font='Helvetica 18')
 
 ####### Creating parameters window ##############################
 def create_insert_parameters_window(parameters):
+    sg.theme(parameters['theme'])
     def TextLabel(text): return sg.Text(text+':', justification='r', size=(30,1))
 
     layout = [  [sg.Text('Parameters', justification='center', font='Helvetica 18')],
@@ -125,7 +126,7 @@ t,i,f,Imag,Imagfilt,ifilt,ienv,int_ienv,ienv_filtered = ([] for i in range(9))
 fig_canvas_agg = None
 df = None
 password_attempt = None
-window, parameters = None, load_settings(PARAMETERS_FILE, DEFAULT_SETTINGS)
+window, parameters = None, load_parameters(PARAMETERS_FILE, DEFAULT_SETTINGS)
 
 while True:
 
@@ -174,7 +175,7 @@ while True:
 
         fig_canvas_agg = draw_figure(window['-CANVAS-'].TKCanvas, fig)
 
-    elif event == 'calculate':
+    elif event == 'Load':
         data = Helper.readFile(fname)
         t,i,f,Imag,Imagfilt,ifilt,ienv,int_ienv,ienv_filtered = major_function(60,10,10,2,1.5,0.2,8000.0,data)
 
@@ -229,6 +230,6 @@ while True:
         if event == 'Save':
             window.close()
             window = None
-            save_settings(PARAMETERS_FILE, parameters, values)
+            save_parameters(PARAMETERS_FILE, parameters, values)
 
 window.close()
