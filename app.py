@@ -67,15 +67,22 @@ def onclick(event):
         print(xdata)
         print(ydata)
 
-def draw_figure(canvas, figure):
+def draw_figure(canvas, figure, toolbar = None):
     figure_canvas_agg = FigureCanvasTkAgg(figure, canvas)
-    figure_canvas_agg.draw()
-    #toolbar = NavigationToolbar2Tk(figure_canvas_agg, canvas)
+    toolbar = NavigationToolbar2Tk(figure_canvas_agg, canvas, pack_toolbar=False)
+    toolbar.update()
+    toolbar.pack(fill='x', side='bottom')
+    
+    
     figure_canvas_agg.get_tk_widget().pack(side='top', fill='both', expand=1)
-    return figure_canvas_agg
+   
+    
 
-def destroy_figure(fig_canvas_agg):
+    return figure_canvas_agg, toolbar
+
+def destroy_figure(fig_canvas_agg, toolbar):
         fig_canvas_agg.get_tk_widget().forget()
+        toolbar.forget()
         plt.close('all')
 
 #ab1 = [[sg.Canvas(size = (700,500), key='-CANVAS-')],
@@ -141,28 +148,28 @@ while True:
         break
     elif event == 'plot':
         if fig_canvas_agg:
-            destroy_figure(fig_canvas_agg)
+            destroy_figure(fig_canvas_agg, toolbar)
 
         window.find_element('baseline').Update(disabled=False)
 
         fig = matplotlib.figure.Figure(figsize=(10, 5), dpi=100)
         fig.add_subplot(111, xlabel = 'Time (s)', ylabel = 'Current (S.U)').plot(t, ienv)
         fig.suptitle('Results', fontsize=16)
-        fig_canvas_agg = draw_figure(window['-CANVAS-'].TKCanvas, fig)
+        fig_canvas_agg, toolbar = draw_figure(window['-CANVAS-'].TKCanvas, fig)
 
     elif event == 'plot2':
         if fig_canvas_agg:
-            destroy_figure(fig_canvas_agg)
+            destroy_figure(fig_canvas_agg, toolbar)
 
         window.find_element('baseline').Update(disabled=True)
         fig = matplotlib.figure.Figure(figsize=(10, 5), dpi=100)
         fig.add_subplot(111, xlabel = 'Time (s)', ylabel = 'Current' ).plot(t, i)
 
-        fig_canvas_agg = draw_figure(window['-CANVAS-'].TKCanvas, fig)
+        fig_canvas_agg, toolbar = draw_figure(window['-CANVAS-'].TKCanvas, fig)
 
     elif event == 'plot3':
         if fig_canvas_agg:
-            destroy_figure(fig_canvas_agg)
+            destroy_figure(fig_canvas_agg, toolbar)
 
         window.find_element('baseline').Update(disabled=True)
 
@@ -172,7 +179,7 @@ while True:
         fig.add_subplot(222).plot(f, Imagfilt)
         fig.add_subplot(224).plot(t, int_ienv)
 
-        fig_canvas_agg = draw_figure(window['-CANVAS-'].TKCanvas, fig)
+        fig_canvas_agg, toolbar = draw_figure(window['-CANVAS-'].TKCanvas, fig)
 
     elif event == 'Load':
         data = Helper.readFile(fname)
