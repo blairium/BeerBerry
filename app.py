@@ -134,7 +134,7 @@ fig_canvas_agg = None
 df = None
 password_attempt = None
 window, parameters = None, load_parameters(PARAMETERS_FILE, DEFAULT_SETTINGS)
-
+print(parameters)
 while True:
 
     if window is None:
@@ -183,7 +183,9 @@ while True:
 
     elif event == 'Load':
         data = Helper.readFile(fname)
-        t,i,f,Imag,Imagfilt,ifilt,ienv,int_ienv,ienv_filtered = major_function(60,10,10,2,1.5,0.2,8000.0,data)
+        t,i,f,Imag,Imagfilt,ifilt,ienv,int_ienv,ienv_filtered = major_function( int(parameters['freq_pert']),int(parameters['bandwith_window']),
+                                                                                int(parameters['lpf_bw']),int(parameters['harmonic']),float(parameters['max_time']),
+                                                                                float(parameters['max_width']),float(parameters['sample_rate']),data)
 
         window.find_element('plot').Update(disabled=False)
         window.find_element('plot2').Update(disabled=False)
@@ -237,5 +239,6 @@ while True:
             window.close()
             window = None
             save_parameters(PARAMETERS_FILE, parameters, values)
+            fig_canvas_agg = None
 
 window.close()
