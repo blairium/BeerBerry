@@ -70,8 +70,9 @@ def onclick(event):
 def draw_figure(canvas, figure):
     figure_canvas_agg = FigureCanvasTkAgg(figure, canvas)
     figure_canvas_agg.draw()
-    #toolbar = NavigationToolbar2Tk(figure_canvas_agg, canvas)
+    toolbar = NavigationToolbar2Tk(figure_canvas_agg, canvas, pack_toolbar=False)
     figure_canvas_agg.get_tk_widget().pack(side='top', fill='both', expand=1)
+    toolbar.pack()
     return figure_canvas_agg
 
 def destroy_figure(fig_canvas_agg):
