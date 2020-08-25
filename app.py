@@ -67,16 +67,22 @@ def onclick(event):
         print(xdata)
         print(ydata)
 
-def draw_figure(canvas, figure):
+def draw_figure(canvas, figure, toolbar = None):
     figure_canvas_agg = FigureCanvasTkAgg(figure, canvas)
-    figure_canvas_agg.draw()
     toolbar = NavigationToolbar2Tk(figure_canvas_agg, canvas, pack_toolbar=False)
+    toolbar.update()
+    toolbar.pack(fill='x', side='bottom')
+    
+    
     figure_canvas_agg.get_tk_widget().pack(side='top', fill='both', expand=1)
-    toolbar.pack()
-    return figure_canvas_agg
+   
+    
 
-def destroy_figure(fig_canvas_agg):
+    return figure_canvas_agg, toolbar
+
+def destroy_figure(fig_canvas_agg, toolbar):
         fig_canvas_agg.get_tk_widget().forget()
+        toolbar.forget()
         plt.close('all')
 
 #ab1 = [[sg.Canvas(size = (700,500), key='-CANVAS-')],
@@ -89,7 +95,7 @@ def create_main_window(parameters, password_attempt):
     sg.theme(parameters['theme'])
     layout = [[sg.In(), sg.FileBrowse(), sg.Button('Log in', visible = False if password_attempt==PASSWORD else True), sg.Button('Logout', visible = True if password_attempt==PASSWORD else False)],
               [sg.Button('Load'), sg.Button('Insert Parameters', visible = True if password_attempt==PASSWORD else False)],
-              [sg.Canvas(size = (700,500), key='-CANVAS-')],
+              [sg.Canvas(size = (898,634), key='-CANVAS-')],
               [sg.Button('plot', disabled=True,), sg.Button('plot2', disabled=True,), sg.Button('plot3', disabled=True,), sg.Button('baseline', disabled=True,),
                sg.FileSaveAs(button_text='save', disabled=True, target='save', enable_events=True, key='save', file_types=(('DATA', '.data'), ('BIN', '.bin'), ('CSV', '.csv'), ('All Files', '*.*'))),
                sg.Button('Exit')]]
@@ -142,38 +148,38 @@ while True:
         break
     elif event == 'plot':
         if fig_canvas_agg:
-            destroy_figure(fig_canvas_agg)
+            destroy_figure(fig_canvas_agg, toolbar)
 
         window.find_element('baseline').Update(disabled=False)
 
-        fig = matplotlib.figure.Figure(figsize=(10, 5), dpi=100)
+        fig = matplotlib.figure.Figure(figsize=(9, 6), dpi=100)
         fig.add_subplot(111, xlabel = 'Time (s)', ylabel = 'Current (S.U)').plot(t, ienv)
         fig.suptitle('Results', fontsize=16)
-        fig_canvas_agg = draw_figure(window['-CANVAS-'].TKCanvas, fig)
+        fig_canvas_agg, toolbar = draw_figure(window['-CANVAS-'].TKCanvas, fig)
 
     elif event == 'plot2':
         if fig_canvas_agg:
-            destroy_figure(fig_canvas_agg)
+            destroy_figure(fig_canvas_agg, toolbar)
 
         window.find_element('baseline').Update(disabled=True)
-        fig = matplotlib.figure.Figure(figsize=(10, 5), dpi=100)
+        fig = matplotlib.figure.Figure(figsize=(9, 6), dpi=100)
         fig.add_subplot(111, xlabel = 'Time (s)', ylabel = 'Current' ).plot(t, i)
 
-        fig_canvas_agg = draw_figure(window['-CANVAS-'].TKCanvas, fig)
+        fig_canvas_agg, toolbar = draw_figure(window['-CANVAS-'].TKCanvas, fig)
 
     elif event == 'plot3':
         if fig_canvas_agg:
-            destroy_figure(fig_canvas_agg)
+            destroy_figure(fig_canvas_agg, toolbar)
 
         window.find_element('baseline').Update(disabled=True)
 
-        fig = matplotlib.figure.Figure(figsize=(10, 5), dpi=100)
+        fig = matplotlib.figure.Figure(figsize=(9, 6), dpi=100)
         fig.add_subplot(221).plot(f, Imag)
         fig.add_subplot(223).plot(t, ifilt)
         fig.add_subplot(222).plot(f, Imagfilt)
         fig.add_subplot(224).plot(t, int_ienv)
 
-        fig_canvas_agg = draw_figure(window['-CANVAS-'].TKCanvas, fig)
+        fig_canvas_agg, toolbar = draw_figure(window['-CANVAS-'].TKCanvas, fig)
 
     elif event == 'Load':
         data = Helper.readFile(fname)
