@@ -69,9 +69,7 @@ def onclick(event):
 
 def draw_figure(canvas, figure, toolbar = None):
     figure_canvas_agg = FigureCanvasTkAgg(figure, canvas)
-    toolbar = NavigationToolbar2Tk(figure_canvas_agg, canvas, pack_toolbar=False)
-    toolbar.update()
-    toolbar.pack(fill='x', side='bottom')
+    toolbar = NavigationToolbar2Tk(figure_canvas_agg, canvas)
     
     
     figure_canvas_agg.get_tk_widget().pack(side='top', fill='both', expand=1)
