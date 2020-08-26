@@ -98,12 +98,12 @@ def destroy_figure(fig_canvas_agg, toolbar):
 ####### Creating the Main Window ################################
 def create_main_window(parameters, password_attempt):
     sg.theme(parameters['theme'])
-    layout = [[sg.In(), sg.FileBrowse(), sg.Button('Log in', visible=False if password_attempt == PASSWORD else True),
+    layout = [[sg.Radio('Pre-Calc', 'RAD1', default=True, font=['Helvetica', 10], key='OP1'),
+               sg.Radio('Post-Calc', 'RAD1', font=['Helvetica', 10]),sg.In(),
+               sg.FileBrowse(),  sg.Button('Log in', visible=False if password_attempt == PASSWORD else True),
                sg.Button('Logout', visible=True if password_attempt == PASSWORD else False)],
               [sg.Button('Load'),
                sg.Button('Insert Parameters', visible=True if password_attempt == PASSWORD else False)],
-              [sg.Radio('Pre-Calc', 'RAD1', default=True, font=['Helvetica', 10], key='OP1'),
-               sg.Radio('Post-Calc', 'RAD1', font=['Helvetica', 10])],
               [sg.Canvas(size=(898, 634), key='-CANVAS-')],
               [sg.Radio('Pre-Calc', 'RAD2', default=True, font=['Helvetica', 10], key='OP2'),
                sg.Radio('Post-Calc', 'RAD2', font=['Helvetica', 10])],
