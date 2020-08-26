@@ -206,12 +206,12 @@ while True:
         # if default radio button is clicked, returns true for precalc
         if tmp:
             data = Helper.readFile(fname, 0)
-
+            num = sg.popup_get_text('Harmonic Number', 'Enter nth harmonic')
             t, i, f, Imag, Imagfilt, ifilt, ienv, int_ienv, ienv_filtered = major_function(int(parameters['freq_pert']),
                                                                                            int(parameters[
                                                                                                    'bandwith_window']),
                                                                                            int(parameters['lpf_bw']),
-                                                                                           int(parameters['harmonic']),
+                                                                                           int(num),
                                                                                            float(
                                                                                                parameters['max_time']),
                                                                                            float(
