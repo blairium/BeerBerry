@@ -99,18 +99,19 @@ def destroy_figure(fig_canvas_agg, toolbar):
 def create_main_window(parameters, password_attempt):
     sg.theme(parameters['theme'])
     layout = [[sg.Radio('Pre-Calc', 'RAD1', default=True, font=['Helvetica', 10], key='OP1'),
-               sg.Radio('Post-Calc', 'RAD1', font=['Helvetica', 10]),sg.In(),
-               sg.FileBrowse(),  sg.Button('Log in', visible=False if password_attempt == PASSWORD else True),
+               sg.Radio('Post-Calc', 'RAD1', font=['Helvetica', 10]),
+                sg.In(), sg.FileBrowse(), sg.Button('Log in', visible=False if password_attempt == PASSWORD else True),
                sg.Button('Logout', visible=True if password_attempt == PASSWORD else False)],
               [sg.Button('Load'),
                sg.Button('Insert Parameters', visible=True if password_attempt == PASSWORD else False)],
+              
               [sg.Canvas(size=(898, 634), key='-CANVAS-')],
-              [sg.Radio('Pre-Calc', 'RAD2', default=True, font=['Helvetica', 10], key='OP2'),
-               sg.Radio('Post-Calc', 'RAD2', font=['Helvetica', 10])],
               [sg.Button('plot', disabled=True, ), sg.Button('plot2', disabled=True, ),
                sg.Button('plot3', disabled=True, ), sg.Button('baseline', disabled=True, ),
                sg.FileSaveAs(button_text='save', disabled=True, target='save', enable_events=True, key='save',
                              file_types=(('DATA', '.data'), ('BIN', '.bin'), ('CSV', '.csv'), ('All Files', '*.*'))),
+                sg.Radio('Pre-Calc', 'RAD2', default=True, font=['Helvetica', 10], key='OP2'),
+                sg.Radio('Post-Calc', 'RAD2', font=['Helvetica', 10]),
                sg.Button('Exit')]]
 
     return sg.Window('BeerBerry', layout, element_justification='center', font='Helvetica 18')
@@ -159,7 +160,7 @@ while True:
         window = create_main_window(parameters, password_attempt)
 
     event, values = window.read()
-    fname = values[0]
+    fname = values[1]
 
     print(event)
     if event == sg.WIN_CLOSED or event == 'Exit':
@@ -205,6 +206,7 @@ while True:
 
         # if default radio button is clicked, returns true for precalc
         if tmp:
+            print(type(fname))
             data = Helper.readFile(fname, 0)
             num = sg.popup_get_text('Harmonic Number', 'Enter nth harmonic')
             t, i, f, Imag, Imagfilt, ifilt, ienv, int_ienv, ienv_filtered = major_function(int(parameters['freq_pert']),
@@ -255,7 +257,7 @@ while True:
             window.find_element('plot2').Update(disabled=False)
             window.find_element('plot3').Update(disabled=False)
 
-            if df is not None:
+            if df_Post is not None:
                 window.find_element('save').Update(disabled=False)
 
     elif event == 'save':
