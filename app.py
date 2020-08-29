@@ -30,9 +30,6 @@ DEFAULT_SETTINGS = {'freq_pert': 60, 'bandwith_window': 10 , 'lpf_bw': 10, 'harm
 PARAMETER_KEYS_TO_ELEMENT_KEYS = {'freq_pert': '-FREQ PERT-', 'bandwith_window': '-BW WINDOW-' ,'lpf_bw': '-LPF BW-', 'harmonic': '-HARMONIC-',
                                 'max_time': '-MAX TIME-', 'max_width': '-MAX WIDTH-','sample_rate': '-SAMPLE RATE-','theme': '-THEME-' }
 
-xdata = []
-ydata = []
-
 ###### Load/Save Parameters File ##########################################
 def load_parameters(parameters_file, default_parameters):
     try:
@@ -89,7 +86,7 @@ def create_main_window(parameters, password_attempt):
     layout = [[sg.In(), sg.FileBrowse(), sg.Button('Log in', visible = False if password_attempt==PASSWORD else True), sg.Button('Logout', visible = True if password_attempt==PASSWORD else False)],
               [sg.Button('Load'), sg.Button('Insert Parameters', visible = True if password_attempt==PASSWORD else False)],
               [sg.Canvas(size = (700,500), key='-CANVAS-')],
-              [sg.Button('plot', disabled=True,), sg.Button('plot2', disabled=True,), sg.Button('plot3', disabled=True,), sg.Button('baseline', disabled=True,),
+              [sg.Button('plot', disabled=True,), sg.Button('plot2', disabled=True,), sg.Button('plot3', disabled=True,), sg.Button('Define baseline', disabled=True,), sg.Button('Map baseline', disabled=True,),
                sg.FileSaveAs(button_text='save', disabled=True, target='save', enable_events=True, key='save', file_types=(('DATA', '.data'), ('BIN', '.bin'), ('CSV', '.csv'), ('All Files', '*.*'))),
                sg.Button('Exit')]]
 
@@ -127,6 +124,9 @@ fig_canvas_agg = None
 df = None
 password_attempt = None
 window, parameters = None, load_parameters(PARAMETERS_FILE, DEFAULT_SETTINGS)
+xdata = []
+ydata = []
+clickEvent = None
 print(parameters)
 while True:
 
@@ -139,11 +139,12 @@ while True:
     print(event)
     if event == sg.WIN_CLOSED or event == 'Exit':
         break
+
     elif event == 'plot':
         if fig_canvas_agg:
             destroy_figure(fig_canvas_agg)
 
-        window.find_element('baseline').Update(disabled=False)
+        window.find_element('Define baseline').Update(disabled=False)
 
         fig = matplotlib.figure.Figure(figsize=(10, 5), dpi=100)
         fig.add_subplot(111, xlabel = 'Time (s)', ylabel = 'Current (S.U)').plot(t, ienv)
@@ -154,7 +155,8 @@ while True:
         if fig_canvas_agg:
             destroy_figure(fig_canvas_agg)
 
-        window.find_element('baseline').Update(disabled=True)
+        window.find_element('Define baseline').Update(disabled=True)
+
         fig = matplotlib.figure.Figure(figsize=(10, 5), dpi=100)
         fig.add_subplot(111, xlabel = 'Time (s)', ylabel = 'Current' ).plot(t, i)
 
@@ -164,7 +166,7 @@ while True:
         if fig_canvas_agg:
             destroy_figure(fig_canvas_agg)
 
-        window.find_element('baseline').Update(disabled=True)
+        window.find_element('Define baseline').Update(disabled=True)
 
         fig = matplotlib.figure.Figure(figsize=(10, 5), dpi=100)
         fig.add_subplot(221).plot(f, Imag)
@@ -205,11 +207,21 @@ while True:
         outFile = values['save']
         Helper.writeFile(outFile, df)
 
-    elif event == 'baseline':
-        if (len(xdata) >= 2):
+    elif event == 'Define baseline':
+        if (len(xdata) >= 2) :
             xdata = []
             ydata = []
         clickEvent = fig_canvas_agg.mpl_connect('button_press_event', onclick)
+        window.find_element('Map baseline').Update(disabled=False)
+
+    elif event == 'Map baseline':
+        fig, (ax1) = plt.subplots(1,1)
+        ax1.fill_between(t, ienv, ydata )
+        fig.set_dpi(100)
+        fig.set_size_inches(10, 5)
+        destroy_figure(fig_canvas_agg)
+        fig_canvas_agg = draw_figure(window['-CANVAS-'].TKCanvas, fig)
+
 
     elif event == 'Log in':
         password_attempt = sg.popup_get_text('Password', '')
