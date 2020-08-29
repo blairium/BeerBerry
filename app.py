@@ -11,6 +11,8 @@ from matplotlib.figure import Figure
 from data.And_AC_Volt_Python import major_function
 from matplotlib.widgets import PolygonSelector
 from matplotlib.axes import Axes
+from asyncio import events
+import asyncio
 
 matplotlib.use('TkAgg')
 
@@ -68,11 +70,17 @@ def onclick(event):
     # print('%s click: button=%d, x=%d, y=%d, xdata=%f, ydata=%f' %
     #     ('double' if event.dblclick else 'single', event.button,
     #     event.x, event.y, event.xdata, event.ydata))
-    if (len(xdata) < 2):
-        xdata.append(event.xdata)
-        ydata.append(event.ydata)
+        while True:
+            if (len(xdata) < 2):
+                xdata.append(event.xdata)
+                ydata.append(event.ydata)
+            else:
+                break
         print(xdata)
         print(ydata)
+
+   
+
 
 
 def draw_figure(canvas, figure, toolbar=None):
