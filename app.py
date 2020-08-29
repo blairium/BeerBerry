@@ -13,8 +13,6 @@ from data.And_AC_Volt_Python import major_function
 from matplotlib.widgets import PolygonSelector
 from matplotlib.axes import Axes
 from asyncio import events
-import asyncio
-
 matplotlib.use('TkAgg')
 
 sg.LOOK_AND_FEEL_TABLE['BeerBerry'] = {'BACKGROUND': '#FFFFFF',
@@ -67,12 +65,10 @@ def onclick(event):
     # print('%s click: button=%d, x=%d, y=%d, xdata=%f, ydata=%f' %
     #     ('double' if event.dblclick else 'single', event.button,
     #     event.x, event.y, event.xdata, event.ydata))
-        while True:
-            if (len(xdata) < 2):
-                xdata.append(event.xdata)
-                ydata.append(event.ydata)
-            else:
-                break
+
+    if (len(xdata) < 2):
+        xdata.append(event.xdata)
+        ydata.append(event.ydata)
         print(xdata)
         print(ydata)
 
@@ -112,7 +108,7 @@ def create_main_window(parameters, password_attempt):
 
               [sg.Canvas(size=(898, 634), key='-CANVAS-')],
               [sg.Button('plot', disabled=True, ), sg.Button('plot2', disabled=True, ),
-               sg.Button('plot3', disabled=True, ), sg.Button('baseline', disabled=True ), sg.Button('Define baseline', disabled=True,), sg.Button('Map baseline', disabled=True,),
+               sg.Button('plot3', disabled=True, ), sg.Button('Define baseline', disabled=True,), sg.Button('Map baseline', disabled=True,),
                sg.FileSaveAs(button_text='save', disabled=True, target='save', enable_events=True, key='save',
                              file_types=(('DATA', '.data'), ('BIN', '.bin'), ('CSV', '.csv'), ('All Files', '*.*'))),
                 sg.Radio('Pre-Calc', 'RAD2', default=True, font=['Helvetica', 10], key='OP2'),
@@ -217,7 +213,7 @@ while True:
         if tmp:
             print(type(fname))
             data = Helper.readFile(fname, 0)
-            num = sg.popup_get_text('Harmonic Number', 'Enter nth harmonic')
+            num = sg.popup_get_text('Harmonic Number', 'Enter nth harmonic', default_text="2",)
             t, i, f, Imag, Imagfilt, ifilt, ienv, int_ienv, ienv_filtered = major_function(int(parameters['freq_pert']),
                                                                                            int(parameters[
                                                                                                    'bandwith_window']),
@@ -307,18 +303,19 @@ while True:
         curve_2 = np.copy(ienv_filtered)
         curve_2[xdata[0]:xdata[1]] = np.linspace(ydata[0],ydata[1],xdata[1]-xdata[0])
         diff_curves = curve_1-curve_2
+        
         peak_height = np.max(diff_curves)
         index_of_peak = np.where(peak_height == diff_curves)[0][0]
         fig = plt.figure()
-        plt.plot(t,curve_1, c = '#40BAD2')
-        plt.plot(t,curve_2, c = '#40BAD2')
+        plt.plot(t,curve_1, c = '#40BAD3')
+        plt.plot(t,curve_2, c = '#40BAD3')
         plt.plot([t[index_of_peak],t[index_of_peak]],[curve_2[index_of_peak],curve_1[index_of_peak]], c = 'r')
         plt.fill_between(t,curve_1,curve_2, alpha = 0.3)
         fig.suptitle('Inc Baseline', fontsize=16)
-        fig.set_size_inches(10,5)
+        fig.set_size_inches(9,6)
         fig.set_dpi(100)
-        destroy_figure(fig_canvas_agg)
-        fig_canvas_agg = draw_figure(window['-CANVAS-'].TKCanvas, fig)
+        destroy_figure(fig_canvas_agg, toolbar)
+        fig_canvas_agg, toolbar = draw_figure(window['-CANVAS-'].TKCanvas, fig)
 
 
     elif event == 'Log in':
