@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 import matplotlib
 import os as os
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+import PySimpleGUI as sg
 
 matplotlib.use('TkAgg')
 
@@ -17,11 +18,18 @@ def binary_Write_Post(fileName, df):
 
 
 def csv_Write(fileName, df):
-    df.to_csv(fileName, index=False, sep=' ')
+    df.to_csv(fileName, index=False, header = True, sep=' ')
 
 
 def csv_WritePost(fileName, df):
-    df.to_csv(fileName, index_label='row')
+    df.to_csv(fileName, index=False, header = True, sep=',')
+
+def data_Write(fileName, df):
+    df.to_csv(fileName, index=False, header = True, sep='\t')
+
+
+def data_WritePost(fileName, df):
+    df.to_csv(fileName, index = False, header = True, sep='\t')
     # columns=['t', 'i', 'Imag', 'Imagfilt', 'ifilt', 'ienv', 'int_ienv', 'ienv_filtered']
 
 
@@ -36,7 +44,7 @@ def binary_Read_Post(fileName):
 
 
 def data_read_Post(fileName):
-    data = pd.read_csv(fileName)
+    data = pd.read_csv(fileName, header=None, delimiter=r"\s+")
     return data
 
 
@@ -46,14 +54,12 @@ def data_read(fileName):
 
 
 def csv_read(fileName):
-    data = pd.read_csv(fileName, header=None)
-    data = data.iloc[:, 1:]
+    data = pd.read_csv(fileName, header=None, delimiter=',')
     return data
 
 
 def csv_read_Post(fileName):
-    data = pd.read_csv(fileName, header=0)
-    data = data.iloc[:, 1:]
+    data = pd.read_csv(fileName, header=None, delimiter=',')
     return data
 
 
@@ -105,16 +111,20 @@ def writeFile(fileName, data, post):
     if post == 1:
 
         if ext == ".data":
-            csv_WritePost(fileName, data)
+            data_WritePost(fileName, data)
         elif ext == ".bin":
             binary_Write_Post(fileName, data)
         elif ext == ".csv":
             csv_WritePost(fileName, data)
+        else:
+            sg.popup_error('Error: Invalid File Extension (Valid extensions are: .data, .csv, .bin)')
 
     elif post == 0:
         if ext == ".data":
-            csv_Write(fileName, data)
+            data_Write(fileName, data)
         elif ext == ".bin":
             binary_Write(fileName, data)
         elif ext == ".csv":
             csv_Write(fileName, data)
+        else:
+            sg.popup_error('Error: Invalid File Extension (Valid extensions are: .data, .csv, .bin)')

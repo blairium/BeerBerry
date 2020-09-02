@@ -13,6 +13,7 @@ from data.And_AC_Volt_Python import major_function
 from matplotlib.widgets import PolygonSelector
 from matplotlib.axes import Axes
 from asyncio import events
+import codecs
 matplotlib.use('TkAgg')
 
 sg.LOOK_AND_FEEL_TABLE['BeerBerry'] = {'BACKGROUND': '#FFFFFF',
@@ -99,11 +100,11 @@ def destroy_figure(fig_canvas_agg, toolbar):
 ####### Creating the Main Window ################################
 def create_main_window(parameters, password_attempt):
     sg.theme(parameters['theme'])
-    layout = [[sg.Radio('Pre-Calc', 'RAD1', default=True, font=['Helvetica', 10], key='OP1'),
-               sg.Radio('Post-Calc', 'RAD1', font=['Helvetica', 10]),
-                sg.In(), sg.FileBrowse(), sg.Button('Log in', visible=False if password_attempt == PASSWORD else True),
+    layout = [[sg.Radio('Raw Data', 'RAD1', default=True, font=['Helvetica', 10], key='OP1'),
+               sg.Radio('Post Calculation', 'RAD1', font=['Helvetica', 10]),
+                sg.In(key = '-FILENAME-',enable_events=True), sg.FileBrowse(), sg.Button('Log in', visible=False if password_attempt == PASSWORD else True),
                sg.Button('Logout', visible=True if password_attempt == PASSWORD else False)],
-              [sg.Button('Load'),
+              [sg.Button('Load',  disabled=True),
                sg.Button('Insert Parameters', visible=True if password_attempt == PASSWORD else False)],
 
               [sg.Canvas(size=(898, 634), key='-CANVAS-')],
@@ -111,8 +112,8 @@ def create_main_window(parameters, password_attempt):
                sg.Button('plot3', disabled=True, ), sg.Button('Define baseline', disabled=True,), sg.Button('Map baseline', disabled=True,),
                sg.FileSaveAs(button_text='save', disabled=True, target='save', enable_events=True, key='save',
                              file_types=(('DATA', '.data'), ('BIN', '.bin'), ('CSV', '.csv'), ('All Files', '*.*'))),
-                sg.Radio('Pre-Calc', 'RAD2', default=True, font=['Helvetica', 10], key='OP2'),
-                sg.Radio('Post-Calc', 'RAD2', font=['Helvetica', 10]),
+                sg.Radio('Raw Data', 'RAD2', default=True, font=['Helvetica', 10], key='OP2'),
+                sg.Radio('Post Calculation', 'RAD2', font=['Helvetica', 10]),
                sg.Button('Exit')]]
 
     return sg.Window('BeerBerry', layout, element_justification='center', font='Helvetica 18')
@@ -164,11 +165,15 @@ while True:
         window = create_main_window(parameters, password_attempt)
 
     event, values = window.read()
-    fname = values[1]
+    fname = values['-FILENAME-']
 
     print(event)
     if event == sg.WIN_CLOSED or event == 'Exit':
         break
+
+    if event == '-FILENAME-':
+        window.find_element('Load').Update(disabled=False)
+
 
     elif event == 'plot':
         if fig_canvas_agg:
@@ -185,7 +190,7 @@ while True:
         if fig_canvas_agg:
             destroy_figure(fig_canvas_agg, toolbar)
 
-        window.find_element('baseline').Update(disabled=True)
+        window.find_element('Define baseline').Update(disabled=True)
         fig = matplotlib.figure.Figure(figsize=(9, 6), dpi=100)
         fig.add_subplot(111, xlabel='Time (s)', ylabel='Current').plot(t, i, c = '#40BAD2')
 
@@ -211,59 +216,77 @@ while True:
 
         # if default radio button is clicked, returns true for precalc
         if tmp:
-            print(type(fname))
             data = Helper.readFile(fname, 0)
-            num = sg.popup_get_text('Harmonic Number', 'Enter nth harmonic', default_text="2",)
-            t, i, f, Imag, Imagfilt, ifilt, ienv, int_ienv, ienv_filtered = major_function(int(parameters['freq_pert']),
-                                                                                           int(parameters[
-                                                                                                   'bandwith_window']),
-                                                                                           int(parameters['lpf_bw']),
-                                                                                           int(num),
-                                                                                           float(
-                                                                                               parameters['max_time']),
-                                                                                           float(
-                                                                                               parameters['max_width']),
-                                                                                           float(parameters[
-                                                                                                     'sample_rate']),
-                                                                                           data)
+            if len(data.columns) == 2:
+                num = sg.popup_get_text('Harmonic Number', 'Enter nth harmonic', default_text="2",)
+                if num != None:
+                    if num.isnumeric() :
+                        harmonic = int(num)
+                        if harmonic > 0 or harmonic <= 5:
+                            t, i, f, Imag, Imagfilt, ifilt, ienv, int_ienv, ienv_filtered = major_function(int(parameters['freq_pert']),
+                                                                                                        int(parameters[
+                                                                                                                'bandwith_window']),
+                                                                                                        int(parameters['lpf_bw']),
+                                                                                                        harmonic,
+                                                                                                        float(
+                                                                                                            parameters['max_time']),
+                                                                                                        float(
+                                                                                                            parameters['max_width']),
+                                                                                                        float(parameters[
+                                                                                                                    'sample_rate']),
+                                                                                                        data)
 
-            window.find_element('plot').Update(disabled=False)
-            window.find_element('plot2').Update(disabled=False)
-            window.find_element('plot3').Update(disabled=False)
+                            window.find_element('plot').Update(disabled=False)
+                            window.find_element('plot2').Update(disabled=False)
+                            window.find_element('plot3').Update(disabled=False)
 
-            d = {
-                't': t,
-                'i': i,
-                'f': f,
-                'Imag': Imag,
-                'Imagfilt': Imagfilt,
-                'ifilt': ifilt,
-                'ienv': ienv,
-                'int_ienv': int_ienv,
-                'ienv_filtered': ienv_filtered
-            }
-            df_Post = pd.DataFrame(d)
-            print(type(df))
-            if df_Post is not None:
-                window.find_element('save').Update(disabled=False)
+                            d = {
+                                't': t,
+                                'i': i,
+                                'f': f,
+                                'Imag': Imag,
+                                'Imagfilt': Imagfilt,
+                                'ifilt': ifilt,
+                                'ienv': ienv,
+                                'int_ienv': int_ienv,
+                                'ienv_filtered': ienv_filtered
+                            }
+                            df_Post = pd.DataFrame(d)
+                            if df_Post is not None:
+                                window.find_element('save').Update(disabled=False)
+                        else:
+                            sg.popup_error('Error: Harmonic Must Be Between 1 to 5, Inclusive')
+                    else:       
+                        sg.popup_error('Error: Harmonic Must Be an Number')
+
+            elif len(data.columns) == 9:
+                sg.popup_error('Error: Select Post Calculation to Load Calculated Data Files')
+            else:
+                sg.popup_error('Error: Incompatible Data File')
         else:
             df_Post = Helper.readFile(fname, 1)
-            t = df_Post[['t']]
-            i = df_Post[['i']]
-            f = df_Post[['f']]
-            Imag = df_Post[['Imag']]
-            Imagfilt = df_Post[['Imagfilt']]
-            ifilt = df_Post[['ifilt']]
-            ienv = df_Post[['ienv']]
-            int_ienv = df_Post[['int_ienv']]
-            ienv_filtered = df_Post[['ienv_filtered']]
+            if len(df_Post.columns) == 9:
+                t = df_Post['t']
+                i = df_Post['i']
+                f = df_Post['f']
+                Imag = df_Post['Imag']
+                Imagfilt = df_Post['Imagfilt']
+                ifilt = df_Post['ifilt']
+                ienv = df_Post['ienv']
+                int_ienv = df_Post['int_ienv']
+                ienv_filtered = df_Post['ienv_filtered']
 
-            window.find_element('plot').Update(disabled=False)
-            window.find_element('plot2').Update(disabled=False)
-            window.find_element('plot3').Update(disabled=False)
+                window.find_element('plot').Update(disabled=False)
+                window.find_element('plot2').Update(disabled=False)
+                window.find_element('plot3').Update(disabled=False)
 
-            if df_Post is not None:
-                window.find_element('save').Update(disabled=False)
+                if df_Post is not None:
+                    window.find_element('save').Update(disabled=False)
+            elif len(df_Post.columns) == 2:
+                sg.popup_error('Error: Select Raw Data to Load Raw Data files')
+            else:
+                sg.popup_error('Error: Incompatible Data File')
+
 
     elif event == 'save':
 
@@ -307,6 +330,7 @@ while True:
         peak_height = np.max(diff_curves)
         index_of_peak = np.where(peak_height == diff_curves)[0][0]
         fig = plt.figure()
+       
         plt.plot(t,curve_1, c = '#40BAD3')
         plt.plot(t,curve_2, c = '#40BAD3')
         plt.plot([t[index_of_peak],t[index_of_peak]],[curve_2[index_of_peak],curve_1[index_of_peak]], c = 'r')
