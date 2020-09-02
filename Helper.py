@@ -18,7 +18,7 @@ def binary_Write_Post(fileName, df):
 
 
 def csv_Write(fileName, df):
-    df.to_csv(fileName, index=False, header = True, sep=' ')
+    df.to_csv(fileName, index=False, header = True, sep=',')
 
 
 def csv_WritePost(fileName, df):
