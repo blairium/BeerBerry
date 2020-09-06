@@ -18,25 +18,35 @@ matplotlib.use('TkAgg')
 
 ####### Creating the Main Window ################################
 def create_main_window(parameters, password_attempt, PASSWORD):
-    sg.theme(parameters['theme'])
-    layout = [[sg.Radio('Raw Data', 'RAD1', default=True, font=['Helvetica', 10], key='OP1'),
-               sg.Radio('Post Calculation', 'RAD1', font=['Helvetica', 10]),
-                sg.In(key = '-FILENAME-',enable_events=True), sg.FileBrowse(), sg.Button('Log in', visible=False if password_attempt == PASSWORD else True),
-               sg.Button('Logout', visible=True if password_attempt == PASSWORD else False)],
-              [sg.Button('Load',  disabled=True),
-               sg.Button('Insert Parameters', visible=True if password_attempt == PASSWORD else False)],
+    sg.theme(parameters['theme']) #sets colour theme of window
 
-              [sg.Canvas(size=(898, 634), key='-CANVAS-')],
-              [sg.Button('plot', disabled=True, ), sg.Button('plot2', disabled=True, ),
-               sg.Button('plot3', disabled=True, ), sg.Button('plot4', disabled=True, ),
-               sg.Button('plot5', disabled=True, ),sg.Button('plot6', disabled=True, ), 
+    ###creates layout of the window
+    layout = [
+                # elements in the top row (radio buttons for loading raw data or calculated data, file browser, login button)
+                [sg.Radio('Raw Data', 'RAD1', default=True, font=['Helvetica', 10], key='OP1'),
+                sg.Radio('Post Calculation', 'RAD1', font=['Helvetica', 10]),
+                sg.In(key = '-FILENAME-',enable_events=True), sg.FileBrowse(), sg.Button('Log in', visible=False if password_attempt == PASSWORD else True),
+                sg.Button('Logout', visible=True if password_attempt == PASSWORD else False)], 
+
+                #elements in the second row (Load button, Insert parameters button which is hidden until logged in)
+                [sg.Button('Load',  disabled=True), sg.Button('Insert Parameters', visible=True if password_attempt == PASSWORD else False)],
+
+                #third row contains the canvas for the graphs
+                [sg.Canvas(size=(898, 634), key='-CANVAS-')],
+
+                # elements in the fourth row are (buttons to switch different graphs, the define baseline button, 
+                # map baseline button, save button, radio buttons saving raw or calculated data, and an exit button)
+                [sg.Button('plot', disabled=True, ), sg.Button('plot2', disabled=True, ),
+                sg.Button('plot3', disabled=True, ), sg.Button('plot4', disabled=True, ),
+                sg.Button('plot5', disabled=True, ),sg.Button('plot6', disabled=True, ), 
                 sg.Button('Define baseline', disabled=True,), sg.Button('Map baseline', disabled=True,),
-               sg.FileSaveAs(button_text='save', disabled=True, target='save', enable_events=True, key='save',
+                sg.FileSaveAs(button_text='save', disabled=True, target='save', enable_events=True, key='save',
                              file_types=(('DATA', '.data'), ('BIN', '.bin'), ('CSV', '.csv'), ('All Files', '*.*'))),
                 sg.Radio('Raw Data', 'RAD2', default=True, font=['Helvetica', 10], key='OP2'),
                 sg.Radio('Post Calculation', 'RAD2', font=['Helvetica', 10]),
-               sg.Button('Exit')]]
+                sg.Button('Exit')]]
 
+    ###return window with layout
     return sg.Window('BeerBerry', layout, element_justification='center', font='Helvetica 18')
 
 ####### Creating parameters window ##############################
@@ -69,18 +79,20 @@ def create_insert_parameters_window(parameters,PARAMETER_KEYS_TO_ELEMENT_KEYS):
 
 ####### Create Figure In Canvas ##############################
 def draw_figure(canvas, figure, toolbar=None):
-    figure_canvas_agg = FigureCanvasTkAgg(figure, canvas)
-    toolbar = NavigationToolbar2Tk(figure_canvas_agg, canvas)
 
-    figure_canvas_agg.get_tk_widget().pack(side='top', fill='both', expand=1)
+    figure_canvas_agg = FigureCanvasTkAgg(figure, canvas) # create canvas containing passed in figure
+    toolbar = NavigationToolbar2Tk(figure_canvas_agg, canvas) # create toolbar
+    figure_canvas_agg.get_tk_widget().pack(side='top', fill='both', expand=1) #pack figure and toolbar into canvas
 
+    #return canvas and toolbar
     return figure_canvas_agg, toolbar
 
 ####### Destroy Figure In Canvas ##############################
 def destroy_figure(fig_canvas_agg, toolbar):
-    fig_canvas_agg.get_tk_widget().forget()
-    toolbar.forget()
-    plt.close('all')
+
+    fig_canvas_agg.get_tk_widget().forget() # destroys canvas
+    toolbar.forget() # destroys toolbar
+    plt.close('all') # destroys figure
 
 
 ###### Load/Save Parameters File ##########################################

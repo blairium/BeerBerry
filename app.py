@@ -16,19 +16,10 @@ import codecs
 from gui import (create_main_window, create_insert_parameters_window, draw_figure, destroy_figure, load_parameters, save_parameters)
 matplotlib.use('TkAgg')
 
-
-
-
-
-
 def onclick(event):
     if (len(xdata) < 2):
         xdata.append(event.xdata)
         ydata.append(event.ydata)
-        print(xdata)
-        print(ydata)
-
-   
 
 ####### Parameter Info ################################
 sg.LOOK_AND_FEEL_TABLE['BeerBerry'] = {'BACKGROUND': '#FFFFFF',
@@ -61,6 +52,7 @@ window, parameters = None, load_parameters(PARAMETERS_FILE, DEFAULT_SETTINGS, PA
 xdata = []
 ydata = []
 clickEvent = None
+toolbar = None
 print(parameters)
 while True:
 
