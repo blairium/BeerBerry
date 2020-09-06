@@ -44,22 +44,22 @@ def binary_Read_Post(fileName):
 
 
 def data_read_Post(fileName):
-    data = pd.read_csv(fileName, header=None, delimiter=r"\s+")
+    data = pd.read_csv(fileName, header=0, delimiter=r"\s+")
     return data
 
 
 def data_read(fileName):
-    data = pd.read_csv(fileName, header=None, delimiter=r"\s+")
+    data = pd.read_csv(fileName, header=0, delimiter=r"\s+")
     return data
 
 
 def csv_read(fileName):
-    data = pd.read_csv(fileName, header=None, delimiter=',')
+    data = pd.read_csv(fileName, header=0, delimiter=',')
     return data
 
 
 def csv_read_Post(fileName):
-    data = pd.read_csv(fileName, header=None, delimiter=',')
+    data = pd.read_csv(fileName, header=0, delimiter=',')
     return data
 
 

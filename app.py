@@ -301,6 +301,8 @@ while True:
                 sg.popup_error('Error: Incompatible Data File')
         else:
             df_Post = Helper.readFile(fname, 1)
+            print(df_Post)
+            print(len(df_Post.columns))
             if len(df_Post.columns) == 9:
                 t = df_Post['t']
                 i = df_Post['i']
