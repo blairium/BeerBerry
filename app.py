@@ -106,7 +106,7 @@ while True:
         window.find_element('Define baseline').Update(disabled=True)
 
         fig = matplotlib.figure.Figure(figsize=(9, 6), dpi=100)
-        fig.add_subplot(111, xlabel='f', ylabel='Imag').plot(f, Imag,  c = '#40BAD2')
+        fig.add_subplot(111, xlim=(0,600), xlabel='f', ylabel='Image').plot(f, Imag,  c = '#40BAD2')
 
         fig_canvas_agg, toolbar = draw_figure(window['-CANVAS-'].TKCanvas, fig)
 
