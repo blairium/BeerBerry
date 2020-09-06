@@ -2,20 +2,35 @@ import PySimpleGUI as sg
 import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
-import Helper
+import File
 import matplotlib
 import peakutils as pk
 from json import (load as jsonload, dump as jsondump)
 from os import path
 from matplotlib.backends.backend_tkagg import (FigureCanvasTkAgg, NavigationToolbar2Tk)
 from matplotlib.figure import Figure
-from data.And_AC_Volt_Python import major_function
+from Maths import major_function
 from matplotlib.widgets import PolygonSelector
 from matplotlib.axes import Axes
-from asyncio import events
 import codecs
+from gui import (create_main_window, create_insert_parameters_window, draw_figure, destroy_figure, load_parameters, save_parameters)
 matplotlib.use('TkAgg')
 
+
+
+
+
+
+def onclick(event):
+    if (len(xdata) < 2):
+        xdata.append(event.xdata)
+        ydata.append(event.ydata)
+        print(xdata)
+        print(ydata)
+
+   
+
+####### Parameter Info ################################
 sg.LOOK_AND_FEEL_TABLE['BeerBerry'] = {'BACKGROUND': '#FFFFFF',
                                        'TEXT': '#000000',
                                        'INPUT': '#C4C4C4',
@@ -35,120 +50,6 @@ PARAMETER_KEYS_TO_ELEMENT_KEYS = {'freq_pert': '-FREQ PERT-', 'bandwith_window':
                                   'max_time': '-MAX TIME-', 'max_width': '-MAX WIDTH-', 'sample_rate': '-SAMPLE RATE-',
                                   'theme': '-THEME-'}
 
-###### Load/Save Parameters File ##########################################
-def load_parameters(parameters_file, default_parameters):
-    try:
-        with open(parameters_file, 'r') as f:
-            parameters = jsonload(f)
-    except Exception as e:
-        sg.popup_quick_message(f'exception {e}', 'No parameters file found... will create one for you',
-                               keep_on_top=True, background_color='red', text_color='white')
-        parameters = default_parameters
-        save_parameters(parameters_file, parameters, None)
-    return parameters
-
-
-def save_parameters(parameters_file, parameters, values):
-    if values:  # if there are stuff specified by another window, fill in those values
-        for key in PARAMETER_KEYS_TO_ELEMENT_KEYS:  # update window with the values read from settings file
-            try:
-                parameters[key] = values[PARAMETER_KEYS_TO_ELEMENT_KEYS[key]]
-            except Exception as e:
-                print(f'Problem updating parameters from window values. Key = {key}')
-
-    with open(parameters_file, 'w') as f:
-        jsondump(parameters, f)
-
-    sg.popup('Parameters saved')
-
-
-def onclick(event):
-    # print('%s click: button=%d, x=%d, y=%d, xdata=%f, ydata=%f' %
-    #     ('double' if event.dblclick else 'single', event.button,
-    #     event.x, event.y, event.xdata, event.ydata))
-
-    if (len(xdata) < 2):
-        xdata.append(event.xdata)
-        ydata.append(event.ydata)
-        print(xdata)
-        print(ydata)
-
-   
-
-
-
-def draw_figure(canvas, figure, toolbar=None):
-    figure_canvas_agg = FigureCanvasTkAgg(figure, canvas)
-    toolbar = NavigationToolbar2Tk(figure_canvas_agg, canvas)
-
-    figure_canvas_agg.get_tk_widget().pack(side='top', fill='both', expand=1)
-
-    return figure_canvas_agg, toolbar
-
-
-def destroy_figure(fig_canvas_agg, toolbar):
-    fig_canvas_agg.get_tk_widget().forget()
-    toolbar.forget()
-    plt.close('all')
-
-
-# ab1 = [[sg.Canvas(size = (700,500), key='-CANVAS-')],
-#       [sg.Button('baseline')]]
-# tab2 = [[sg.Canvas(size = (700,500), key='-CANVAS2-')]]
-# tab3 = [[sg.Canvas(size = (700,500), key='-CANVAS3-')]]
-
-####### Creating the Main Window ################################
-def create_main_window(parameters, password_attempt):
-    sg.theme(parameters['theme'])
-    layout = [[sg.Radio('Raw Data', 'RAD1', default=True, font=['Helvetica', 10], key='OP1'),
-               sg.Radio('Post Calculation', 'RAD1', font=['Helvetica', 10]),
-                sg.In(key = '-FILENAME-',enable_events=True), sg.FileBrowse(), sg.Button('Log in', visible=False if password_attempt == PASSWORD else True),
-               sg.Button('Logout', visible=True if password_attempt == PASSWORD else False)],
-              [sg.Button('Load',  disabled=True),
-               sg.Button('Insert Parameters', visible=True if password_attempt == PASSWORD else False)],
-
-              [sg.Canvas(size=(898, 634), key='-CANVAS-')],
-              [sg.Button('plot', disabled=True, ), sg.Button('plot2', disabled=True, ),
-               sg.Button('plot3', disabled=True, ), sg.Button('plot4', disabled=True, ),
-               sg.Button('plot5', disabled=True, ),sg.Button('plot6', disabled=True, ), 
-                sg.Button('Define baseline', disabled=True,), sg.Button('Map baseline', disabled=True,),
-               sg.FileSaveAs(button_text='save', disabled=True, target='save', enable_events=True, key='save',
-                             file_types=(('DATA', '.data'), ('BIN', '.bin'), ('CSV', '.csv'), ('All Files', '*.*'))),
-                sg.Radio('Raw Data', 'RAD2', default=True, font=['Helvetica', 10], key='OP2'),
-                sg.Radio('Post Calculation', 'RAD2', font=['Helvetica', 10]),
-               sg.Button('Exit')]]
-
-    return sg.Window('BeerBerry', layout, element_justification='center', font='Helvetica 18')
-
-
-####### Creating parameters window ##############################
-def create_insert_parameters_window(parameters):
-    sg.theme(parameters['theme'])
-
-    def TextLabel(text):
-        return sg.Text(text + ':', justification='r', size=(30, 1))
-
-    layout = [[sg.Text('Parameters', justification='center', font='Helvetica 18')],
-              [TextLabel('Frequency perturbation'), sg.Input(key='-FREQ PERT-')],
-              [TextLabel('Band-width window'), sg.Input(key='-BW WINDOW-')],
-              [TextLabel('Env lpf bandwidth'), sg.Input(key='-LPF BW-')],
-              [TextLabel('Harmonic to Use'), sg.Input(key='-HARMONIC-')],
-              [TextLabel('Maximum Time'), sg.Input(key='-MAX TIME-')],
-              [TextLabel('Maximum Width'), sg.Input(key='-MAX WIDTH-')],
-              [TextLabel('Sample Rate'), sg.Input(key='-SAMPLE RATE-')],
-              [TextLabel('Theme'), sg.Combo(sg.theme_list(), size=(20, 20), key='-THEME-')],
-              [sg.Button('Save'), sg.Button('Exit')]]
-
-    window = sg.Window('Insert Parameters', layout, keep_on_top=True, finalize=True)
-
-    for key in PARAMETER_KEYS_TO_ELEMENT_KEYS:  # update window with the values read from settings file
-        try:
-            window[PARAMETER_KEYS_TO_ELEMENT_KEYS[key]].update(value=parameters[key])
-        except Exception as e:
-            print(f'Problem updating PySimpleGUI window from parameters. Key = {key}')
-
-    return window
-
 
 # Initialising empty variables so they can remain within the whole program scope
 t, i, f, Imag, Imagfilt, ifilt, ienv, int_ienv, ienv_filtered = ([] for i in range(9))
@@ -156,7 +57,7 @@ fig_canvas_agg = None
 df = None
 df_Post = None
 password_attempt = None
-window, parameters = None, load_parameters(PARAMETERS_FILE, DEFAULT_SETTINGS)
+window, parameters = None, load_parameters(PARAMETERS_FILE, DEFAULT_SETTINGS, PARAMETER_KEYS_TO_ELEMENT_KEYS)
 xdata = []
 ydata = []
 clickEvent = None
@@ -164,7 +65,7 @@ print(parameters)
 while True:
 
     if window is None:
-        window = create_main_window(parameters, password_attempt)
+        window = create_main_window(parameters, password_attempt, PASSWORD)
 
     event, values = window.read()
     fname = values['-FILENAME-']
@@ -249,7 +150,7 @@ while True:
 
         # if default radio button is clicked, returns true for precalc
         if tmp:
-            data = Helper.readFile(fname, 0)
+            data = File.readFile(fname, 0)
             if len(data.columns) == 2:
                 num = sg.popup_get_text('Harmonic Number', 'Enter nth harmonic', default_text="2",)
                 if num != None:
@@ -300,7 +201,7 @@ while True:
             else:
                 sg.popup_error('Error: Incompatible Data File')
         else:
-            df_Post = Helper.readFile(fname, 1)
+            df_Post = File.readFile(fname, 1)
             print(df_Post)
             print(len(df_Post.columns))
             if len(df_Post.columns) == 9:
@@ -335,11 +236,11 @@ while True:
         outFile = values['save']
         if tmp:
 
-            Helper.writeFile(outFile, data, 0)
+            File.writeFile(outFile, data, 0)
 
         else:
 
-            Helper.writeFile(outFile, df_Post, 1)
+            File.writeFile(outFile, df_Post, 1)
 
     elif event == 'Define baseline':
         if (len(xdata) >= 2) :
@@ -399,11 +300,11 @@ while True:
         window.find_element('Insert Parameters').Update(visible=False)
 
     elif event == 'Insert Parameters':
-        event, values = create_insert_parameters_window(parameters).read(close=True)
+        event, values = create_insert_parameters_window(parameters, PARAMETER_KEYS_TO_ELEMENT_KEYS).read(close=True)
         if event == 'Save':
             window.close()
             window = None
-            save_parameters(PARAMETERS_FILE, parameters, values)
+            save_parameters(PARAMETERS_FILE, parameters, values, PARAMETER_KEYS_TO_ELEMENT_KEYS)
             fig_canvas_agg = None
 
 window.close()
