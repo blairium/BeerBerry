@@ -62,26 +62,6 @@ def csv_read_Post(fileName):
     data = pd.read_csv(fileName, header=0, delimiter=',')
     return data
 
-
-def draw_plot(time, amps):
-    plt.plot(time, amps)
-    plt.show(block=False)
-
-
-def get_time_values(volts):
-    sample_rate = 8000.0
-    dt = 1 / sample_rate
-    nod = len(volts) + 1
-    n = np.arange(1, nod)
-    t = n * dt
-    return t
-
-
-def draw_plot(time, amps):
-    plt.plot(time, amps)
-    plt.show(block=False)
-
-
 def readFile(fileName, post):
     ext = os.path.splitext(fileName)[-1].lower()
 
