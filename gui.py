@@ -11,11 +11,6 @@ from matplotlib.axes import Axes
 matplotlib.use('TkAgg')
 
 
-
-
-
-
-
 ####### Creating the Main Window ################################
 def create_main_window(parameters, password_attempt, PASSWORD):
     sg.theme(parameters['theme']) #sets colour theme of window
@@ -26,7 +21,7 @@ def create_main_window(parameters, password_attempt, PASSWORD):
                 [sg.Radio('Raw Data', 'RAD1', default=True, font=['Helvetica', 10], key='OP1'),
                 sg.Radio('Post Calculation', 'RAD1', font=['Helvetica', 10]),
                 sg.In(key = '-FILENAME-',enable_events=True), sg.FileBrowse(), sg.Button('Log in', visible=False if password_attempt == PASSWORD else True),
-                sg.Button('Logout', visible=True if password_attempt == PASSWORD else False)], 
+                sg.Button('Logout', visible=True if password_attempt == PASSWORD else False)],
 
                 #elements in the second row (Load button, Insert parameters button which is hidden until logged in)
                 [sg.Button('Load',  disabled=True), sg.Button('Insert Parameters', visible=True if password_attempt == PASSWORD else False)],
@@ -34,11 +29,11 @@ def create_main_window(parameters, password_attempt, PASSWORD):
                 #third row contains the canvas for the graphs
                 [sg.Canvas(size=(898, 634), key='-CANVAS-')],
 
-                # elements in the fourth row are (buttons to switch different graphs, the define baseline button, 
+                # elements in the fourth row are (buttons to switch different graphs, the define baseline button,
                 # map baseline button, save button, radio buttons saving raw or calculated data, and an exit button)
                 [sg.Button('plot', disabled=True, ), sg.Button('plot2', disabled=True, ),
                 sg.Button('plot3', disabled=True, ), sg.Button('plot4', disabled=True, ),
-                sg.Button('plot5', disabled=True, ),sg.Button('plot6', disabled=True, ), 
+                sg.Button('plot5', disabled=True, ),sg.Button('plot6', disabled=True, ),
                 sg.Button('Define baseline', disabled=True,), sg.Button('Map baseline', disabled=True,),
                 sg.FileSaveAs(button_text='save', disabled=True, target='save', enable_events=True, key='save',
                              file_types=(('DATA', '.data'), ('BIN', '.bin'), ('CSV', '.csv'), ('All Files', '*.*'))),
@@ -120,5 +115,3 @@ def save_parameters(parameters_file, parameters, values, PARAMETER_KEYS_TO_ELEME
         jsondump(parameters, f)
 
     sg.popup('Parameters saved')
-
-

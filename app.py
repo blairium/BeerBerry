@@ -149,18 +149,13 @@ while True:
                     if num.isnumeric() :
                         harmonic = int(num)
                         if harmonic > 0 or harmonic <= 5:
-                            t, i, f, Imag, Imagfilt, ifilt, ienv, int_ienv, ienv_filtered = major_function(int(parameters['freq_pert']),
-                                                                                                        int(parameters[
-                                                                                                                'bandwith_window']),
-                                                                                                        int(parameters['lpf_bw']),
-                                                                                                        harmonic,
-                                                                                                        float(
-                                                                                                            parameters['max_time']),
-                                                                                                        float(
-                                                                                                            parameters['max_width']),
-                                                                                                        float(parameters[
-                                                                                                                    'sample_rate']),
-                                                                                                        data)
+
+                            v = data.iloc[:,0].values                   # Column 1: Voltage
+                            i = data.iloc[:,1].values
+
+                            v,i = blanking_first_samples(4000, v, i)
+                            f,t = get_time_values(i, parameters['sample_rate'])
+                            
 
                             window.find_element('plot').Update(disabled=False)
                             window.find_element('plot2').Update(disabled=False)
@@ -185,7 +180,7 @@ while True:
                                 window.find_element('save').Update(disabled=False)
                         else:
                             sg.popup_error('Error: Harmonic Must Be Between 1 to 5, Inclusive')
-                    else:       
+                    else:
                         sg.popup_error('Error: Harmonic Must Be an Number')
 
             elif len(data.columns) == 9:
@@ -260,11 +255,11 @@ while True:
         curve_2 = np.copy(ienv_filtered)
         curve_2[xdata[0]:xdata[1]] = np.linspace(ydata[0],ydata[1],xdata[1]-xdata[0])
         diff_curves = curve_1-curve_2
-        
+
         peak_height = np.max(diff_curves)
         index_of_peak = np.where(peak_height == diff_curves)[0][0]
         fig = plt.figure()
-       
+
         plt.plot(t,curve_1, c = '#40BAD3')
         plt.plot(t,curve_2, c = '#40BAD3')
         plt.plot([t[index_of_peak],t[index_of_peak]],[curve_2[index_of_peak],curve_1[index_of_peak]], c = 'r')
