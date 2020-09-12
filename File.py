@@ -9,28 +9,13 @@ import PySimpleGUI as sg
 matplotlib.use('TkAgg')
 
 
+# Binary file IO pre/post calculation values
 def binary_Write(fileName, df):
     df.to_pickle(fileName)
 
 
 def binary_Write_Post(fileName, df):
     df.to_pickle(fileName)
-
-
-def csv_Write(fileName, df):
-    df.to_csv(fileName, index=False, header = True, sep=',')
-
-
-def csv_WritePost(fileName, df):
-    df.to_csv(fileName, index=False, header = True, sep=',')
-
-def data_Write(fileName, df):
-    df.to_csv(fileName, index=False, header = True, sep='\t')
-
-
-def data_WritePost(fileName, df):
-    df.to_csv(fileName, index = False, header = True, sep='\t')
-    # columns=['t', 'i', 'Imag', 'Imagfilt', 'ifilt', 'ienv', 'int_ienv', 'ienv_filtered']
 
 
 def binary_Read(fileName):
@@ -43,14 +28,13 @@ def binary_Read_Post(fileName):
     return data
 
 
-def data_read_Post(fileName):
-    data = pd.read_csv(fileName, header=0, delimiter=r"\s+")
-    return data
+# CSV file IO pre/post calculation values+
+def csv_Write(fileName, df):
+    df.to_csv(fileName, index=False, header=True, sep=',')
 
 
-def data_read(fileName):
-    data = pd.read_csv(fileName, header=0, delimiter=r"\s+")
-    return data
+def csv_WritePost(fileName, df):
+    df.to_csv(fileName, index=False, header=True, sep=',')
 
 
 def csv_read(fileName):
@@ -62,6 +46,28 @@ def csv_read_Post(fileName):
     data = pd.read_csv(fileName, header=0, delimiter=',')
     return data
 
+
+# data file IO pre/post calculation values
+def data_Write(fileName, df):
+    df.to_csv(fileName, index=False, header=True, sep='\t')
+
+
+def data_WritePost(fileName, df):
+    df.to_csv(fileName, index=False, header=True, sep='\t')
+    # columns=['t', 'i', 'Imag', 'Imagfilt', 'ifilt', 'ienv', 'int_ienv', 'ienv_filtered']
+
+
+def data_read_Post(fileName):
+    data = pd.read_csv(fileName, header=0, delimiter=r"\s+")
+    return data
+
+
+def data_read(fileName):
+    data = pd.read_csv(fileName, header=0, delimiter=r"\s+")
+    return data
+
+
+# High-level function to determine which input to call
 def readFile(fileName, post):
     ext = os.path.splitext(fileName)[-1].lower()
 
@@ -84,7 +90,7 @@ def readFile(fileName, post):
 
     return data
 
-
+#High level function to determmine which output to call
 def writeFile(fileName, data, post):
     ext = os.path.splitext(fileName)[-1].lower()
     ##
