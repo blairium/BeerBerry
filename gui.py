@@ -14,6 +14,7 @@ matplotlib.use('TkAgg')
 ####### Creating the Main Window ################################
 def create_main_window(parameters, password_attempt, PASSWORD):
     sg.theme(parameters['theme']) #sets colour theme of window
+    radio_choices = ['1st Harmonic', '2nd Harmonic', '3rd Harmonic', '4th Harmonic','5th Harmonic']
 
     ###creates layout of the window
     layout = [
@@ -31,15 +32,17 @@ def create_main_window(parameters, password_attempt, PASSWORD):
 
                 # elements in the fourth row are (buttons to switch different graphs, the define baseline button,
                 # map baseline button, save button, radio buttons saving raw or calculated data, and an exit button)
+                [sg.Checkbox('1st Harmonic', key='r1'), sg.Checkbox('2nd Harmonic', key='r2'), sg.Checkbox('3rd Harmonic', key='r3'),
+                sg.Checkbox('4th Harmonic', key='r4'), sg.Checkbox('5th Harmonic', key='r5')],
                 [sg.Button('plot', disabled=True, ), sg.Button('plot2', disabled=True, ),
-                sg.Button('plot3', disabled=True, ), sg.Button('plot4', disabled=True, ),
-                sg.Button('plot5', disabled=True, ),sg.Button('plot6', disabled=True, ),
+                sg.Button('Frequency vs Mag of Current', disabled=True, ),sg.Button('Cumulative Sum', disabled=True, ),
                 sg.Button('Define baseline', disabled=True,), sg.Button('Map baseline', disabled=True,),
                 sg.FileSaveAs(button_text='save', disabled=True, target='save', enable_events=True, key='save',
                              file_types=(('DATA', '.data'), ('BIN', '.bin'), ('CSV', '.csv'), ('All Files', '*.*'))),
                 sg.Radio('Raw Data', 'RAD2', default=True, font=['Helvetica', 10], key='OP2'),
                 sg.Radio('Post Calculation', 'RAD2', font=['Helvetica', 10]),
-                sg.Button('Exit')]]
+                sg.Button('Exit')]
+            ]
 
     ###return window with layout
     return sg.Window('BeerBerry', layout, element_justification='center', font='Helvetica 18')

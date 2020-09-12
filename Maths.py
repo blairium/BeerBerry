@@ -3,6 +3,7 @@ import pandas as pd
 import scipy as sp
 from scipy import signal
 import matplotlib.pyplot as plt
+import time
 
 def blanking_first_samples(blank_samples, v, i):
     for x in range(0,blank_samples):
@@ -14,20 +15,26 @@ def magnitude_of_current(i,nod):
     Imag = (np.absolute(np.fft.fft(i)/nod*2))  #Magnitude of Current (Absolute value of fourier transform)
     return Imag
 
-def get_ienv(i, freq_pert, harm_num, harm_bandwith, sample_rate, lpf_bw):
+def get_ienv(i, freq_pert, harm_num, harm_bandwith, sample_rate, lpf_bw,t):
     # Filter size
     n = 2046
-
+    nod = i.size
     # Low pass cut off
-    fc = freq_pert*har_num
+    fc = freq_pert*harm_num
     bw = harm_bandwith
 
-    # Full ADC rate
     fs2 = sample_rate/2
-    ff = [0.0,((fc-bw)/fs2*0.99), ((fc-bw)/fs2), ((fc+bw)/fs2), ((fc+bw)/fs2*1.01), 1.0]
-    m = [0, 0, 1, 1, 0, 0]
-    n_freq_in = int(2**(np.ceil(np.log(n)/np.log(2))))
-    b=sp.signal.firwin2(n+1,ff,m, nfreqs=None, window="hamming", antisymmetric=False)
+    # Full ADC rate
+    if fc == bw :
+        ff = [0.0, ((fc+bw)/fs2), ((fc+bw)/fs2*1.01), 1.0]
+        m = [0, 1, 0, 0]
+        n_freq_in = int(2**(np.ceil(np.log(n)/np.log(2))))
+        b=sp.signal.firwin2(n+1,ff,m, nfreqs=None, window="hamming", antisymmetric=False)
+    else:
+        ff = [0.0,((fc-bw)/fs2*0.99), ((fc-bw)/fs2), ((fc+bw)/fs2), ((fc+bw)/fs2*1.01), 1.0]
+        m = [0, 0, 1, 1, 0, 0]
+        n_freq_in = int(2**(np.ceil(np.log(n)/np.log(2))))
+        b=sp.signal.firwin2(n+1,ff,m, nfreqs=None, window="hamming", antisymmetric=False)
 
     c= b/np.max(b)
 
@@ -58,7 +65,7 @@ def get_ienv(i, freq_pert, harm_num, harm_bandwith, sample_rate, lpf_bw):
     ixcosin_filt = sp.signal.lfilter(c,1,ixcosin)
 
     ienv = 2*np.sqrt(ixsin_filt * ixsin_filt + ixcosin_filt * ixcosin_filt)
-
+    print("pass")
     return ienv
 
 def cumulative_sum_ienv(ienv):
@@ -74,7 +81,7 @@ def filter_ienv(ienv, filter_length):
 
 def get_time_values(amps, sample_rate):
     dt = 1/float(sample_rate)
-    nod = len(amps.index)
+    nod = amps.size
     df = sample_rate/nod
     n = np.arange(1, nod+1)
     t = n*dt

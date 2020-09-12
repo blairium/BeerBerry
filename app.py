@@ -9,7 +9,7 @@ from json import (load as jsonload, dump as jsondump)
 from os import path
 from matplotlib.backends.backend_tkagg import (FigureCanvasTkAgg, NavigationToolbar2Tk)
 from matplotlib.figure import Figure
-from Maths import major_function
+import Maths as math
 from matplotlib.widgets import PolygonSelector
 from matplotlib.axes import Axes
 import codecs
@@ -44,6 +44,7 @@ PARAMETER_KEYS_TO_ELEMENT_KEYS = {'freq_pert': '-FREQ PERT-', 'bandwith_window':
 
 # Initialising empty variables so they can remain within the whole program scope
 t, i, f, Imag, Imagfilt, ifilt, ienv, int_ienv, ienv_filtered = ([] for i in range(9))
+harm_one,harm_two,harm_three,harm_four,harm_five = ([] for i in range(5))
 fig_canvas_agg = None
 df = None
 df_Post = None
@@ -74,11 +75,22 @@ while True:
         if fig_canvas_agg:
             destroy_figure(fig_canvas_agg, toolbar)
 
+        fig = plt.figure()
         window.find_element('Define baseline').Update(disabled=False)
+        if window['r1'].get():
+            plt.plot(t,harm_one, c = '#40BAD3')
+        if window['r2'].get():
+            plt.plot(t,harm_two)
+        if window['r3'].get():
+            plt.plot(t,harm_three)
+        if window['r4'].get():
+            plt.plot(t,harm_four)
+        if window['r5'].get():
+            plt.plot(t,harm_five)
 
-        fig = matplotlib.figure.Figure(figsize=(9, 6), dpi=100)
-        fig.add_subplot(111, xlabel='Time (s)', ylabel='Current (S.U)').plot(t, ienv, c = '#40BAD2')
-        fig.suptitle('Results', fontsize=16)
+        fig.suptitle('Selected Harmonics', fontsize=16)
+        fig.set_size_inches(9,6)
+        fig.set_dpi(100)
         fig_canvas_agg, toolbar = draw_figure(window['-CANVAS-'].TKCanvas, fig)
 
     elif event == 'plot2':
@@ -91,40 +103,18 @@ while True:
 
         fig_canvas_agg, toolbar = draw_figure(window['-CANVAS-'].TKCanvas, fig)
 
-    elif event == 'plot3':
+    elif event == 'Frequency vs Mag of Current':
         if fig_canvas_agg:
             destroy_figure(fig_canvas_agg, toolbar)
 
         window.find_element('Define baseline').Update(disabled=True)
 
         fig = matplotlib.figure.Figure(figsize=(9, 6), dpi=100)
-        fig.add_subplot(111, xlim=(0,600), xlabel='f', ylabel='Image').plot(f, Imag,  c = '#40BAD2')
+        fig.add_subplot(111, xlim=(0,int(parameters['freq_pert'])*10), xlabel='frequency', ylabel='Magnitude of Current').plot(f, Imag,  c = '#40BAD2')
 
         fig_canvas_agg, toolbar = draw_figure(window['-CANVAS-'].TKCanvas, fig)
 
-    elif event == 'plot4':
-        if fig_canvas_agg:
-            destroy_figure(fig_canvas_agg, toolbar)
-
-        window.find_element('Define baseline').Update(disabled=True)
-
-        fig = matplotlib.figure.Figure(figsize=(9, 6), dpi=100)
-        fig.add_subplot(111, xlabel='Time (s)', ylabel='ifilt').plot(t, ifilt, c = '#40BAD2')
-
-        fig_canvas_agg, toolbar = draw_figure(window['-CANVAS-'].TKCanvas, fig)
-
-    elif event == 'plot5':
-        if fig_canvas_agg:
-            destroy_figure(fig_canvas_agg, toolbar)
-
-        window.find_element('Define baseline').Update(disabled=True)
-
-        fig = matplotlib.figure.Figure(figsize=(9, 6), dpi=100)
-        fig.add_subplot(111, xlabel='f', ylabel='Imagfilt').plot(f, Imagfilt, c = '#40BAD2')
-
-        fig_canvas_agg, toolbar = draw_figure(window['-CANVAS-'].TKCanvas, fig)
-
-    elif event == 'plot6':
+    elif event == 'Cumulative Sum':
         if fig_canvas_agg:
             destroy_figure(fig_canvas_agg, toolbar)
 
@@ -153,25 +143,44 @@ while True:
                             v = data.iloc[:,0].values                   # Column 1: Voltage
                             i = data.iloc[:,1].values
 
-                            v,i = blanking_first_samples(4000, v, i)
-                            f,t = get_time_values(i, parameters['sample_rate'])
-                            
+                            v,i = math.blanking_first_samples(4000, v, i)
+                            f,t = math.get_time_values(i, float(parameters['sample_rate']))
+                            Imag = math.magnitude_of_current(i,i.size)
+                            spec_hm_ienv = math.get_ienv(i,int(parameters['freq_pert']),harmonic,int(parameters['bandwith_window']), float(parameters['sample_rate']),int(parameters['lpf_bw']),t)
+                            int_ienv = math.cumulative_sum_ienv(spec_hm_ienv)
+                            ienv_filtered = math.filter_ienv(spec_hm_ienv,200)
+                            if fig_canvas_agg:
+                                destroy_figure(fig_canvas_agg, toolbar)
+
+                            window.find_element('Define baseline').Update(disabled=False)
+
+                            fig = matplotlib.figure.Figure(figsize=(9, 6), dpi=100)
+                            fig.add_subplot(111, xlabel='Time (s)', ylabel='Current (S.U)').plot(t, spec_hm_ienv, c = '#40BAD2')
+                            fig.suptitle('Results', fontsize=16)
+                            fig_canvas_agg, toolbar = draw_figure(window['-CANVAS-'].TKCanvas, fig)
+
+                            harm_one = math.get_ienv(i,int(parameters['freq_pert']),1,int(parameters['bandwith_window']),
+                                            float(parameters['sample_rate']),int(parameters['lpf_bw']),t)
+                            harm_two = math.get_ienv(i,int(parameters['freq_pert']),2,int(parameters['bandwith_window']),
+                                            float(parameters['sample_rate']),int(parameters['lpf_bw']),t)
+                            harm_three = math.get_ienv(i,int(parameters['freq_pert']),3,int(parameters['bandwith_window']),
+                                            float(parameters['sample_rate']),int(parameters['lpf_bw']),t)
+                            harm_four = math.get_ienv(i,int(parameters['freq_pert']),4,int(parameters['bandwith_window']),
+                                            float(parameters['sample_rate']),int(parameters['lpf_bw']),t)
+                            harm_five = math.get_ienv(i,int(parameters['freq_pert']),5,int(parameters['bandwith_window']),
+                                            float(parameters['sample_rate']),int(parameters['lpf_bw']),t)
 
                             window.find_element('plot').Update(disabled=False)
                             window.find_element('plot2').Update(disabled=False)
-                            window.find_element('plot3').Update(disabled=False)
-                            window.find_element('plot4').Update(disabled=False)
-                            window.find_element('plot5').Update(disabled=False)
-                            window.find_element('plot6').Update(disabled=False)
+                            window.find_element('Frequency vs Mag of Current').Update(disabled=False)
+                            window.find_element('Cumulative Sum').Update(disabled=False)
 
                             d = {
                                 't': t,
                                 'i': i,
                                 'f': f,
                                 'Imag': Imag,
-                                'Imagfilt': Imagfilt,
-                                'ifilt': ifilt,
-                                'ienv': ienv,
+                                'ienv': spec_hm_ienv,
                                 'int_ienv': int_ienv,
                                 'ienv_filtered': ienv_filtered
                             }
@@ -204,10 +213,8 @@ while True:
 
                 window.find_element('plot').Update(disabled=False)
                 window.find_element('plot2').Update(disabled=False)
-                window.find_element('plot3').Update(disabled=False)
-                window.find_element('plot4').Update(disabled=False)
-                window.find_element('plot5').Update(disabled=False)
-                window.find_element('plot6').Update(disabled=False)
+                window.find_element('Frequency vs Mag of Current').Update(disabled=False)
+                window.find_element('Cumulative Sum').Update(disabled=False)
 
                 if df_Post is not None:
                     window.find_element('save').Update(disabled=False)
