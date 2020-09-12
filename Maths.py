@@ -80,6 +80,9 @@ def filter_ienv(ienv, filter_length):
     return ienv_filtered
 
 def get_time_values(amps, sample_rate):
+    print("this is a robbery")
+    print("Amps: " + amps)
+    print("sample_rate" + sample_rate)
     dt = 1/float(sample_rate)
     nod = amps.size
     df = sample_rate/nod

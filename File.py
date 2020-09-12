@@ -80,7 +80,7 @@ def readFile(fileName, post):
         elif ext == ".csv":
             data = csv_read_Post(fileName)
 
-    else:
+    elif post == 0:
         if ext == ".data":
             data = data_read(fileName)
         elif ext == ".bin":
