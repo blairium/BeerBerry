@@ -1,5 +1,6 @@
 # OS files
 **/*/.DS_Store
+**/*/_MACOSX/
 
 # IDE
 .vscode/

@@ -7,68 +7,97 @@ import matplotlib.pyplot as plt
 
 from scipy import signal
 
+
 def blanking_first_samples(blank_samples, v, i):
-    for x in range(0,blank_samples):
-        v[x]=0
-        i[x]=0
+    for x in range(0, blank_samples):
+        v[x] = 0
+        i[x] = 0
     return v, i
 
-def magnitude_of_current(i,nod):
-    Imag = (np.absolute(np.fft.fft(i)/nod*2))  #Magnitude of Current (Absolute value of fourier transform)
+
+def magnitude_of_current(i, nod):
+    # Magnitude of Current (Absolute value of fourier transform)
+    Imag = (np.absolute(np.fft.fft(i) / nod * 2))
     return Imag
 
-def get_ienv(i, freq_pert, harm_num, harm_bandwith, sample_rate, lpf_bw,t):
+
+def get_ienv(i, freq_pert, harm_num, harm_bandwith, sample_rate, lpf_bw, t):
     # Filter size
     n = 2046
     nod = i.size
     # Low pass cut off
-    fc = freq_pert*harm_num
+    fc = freq_pert * harm_num
     bw = harm_bandwith
 
-    fs2 = sample_rate/2
+    fs2 = sample_rate / 2
     # Full ADC rate
-    if fc == bw :
-        ff = [0.0, ((fc+bw)/fs2), ((fc+bw)/fs2*1.01), 1.0]
+    if fc == bw:
+        ff = [0.0, ((fc + bw) / fs2), ((fc + bw) / fs2 * 1.01), 1.0]
         m = [0, 1, 0, 0]
-        n_freq_in = int(2**(np.ceil(np.log(n)/np.log(2))))
-        b=sp.signal.firwin2(n+1,ff,m, nfreqs=None, window="hamming", antisymmetric=False)
+        n_freq_in = int(2**(np.ceil(np.log(n) / np.log(2))))
+        b = sp.signal.firwin2(
+            n + 1,
+            ff,
+            m,
+            nfreqs=None,
+            window="hamming",
+            antisymmetric=False)
     else:
-        ff = [0.0,((fc-bw)/fs2*0.99), ((fc-bw)/fs2), ((fc+bw)/fs2), ((fc+bw)/fs2*1.01), 1.0]
+        ff = [
+            0.0,
+            ((fc - bw) / fs2 * 0.99),
+            ((fc - bw) / fs2),
+            ((fc + bw) / fs2),
+            ((fc + bw) / fs2 * 1.01),
+            1.0]
         m = [0, 0, 1, 1, 0, 0]
-        n_freq_in = int(2**(np.ceil(np.log(n)/np.log(2))))
-        b=sp.signal.firwin2(n+1,ff,m, nfreqs=None, window="hamming", antisymmetric=False)
+        n_freq_in = int(2**(np.ceil(np.log(n) / np.log(2))))
+        b = sp.signal.firwin2(
+            n + 1,
+            ff,
+            m,
+            nfreqs=None,
+            window="hamming",
+            antisymmetric=False)
 
-    c= b/np.max(b)
+    c = b / np.max(b)
 
-    w,h = sp.signal.freqz(c,1,worN=500)
+    w, h = sp.signal.freqz(c, 1, worN=500)
     gain = (np.max(np.absolute(h)))
-    c = c/gain
-    ifilt = sp.signal.lfilter(c,1,i)
-    Imagfilt = (np.abs(np.fft.fft(ifilt)/nod*2))
+    c = c / gain
+    ifilt = sp.signal.lfilter(c, 1, i)
+    Imagfilt = (np.abs(np.fft.fft(ifilt) / nod * 2))
 
-    #-------------------------------
+    # -------------------------------
 
-    i2sin = np.sin(2*np.pi*fc*t)
-    i2cosin = np.cos(2*np.pi*fc*t)
+    i2sin = np.sin(2 * np.pi * fc * t)
+    i2cosin = np.cos(2 * np.pi * fc * t)
 
-    ixsin = ifilt*i2sin
-    ixcosin = ifilt*i2cosin
+    ixsin = ifilt * i2sin
+    ixcosin = ifilt * i2cosin
 
     fc2 = lpf_bw
-    ff = [0, fc2/fs2, fc2/fs2*1.01, 1]
+    ff = [0, fc2 / fs2, fc2 / fs2 * 1.01, 1]
     m = [0, 0, 1, 1]
-    b = sp.signal.firwin2(n+1,ff,m, nfreqs=None, window="hamming", antisymmetric=False)
-    c = b/np.max(b)
-    w,h = sp.signal.freqz(c,1,worN=500)
+    b = sp.signal.firwin2(
+        n + 1,
+        ff,
+        m,
+        nfreqs=None,
+        window="hamming",
+        antisymmetric=False)
+    c = b / np.max(b)
+    w, h = sp.signal.freqz(c, 1, worN=500)
     gain = (np.max(np.absolute(h)))
-    c = c/gain
+    c = c / gain
 
-    ixsin_filt = sp.signal.lfilter(c,1,ixsin)
-    ixcosin_filt = sp.signal.lfilter(c,1,ixcosin)
+    ixsin_filt = sp.signal.lfilter(c, 1, ixsin)
+    ixcosin_filt = sp.signal.lfilter(c, 1, ixcosin)
 
-    ienv = 2*np.sqrt(ixsin_filt * ixsin_filt + ixcosin_filt * ixcosin_filt)
+    ienv = 2 * np.sqrt(ixsin_filt * ixsin_filt + ixcosin_filt * ixcosin_filt)
     print("pass")
     return ienv
+
 
 def cumulative_sum_ienv(ienv):
     int_ienv = np.cumsum(ienv)
@@ -78,20 +107,22 @@ def cumulative_sum_ienv(ienv):
 def filter_ienv(ienv, filter_length):
     #filter_length = 200
     ienv_filtered = np.copy(ienv)
-    ienv_filtered = sp.signal.filtfilt(np.ones(filter_length)/filter_length,1,ienv_filtered)
+    ienv_filtered = sp.signal.filtfilt(
+        np.ones(filter_length) / filter_length, 1, ienv_filtered)
     return ienv_filtered
 
-def get_time_values(amps, sample_rate):
-    dt = 1/float(sample_rate)
-    nod = amps.size
-    df = sample_rate/nod
-    n = np.arange(1, nod+1)
-    t = n*dt
-    f = n*df
-    return f,t
 
-#FFT filtering
-#frequency domain
+def get_time_values(amps, sample_rate):
+    dt = 1 / float(sample_rate)
+    nod = amps.size
+    df = sample_rate / nod
+    n = np.arange(1, nod + 1)
+    t = n * dt
+    f = n * df
+    return f, t
+
+# FFT filtering
+# frequency domain
 # p = np.fft.fft(i)
 # #sample position of freq_pert x 2
 # sample_freq_pert = freq_pert*2/sample_rate*nod
