@@ -21,7 +21,7 @@ python app.py
 To format code to python pep8 standard
 
 ```bash
-autopep8 --in-place --aggressive --aggressive <filename>>
+autopep8 --in-place --aggressive --aggressive <filename>
 ```
 
 ## Python Libraries
