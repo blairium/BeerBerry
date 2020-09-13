@@ -1,3 +1,13 @@
-node_modules
-.DS_Store
-.vscode
+# OS files
+**/*/.DS_Store
+
+# IDE
+# .vscode
+# .idea
+
+# node
+node_modules/
+
+# Python cache
+*.pyc
+__pycache__/
