@@ -2,8 +2,8 @@
 **/*/.DS_Store
 
 # IDE
-# .vscode
-# .idea
+.vscode/
+.idea/
 
 # node
 node_modules/

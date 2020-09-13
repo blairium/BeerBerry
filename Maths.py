@@ -1,9 +1,11 @@
+import time
+
 import numpy as np
 import pandas as pd
 import scipy as sp
-from scipy import signal
 import matplotlib.pyplot as plt
-import time
+
+from scipy import signal
 
 def blanking_first_samples(blank_samples, v, i):
     for x in range(0,blank_samples):
@@ -80,9 +82,6 @@ def filter_ienv(ienv, filter_length):
     return ienv_filtered
 
 def get_time_values(amps, sample_rate):
-    print("this is a robbery")
-    print("Amps: " + amps)
-    print("sample_rate" + sample_rate)
     dt = 1/float(sample_rate)
     nod = amps.size
     df = sample_rate/nod

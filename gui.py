@@ -1,15 +1,18 @@
-import PySimpleGUI as sg
+import matplotlib
+
+import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-import numpy as np
-import matplotlib
+import PySimpleGUI as sg
+
 from json import (load as jsonload, dump as jsondump)
-from matplotlib.backends.backend_tkagg import (FigureCanvasTkAgg, NavigationToolbar2Tk)
+from matplotlib.axes import Axes
 from matplotlib.figure import Figure
 from matplotlib.widgets import PolygonSelector
-from matplotlib.axes import Axes
-matplotlib.use('TkAgg')
+from matplotlib.backends.backend_tkagg import (FigureCanvasTkAgg, NavigationToolbar2Tk)
 
+# use tkinter
+matplotlib.use('TkAgg')
 
 ####### Creating the Main Window ################################
 def create_main_window(parameters, password_attempt, PASSWORD):
@@ -77,7 +80,6 @@ def create_insert_parameters_window(parameters,PARAMETER_KEYS_TO_ELEMENT_KEYS):
 
 ####### Create Figure In Canvas ##############################
 def draw_figure(canvas, figure, toolbar=None):
-
     figure_canvas_agg = FigureCanvasTkAgg(figure, canvas) # create canvas containing passed in figure
     toolbar = NavigationToolbar2Tk(figure_canvas_agg, canvas) # create toolbar
     figure_canvas_agg.get_tk_widget().pack(side='top', fill='both', expand=1) #pack figure and toolbar into canvas
@@ -87,7 +89,6 @@ def draw_figure(canvas, figure, toolbar=None):
 
 ####### Destroy Figure In Canvas ##############################
 def destroy_figure(fig_canvas_agg, toolbar):
-
     fig_canvas_agg.get_tk_widget().forget() # destroys canvas
     toolbar.forget() # destroys toolbar
     plt.close('all') # destroys figure
@@ -104,7 +105,6 @@ def load_parameters(parameters_file, default_parameters, PARAMETER_KEYS_TO_ELEME
         parameters = default_parameters
         save_parameters(parameters_file, parameters, None, PARAMETER_KEYS_TO_ELEMENT_KEYS)
     return parameters
-
 
 def save_parameters(parameters_file, parameters, values, PARAMETER_KEYS_TO_ELEMENT_KEYS):
     if values:  # if there are stuff specified by another window, fill in those values
