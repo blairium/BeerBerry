@@ -17,8 +17,8 @@ from matplotlib.backends.backend_tkagg import (
     FigureCanvasTkAgg, NavigationToolbar2Tk)
 
 # local modules
-import file
-import maths
+import File
+import Maths
 from gui import (
     create_main_window,
     create_insert_parameters_window,
@@ -108,16 +108,16 @@ while True:
     if event == '-FILENAME-':
         window.find_element('Load').Update(disabled=False)
 
-    elif event == 'plot':
+    elif event == 'plot' or event == 'r1' or event == 'r2' or event == 'r3' or event == 'r4' or event == 'r5':
         if fig_canvas_agg:
             destroy_figure(fig_canvas_agg, toolbar)
 
         fig = plt.figure()
         window.find_element('Define baseline').Update(disabled=False)
         if window['r1'].get():
-            plt.plot(t, harm_one, c='#40BAD3')
+            plt.plot(t, harm_one)
         if window['r2'].get():
-            plt.plot(t, harm_two)
+            plt.plot(t, harm_two, c='#40BAD3')
         if window['r3'].get():
             plt.plot(t, harm_three)
         if window['r4'].get():
@@ -186,103 +186,87 @@ while True:
 
         # if default radio button is clicked, returns true for precalc
         if tmp:
-            data = file.readFile(fname, 0)
+            data = File.readFile(fname, 0)
             if len(data.columns) == 2:
-                num = sg.popup_get_text(
-                    'Harmonic Number', 'Enter nth harmonic', default_text="2",)
-                if num is not None:
-                    if num.isnumeric():
-                        harmonic = int(num)
-                        if harmonic > 0 or harmonic <= 5:
+                # Column 1: Voltage
+                v = data.iloc[:, 0].values
+                i = data.iloc[:, 1].values
 
-                            # Column 1: Voltage
-                            v = data.iloc[:, 0].values
-                            i = data.iloc[:, 1].values
+                v, i = Maths.blanking_first_samples(4000, v, i)
+                f, t = Maths.get_time_values(
+                    i, float(parameters['sample_rate']))
+                Imag = Maths.magnitude_of_current(i, i.size)
 
-                            v, i = maths.blanking_first_samples(4000, v, i)
-                            f, t = maths.get_time_values(
-                                i, float(parameters['sample_rate']))
-                            Imag = maths.magnitude_of_current(i, i.size)
-                            spec_hm_ienv = maths.get_ienv(
-                                i, int(
-                                    parameters['freq_pert']), harmonic, int(
-                                    parameters['bandwith_window']), float(
-                                    parameters['sample_rate']), int(
-                                    parameters['lpf_bw']), t)
-                            int_ienv = maths.cumulative_sum_ienv(spec_hm_ienv)
-                            ienv_filtered = maths.filter_ienv(
-                                spec_hm_ienv, 200)
-                            if fig_canvas_agg:
-                                destroy_figure(fig_canvas_agg, toolbar)
+                window.find_element(
+                    'Define baseline').Update(disabled=False)
 
-                            window.find_element(
-                                'Define baseline').Update(disabled=False)
+                harm_one = Maths.get_ienv(
+                    i, int(
+                        parameters['freq_pert']), 1, int(
+                        parameters['bandwith_window']), float(
+                        parameters['sample_rate']), int(
+                        parameters['lpf_bw']), t)
+                harm_two = Maths.get_ienv(
+                    i, int(
+                        parameters['freq_pert']), 2, int(
+                        parameters['bandwith_window']), float(
+                        parameters['sample_rate']), int(
+                        parameters['lpf_bw']), t)
+                harm_three = Maths.get_ienv(
+                    i, int(
+                        parameters['freq_pert']), 3, int(
+                        parameters['bandwith_window']), float(
+                        parameters['sample_rate']), int(
+                        parameters['lpf_bw']), t)
+                harm_four = Maths.get_ienv(
+                    i, int(
+                        parameters['freq_pert']), 4, int(
+                        parameters['bandwith_window']), float(
+                        parameters['sample_rate']), int(
+                        parameters['lpf_bw']), t)
+                harm_five = Maths.get_ienv(
+                    i, int(
+                        parameters['freq_pert']), 5, int(
+                        parameters['bandwith_window']), float(
+                        parameters['sample_rate']), int(
+                        parameters['lpf_bw']), t)
 
-                            fig = matplotlib.figure.Figure(
-                                figsize=(9, 6), dpi=100)
-                            fig.add_subplot(
-                                111, xlabel='Time (s)', ylabel='Current (S.U)').plot(
-                                t, spec_hm_ienv, c='#40BAD2')
-                            fig.suptitle('Results', fontsize=16)
-                            fig_canvas_agg, toolbar = draw_figure(
-                                window['-CANVAS-'].TKCanvas, fig)
+                int_ienv = Maths.cumulative_sum_ienv(harm_two)
+                ienv_filtered = Maths.filter_ienv(
+                    harm_two, 200)
 
-                            harm_one = maths.get_ienv(
-                                i, int(
-                                    parameters['freq_pert']), 1, int(
-                                    parameters['bandwith_window']), float(
-                                    parameters['sample_rate']), int(
-                                    parameters['lpf_bw']), t)
-                            harm_two = maths.get_ienv(
-                                i, int(
-                                    parameters['freq_pert']), 2, int(
-                                    parameters['bandwith_window']), float(
-                                    parameters['sample_rate']), int(
-                                    parameters['lpf_bw']), t)
-                            harm_three = maths.get_ienv(
-                                i, int(
-                                    parameters['freq_pert']), 3, int(
-                                    parameters['bandwith_window']), float(
-                                    parameters['sample_rate']), int(
-                                    parameters['lpf_bw']), t)
-                            harm_four = maths.get_ienv(
-                                i, int(
-                                    parameters['freq_pert']), 4, int(
-                                    parameters['bandwith_window']), float(
-                                    parameters['sample_rate']), int(
-                                    parameters['lpf_bw']), t)
-                            harm_five = maths.get_ienv(
-                                i, int(
-                                    parameters['freq_pert']), 5, int(
-                                    parameters['bandwith_window']), float(
-                                    parameters['sample_rate']), int(
-                                    parameters['lpf_bw']), t)
+                if fig_canvas_agg:
+                    destroy_figure(fig_canvas_agg, toolbar)
 
-                            window.find_element('plot').Update(disabled=False)
-                            window.find_element('plot2').Update(disabled=False)
-                            window.find_element(
-                                'Frequency vs Mag of Current').Update(disabled=False)
-                            window.find_element(
-                                'Cumulative Sum').Update(disabled=False)
+                fig = matplotlib.figure.Figure(
+                    figsize=(9, 6), dpi=100)
+                fig.add_subplot(
+                    111, xlabel='Time (s)', ylabel='Current (S.U)').plot(
+                    t, harm_two, c='#40BAD2')
+                fig.suptitle('Selected Harmonics', fontsize=16)
+                fig_canvas_agg, toolbar = draw_figure(
+                    window['-CANVAS-'].TKCanvas, fig)
 
-                            d = {
-                                't': t,
-                                'i': i,
-                                'f': f,
-                                'Imag': Imag,
-                                'ienv': spec_hm_ienv,
-                                'int_ienv': int_ienv,
-                                'ienv_filtered': ienv_filtered
-                            }
-                            df_Post = pd.DataFrame(d)
-                            if df_Post is not None:
-                                window.find_element(
-                                    'save').Update(disabled=False)
-                        else:
-                            sg.popup_error(
-                                'Error: Harmonic Must Be Between 1 to 5, Inclusive')
-                    else:
-                        sg.popup_error('Error: Harmonic Must Be an Number')
+                window.find_element('plot').Update(disabled=False)
+                window.find_element('plot2').Update(disabled=False)
+                window.find_element(
+                    'Frequency vs Mag of Current').Update(disabled=False)
+                window.find_element(
+                    'Cumulative Sum').Update(disabled=False)
+
+                d = {
+                    't': t,
+                    'i': i,
+                    'f': f,
+                    'Imag': Imag,
+                    'ienv': harm_two,
+                    'int_ienv': int_ienv,
+                    'ienv_filtered': ienv_filtered
+                }
+                df_Post = pd.DataFrame(d)
+                if df_Post is not None:
+                    window.find_element(
+                        'save').Update(disabled=False)
 
             elif len(data.columns) == 9:
                 sg.popup_error(
@@ -290,7 +274,7 @@ while True:
             else:
                 sg.popup_error('Error: Incompatible Data File')
         else:
-            df_Post = file.readFile(fname, 1)
+            df_Post = File.readFile(fname, 1)
             print(df_Post)
             print(len(df_Post.columns))
             if len(df_Post.columns) == 9:
@@ -323,11 +307,11 @@ while True:
         outFile = values['save']
         if tmp:
 
-            file.writeFile(outFile, data, 0)
+            File.writeFile(outFile, data, 0)
 
         else:
 
-            file.writeFile(outFile, df_Post, 1)
+            File.writeFile(outFile, df_Post, 1)
 
     elif event == 'Define baseline':
         if (len(xdata) >= 2):
