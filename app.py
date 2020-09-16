@@ -17,8 +17,8 @@ from matplotlib.backends.backend_tkagg import (
     FigureCanvasTkAgg, NavigationToolbar2Tk)
 
 # local modules
-import File
-import Maths
+import file
+import maths
 from gui import (
     create_main_window,
     create_insert_parameters_window,
@@ -186,53 +186,53 @@ while True:
 
         # if default radio button is clicked, returns true for precalc
         if tmp:
-            data = File.readFile(fname, 0)
+            data = file.readFile(fname, 0)
             if len(data.columns) == 2:
                 # Column 1: Voltage
                 v = data.iloc[:, 0].values
                 i = data.iloc[:, 1].values
 
-                v, i = Maths.blanking_first_samples(4000, v, i)
-                f, t = Maths.get_time_values(
+                v, i = maths.blanking_first_samples(4000, v, i)
+                f, t = maths.get_time_values(
                     i, float(parameters['sample_rate']))
-                Imag = Maths.magnitude_of_current(i, i.size)
+                Imag = maths.magnitude_of_current(i, i.size)
 
                 window.find_element(
                     'Define baseline').Update(disabled=False)
 
-                harm_one = Maths.get_ienv(
+                harm_one = maths.get_ienv(
                     i, int(
                         parameters['freq_pert']), 1, int(
                         parameters['bandwith_window']), float(
                         parameters['sample_rate']), int(
                         parameters['lpf_bw']), t)
-                harm_two = Maths.get_ienv(
+                harm_two = maths.get_ienv(
                     i, int(
                         parameters['freq_pert']), 2, int(
                         parameters['bandwith_window']), float(
                         parameters['sample_rate']), int(
                         parameters['lpf_bw']), t)
-                harm_three = Maths.get_ienv(
+                harm_three = maths.get_ienv(
                     i, int(
                         parameters['freq_pert']), 3, int(
                         parameters['bandwith_window']), float(
                         parameters['sample_rate']), int(
                         parameters['lpf_bw']), t)
-                harm_four = Maths.get_ienv(
+                harm_four = maths.get_ienv(
                     i, int(
                         parameters['freq_pert']), 4, int(
                         parameters['bandwith_window']), float(
                         parameters['sample_rate']), int(
                         parameters['lpf_bw']), t)
-                harm_five = Maths.get_ienv(
+                harm_five = maths.get_ienv(
                     i, int(
                         parameters['freq_pert']), 5, int(
                         parameters['bandwith_window']), float(
                         parameters['sample_rate']), int(
                         parameters['lpf_bw']), t)
 
-                int_ienv = Maths.cumulative_sum_ienv(harm_two)
-                ienv_filtered = Maths.filter_ienv(
+                int_ienv = maths.cumulative_sum_ienv(harm_two)
+                ienv_filtered = maths.filter_ienv(
                     harm_two, 200)
 
                 if fig_canvas_agg:
@@ -274,7 +274,7 @@ while True:
             else:
                 sg.popup_error('Error: Incompatible Data File')
         else:
-            df_Post = File.readFile(fname, 1)
+            df_Post = file.readFile(fname, 1)
             print(df_Post)
             print(len(df_Post.columns))
             if len(df_Post.columns) == 9:
@@ -307,11 +307,11 @@ while True:
         outFile = values['save']
         if tmp:
 
-            File.writeFile(outFile, data, 0)
+            file.writeFile(outFile, data, 0)
 
         else:
 
-            File.writeFile(outFile, df_Post, 1)
+            file.writeFile(outFile, df_Post, 1)
 
     elif event == 'Define baseline':
         if (len(xdata) >= 2):
