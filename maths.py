@@ -121,6 +121,60 @@ def get_time_values(amps, sample_rate):
     f = n * df
     return f, t
 
+def map_baseline(t, ienv, xdata, ydata):
+    copy_t = np.full(np.size(t), xdata[0])
+    copy_t = copy_t - t
+    copy_t = np.abs(copy_t)
+    x_start = np.where(copy_t == (np.min(np.abs(copy_t))))
+    xdata[0] = x_start[0][0]
+
+    copy_t = np.full(np.size(t), xdata[1])
+    copy_t = copy_t - t
+    copy_t = np.abs(copy_t)
+    x_end = np.where(copy_t == (np.min(np.abs(copy_t))))
+    xdata[1] = x_end[0][0]
+
+    xdata = [int(i) for i in xdata]
+
+    area_under_curve = np.trapz(
+        t[xdata[0]:xdata[1]], ienv[xdata[0]:xdata[1]])
+    area_under_baseline = np.trapz(xdata, ydata)
+    area_between_curves = area_under_curve - area_under_curve
+    curve_1 = np.copy(ienv)
+    curve_2 = np.copy(ienv)
+    curve_2[xdata[0]:xdata[1]] = np.linspace(
+        ydata[0], ydata[1], xdata[1] - xdata[0])
+    diff_curves = curve_1 - curve_2
+
+    peak_height = np.max(diff_curves)
+    print(peak_height)
+    index_of_peak = np.where(peak_height == diff_curves)[0][0]
+
+    return curve_1, curve_2, peak_height, index_of_peak, diff_curves
+
+def is_y_valid(t, ienv, xdata, ydata):
+    copy_t = np.full(np.size(t), xdata[0])
+    copy_t = copy_t - t
+    copy_t = np.abs(copy_t)
+    x_start = np.where(copy_t == (np.min(np.abs(copy_t))))
+
+    copy_t = np.full(np.size(t), xdata[1])
+    copy_t = copy_t - t
+    copy_t = np.abs(copy_t)
+    x_end = np.where(copy_t == (np.min(np.abs(copy_t))))
+
+    subset = ienv[x_start[0][0]:x_end[0][0]]
+    to_compare = np.linspace(
+        ydata[0], ydata[1], x_end[0][0] - x_start[0][0])
+    valid = -1
+    for i in range(x_end[0][0]-x_start[0][0]):
+        if subset[i] - to_compare[i] > valid:
+            valid = subset[i] - to_compare[i]
+    if valid > 0:
+        return True
+    return False
+
+
 # FFT filtering
 # frequency domain
 # p = np.fft.fft(i)
