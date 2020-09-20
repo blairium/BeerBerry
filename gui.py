@@ -33,14 +33,15 @@ def create_main_window(parameters, password_attempt, PASSWORD):
         # calculated data, file browser, login button)
         [sg.Radio('Raw Data', 'RAD1', default=True, font=['Helvetica', 10], key='OP1'),
          sg.Radio('Post Calculation', 'RAD1', font=['Helvetica', 10]),
-         sg.In(key='-FILENAME-', enable_events=True), sg.FileBrowse(), sg.Button(
-             'Log in', visible=False if password_attempt == PASSWORD else True),
-         sg.Button('Logout', visible=True if password_attempt == PASSWORD else False)],
+         sg.In(key='-FILENAME-', enable_events=True), sg.FileBrowse(),
+         sg.Button('Record Data', auto_size_button = True),
+         sg.Button('Load', disabled=True),
+         sg.Button('Log in', visible=False if password_attempt == PASSWORD else True),
+         sg.Button('Logout', visible=True if password_attempt == PASSWORD else False),
+        sg.Button('Insert Parameters', visible=True if password_attempt == PASSWORD else False)],
 
-        # elements in the second row (Load button, Insert parameters button
-        # which is hidden until logged in)
-        [sg.Button('Load', disabled=True), sg.Button(
-            'Insert Parameters', visible=True if password_attempt == PASSWORD else False)],
+        
+        
 
         # third row contains the canvas for the graphs
         [sg.Canvas(size=(898, 634), key='-CANVAS-')],
@@ -49,15 +50,15 @@ def create_main_window(parameters, password_attempt, PASSWORD):
         # map baseline button, save button, radio buttons saving raw or calculated data, and an exit button)
         [sg.Checkbox('1st Harmonic', enable_events=True, key='r1'), sg.Checkbox('2nd Harmonic', default=True, enable_events=True, key='r2'), sg.Checkbox('3rd Harmonic', enable_events=True, key='r3'),
          sg.Checkbox('4th Harmonic', enable_events=True, key='r4'), sg.Checkbox('5th Harmonic', enable_events=True, key='r5')],
-        [sg.Button('plot', disabled=True, ), sg.Button('plot2', disabled=True, ),
-         sg.Button('Frequency vs Mag of Current', disabled=True, ), sg.Button('Cumulative Sum', disabled=True, ),
-         sg.Button('Define baseline', disabled=True,), sg.Button('Map baseline', disabled=True),
-         sg.Button('Record Data'),
+        [sg.Button('plot', disabled=True, auto_size_button = True), sg.Button('plot2', disabled=True, auto_size_button = True),
+         sg.Button('Freq vs Mag of Current', disabled=True, ), sg.Button('Cumulative Sum', disabled=True, ),
+         sg.Button('Define baseline', disabled=True, auto_size_button = True), sg.Button('Map baseline', disabled=True, auto_size_button = True),
+
          sg.FileSaveAs(button_text='save', disabled=True, target='save', enable_events=True, key='save',
-                       file_types=(('DATA', '.data'), ('BIN', '.bin'), ('CSV', '.csv'), ('All Files', '*.*'))),
+                       file_types=(('DATA', '.data'), ('BIN', '.bin'), ('CSV', '.csv'), ('All Files', '*.*')), auto_size_button = True),
          sg.Radio('Raw Data', 'RAD2', default=True, font=['Helvetica', 10], key='OP2'),
          sg.Radio('Post Calculation', 'RAD2', font=['Helvetica', 10]),
-         sg.Button('Exit')]
+         sg.Button('Exit', auto_size_button = True)]
     ]
 
     # return window with layout

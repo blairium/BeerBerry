@@ -200,7 +200,9 @@ def excitation():
     v3 = 0.7 #Recording stop "Voltage" actually a fraction of max output 1.0 = ~1.265
     filename_string = str('Amp_'+ str(amplitude) + '_stable_' +str(stable) + 'recording_'+ str(duration)+ '_freq_' + '_v1_'+ str(v1) + '_v2_' + str(v2) +'_v3_' +str(v3))#file identifier in quotes
     filename = str(newpath+'/' +filename_string + '_'+ date + '.wav') 
+    print(filename)
     filename_data = str(newpath+'/' +filename_string + '_'+ date + '.data') 
+    print(filename_data)
 
     #timestamp of start time
     startTime = datetime.now()

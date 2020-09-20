@@ -149,7 +149,7 @@ while True:
 
         fig_canvas_agg, toolbar = draw_figure(window['-CANVAS-'].TKCanvas, fig)
 
-    elif event == 'Frequency vs Mag of Current':
+    elif event == 'Freq vs Mag of Current':
         if fig_canvas_agg:
             destroy_figure(fig_canvas_agg, toolbar)
 
@@ -253,7 +253,7 @@ while True:
                 window.find_element('plot').Update(disabled=False)
                 window.find_element('plot2').Update(disabled=False)
                 window.find_element(
-                    'Frequency vs Mag of Current').Update(disabled=False)
+                    'Freq vs Mag of Current').Update(disabled=False)
                 window.find_element(
                     'Cumulative Sum').Update(disabled=False)
 
@@ -294,7 +294,7 @@ while True:
                 window.find_element('plot').Update(disabled=False)
                 window.find_element('plot2').Update(disabled=False)
                 window.find_element(
-                    'Frequency vs Mag of Current').Update(disabled=False)
+                    'Freq vs Mag of Current').Update(disabled=False)
                 window.find_element('Cumulative Sum').Update(disabled=False)
 
                 if df_Post is not None:
@@ -306,6 +306,7 @@ while True:
 
     elif event == 'Record Data':
         data = maths.excitation()
+        sg.PopupOK("Recording Complete")
         window.find_element('Load').Update(disabled=False)
 
     elif event == 'save':
