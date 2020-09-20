@@ -85,6 +85,7 @@ harm_one, harm_two, harm_three, harm_four, harm_five = ([] for i in range(5))
 fig_canvas_agg = None
 df = None
 df_Post = None
+data = None
 password_attempt = None
 window, parameters = None, load_parameters(
     PARAMETERS_FILE, DEFAULT_SETTINGS, PARAMETER_KEYS_TO_ELEMENT_KEYS)
@@ -106,7 +107,9 @@ while True:
         break
 
     if event == '-FILENAME-':
+        data = file.readFile(fname, 0)
         window.find_element('Load').Update(disabled=False)
+        
 
     elif event == 'plot' or event == 'r1' or event == 'r2' or event == 'r3' or event == 'r4' or event == 'r5':
         if fig_canvas_agg:
@@ -186,7 +189,7 @@ while True:
 
         # if default radio button is clicked, returns true for precalc
         if tmp:
-            data = file.readFile(fname, 0)
+            
             if len(data.columns) == 2:
                 # Column 1: Voltage
                 v = data.iloc[:, 0].values
@@ -300,6 +303,10 @@ while True:
                 sg.popup_error('Error: Select Raw Data to Load Raw Data files')
             else:
                 sg.popup_error('Error: Incompatible Data File')
+
+    elif event == 'Record Data':
+        data = maths.excitation()
+        window.find_element('Load').Update(disabled=False)
 
     elif event == 'save':
 

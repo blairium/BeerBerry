@@ -4,8 +4,15 @@ import numpy as np
 import pandas as pd
 import scipy as sp
 import matplotlib.pyplot as plt
+import sounddevice as sd
+import scipy.io.wavfile as wf
+import os
 
 from scipy import signal
+from datetime import datetime
+from scipy import signal
+import peakutils
+import ntpath
 
 
 def blanking_first_samples(blank_samples, v, i):
@@ -174,6 +181,79 @@ def is_y_valid(t, ienv, xdata, ydata):
         return True
     return False
 
+def excitation():
+
+    path = os.getcwd()
+    newpath = str(path) + '/' + 'Electrobe_output_'+ str(datetime.now().strftime("%d_%m_%Y"))
+    if not os.path.exists(newpath):
+        os.makedirs(newpath)
+
+    date = datetime.now().strftime("%d-%m-%Y_%I-%M_%p")
+    #settings
+    amplitude = 0.06 # This is as a fraction of the maximum amplitude 1 = 2.96 V 
+    stable = 2.0 #stable duration in seconds
+    sample_rate = 44100 #Doesn't necessarily work for other sample rates
+    duration = 8.0 # recording duration in seconds
+    frequency = 115.0 # Frequency
+    v1 = 0.0 #Stable "Voltage" actually a fraction of max output positive values only 
+    v2 = 0.0 #Recording Start "Voltage" actually a fraction of max output 0.1 = ~0.045V
+    v3 = 0.7 #Recording stop "Voltage" actually a fraction of max output 1.0 = ~1.265
+    filename_string = str('Amp_'+ str(amplitude) + '_stable_' +str(stable) + 'recording_'+ str(duration)+ '_freq_' + '_v1_'+ str(v1) + '_v2_' + str(v2) +'_v3_' +str(v3))#file identifier in quotes
+    filename = str(newpath+'/' +filename_string + '_'+ date + '.wav') 
+    filename_data = str(newpath+'/' +filename_string + '_'+ date + '.data') 
+
+    #timestamp of start time
+    startTime = datetime.now()
+    sramp = np.linspace(v1,v1,int(stable*sample_rate)) #ramp for stable period
+    ramp = np.linspace(v2,v3,int(duration*sample_rate)) #ramp for excitation
+
+    filename = str(filename_string + '_'+ date + '.wav')
+    #stable duration
+    xls = np.linspace(0, stable * 2 * np.pi, int(stable * sample_rate)) #Left channel wave form
+    xrs = np.linspace(0, stable * 2 * np.pi, int(stable * sample_rate)) #Right Channel waveform
+
+    s_left_channel = np.sin(frequency * xls)*amplitude 
+    s_right_channel = np.sin(frequency * xrs + np.pi)*amplitude
+
+    s_left_channel  -= sramp
+    s_right_channel += sramp
+
+    stable_waveform_stereo = np.vstack((s_left_channel, s_right_channel)).T #combine left and right channels
+
+    #record duration
+    xl = np.linspace(0, duration * 2 * np.pi, int(duration * sample_rate))
+    xr = np.linspace(0, duration * 2 * np.pi, int(duration * sample_rate))
+
+    left_channel = amplitude*np.sin(frequency * xl)
+    right_channel = amplitude*np.sin(frequency * xr + np.pi)
+
+    left_channel -= ramp
+
+    right_channel += ramp
+    
+    waveform_stereo = np.vstack((left_channel, right_channel)).T #combine left and right channels
+
+    #create total waveform
+    total_waveform = (np.append(stable_waveform_stereo, waveform_stereo, axis=0))
+
+    #record data
+    rec_data = sd.playrec(total_waveform, sample_rate, channels=1)
+    time.sleep(stable+duration)
+    sd.stop()
+
+    write_data = np.int16(total_waveform * 32767)
+    wf.write(filename, sample_rate, write_data)
+
+    excitation_data = str(str(stable) + ',' +  str(sample_rate) + ',' + str(v1) +','+ str(v2) +','+ str(v3) +','+ str(frequency) +','+ str(duration) +','+ str(filename))
+    np.savetxt(filename_data, rec_data, delimiter=',' , header=excitation_data)
+
+    rec = len(rec_data)
+    zeroCol = np.zeros(rec, dtype=int)
+    df = pd.DataFrame(zeroCol)
+    df.insert(loc = 1, column = 1, value = rec_data)
+    blank_samples = 4000
+    df.iloc[0:blank_samples,1] = 0
+    return df
 
 # FFT filtering
 # frequency domain
