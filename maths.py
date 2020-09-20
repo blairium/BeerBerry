@@ -198,11 +198,6 @@ def excitation():
     v1 = 0.0 #Stable "Voltage" actually a fraction of max output positive values only 
     v2 = 0.0 #Recording Start "Voltage" actually a fraction of max output 0.1 = ~0.045V
     v3 = 0.7 #Recording stop "Voltage" actually a fraction of max output 1.0 = ~1.265
-    filename_string = str('Amp_'+ str(amplitude) + '_stable_' +str(stable) + 'recording_'+ str(duration)+ '_freq_' + '_v1_'+ str(v1) + '_v2_' + str(v2) +'_v3_' +str(v3))#file identifier in quotes
-    filename = str(newpath+'/' +filename_string + '_'+ date + '.wav') 
-    print(filename)
-    filename_data = str(newpath+'/' +filename_string + '_'+ date + '.data') 
-    print(filename_data)
 
     #timestamp of start time
     startTime = datetime.now()
@@ -242,12 +237,6 @@ def excitation():
     rec_data = sd.playrec(total_waveform, sample_rate, channels=1)
     time.sleep(stable+duration)
     sd.stop()
-
-    write_data = np.int16(total_waveform * 32767)
-    wf.write(filename, sample_rate, write_data)
-
-    excitation_data = str(str(stable) + ',' +  str(sample_rate) + ',' + str(v1) +','+ str(v2) +','+ str(v3) +','+ str(frequency) +','+ str(duration) +','+ str(filename))
-    np.savetxt(filename_data, rec_data, delimiter=',' , header=excitation_data)
 
     rec = len(rec_data)
     zeroCol = np.zeros(rec, dtype=int)
