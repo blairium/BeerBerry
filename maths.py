@@ -190,7 +190,7 @@ def excitation():
     stable = 2.0  # stable duration in seconds
     sample_rate = 8000  # Doesn't necessarily work for other sample rates
     duration = 8.0  # recording duration in seconds
-    frequency = 115.0  # Frequency
+    frequency = 60.0  # Frequency
     v1 = 0.0  # Stable "Voltage" actually a fraction of max output positive values only
     v2 = 0.0  # Recording Start "Voltage" actually a fraction of max output 0.1 = ~0.045V
     v3 = 0.7  # Recording stop "Voltage" actually a fraction of max output 1.0 = ~1.265

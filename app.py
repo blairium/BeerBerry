@@ -25,7 +25,8 @@ from gui import (
     draw_figure,
     destroy_figure,
     load_parameters,
-    save_parameters)
+    save_parameters,
+    create_excitation_parameters_window)
 
 # use tkinter
 matplotlib.use('TkAgg')
@@ -60,9 +61,6 @@ DEFAULT_SETTINGS = {
     'freq_pert': 60,
     'bandwith_window': 10,
     'lpf_bw': 10,
-    'harmonic': 2,
-    'max_time': 1.5,
-    'max_width': 0.2,
     'sample_rate': 8000.0,
     'theme': sg.theme('BeerBerry')}
 # "Map" from the settings dictionary keys to the window's element keys
@@ -70,11 +68,30 @@ PARAMETER_KEYS_TO_ELEMENT_KEYS = {
     'freq_pert': '-FREQ PERT-',
     'bandwith_window': '-BW WINDOW-',
     'lpf_bw': '-LPF BW-',
-    'harmonic': '-HARMONIC-',
-    'max_time': '-MAX TIME-',
-    'max_width': '-MAX WIDTH-',
     'sample_rate': '-SAMPLE RATE-',
     'theme': '-THEME-'}
+
+
+EXCITATION_PARAMETER = path.join(path.dirname(__file__), r'exciation_file.cfg')
+EXCITATION_SETTINGS = {
+    'amplitude': 0.06,
+    'stable': 2.0,
+    'sample_rate': 8000,
+    'duration': 8.0,
+    'frequency': 60.0,
+    'v1': 0.0,
+    'v2': 0.0,
+    'v3': 0.7}
+# "Map" from the settings dictionary keys to the window's element keys
+EXCITATION_KEYS_TO_ELEMENT_KEYS = {
+    'amplitude': '-AMPLITUDE-',
+    'stable': '-STABLE-',
+    'sample_rate': '-EXC SAMPLE RATE-',
+    'duration': '-DURATION-',
+    'frequency': '-FREQ-',
+    'v1': '-V1-',
+    'v2': '-V2-',
+    'v3': '-V3-'}
 
 
 # Initialising empty variables so they can remain within the whole program
@@ -87,13 +104,15 @@ df = None
 df_Post = None
 data = None
 password_attempt = None
-window, parameters = None, load_parameters(
-    PARAMETERS_FILE, DEFAULT_SETTINGS, PARAMETER_KEYS_TO_ELEMENT_KEYS)
+window, parameters, exc_parameters = None, load_parameters(
+    PARAMETERS_FILE, DEFAULT_SETTINGS, PARAMETER_KEYS_TO_ELEMENT_KEYS), load_parameters(EXCITATION_PARAMETER, EXCITATION_SETTINGS, EXCITATION_KEYS_TO_ELEMENT_KEYS)
 xdata = []
 ydata = []
 clickEvent = None
 toolbar = None
 print(parameters)
+print(exc_parameters)
+print(EXCITATION_KEYS_TO_ELEMENT_KEYS)
 while True:
 
     if window is None:
@@ -304,6 +323,17 @@ while True:
                 sg.popup_error('Error: Incompatible Data File')
 
     elif event == 'Record Data':
+        exc_event, exc_values = create_excitation_parameters_window(exc_parameters, EXCITATION_KEYS_TO_ELEMENT_KEYS).read(
+        close=True)
+        if event == 'Save':
+            window.close()
+            window = None
+            save_parameters(
+                EXCITATION_PARAMETER,
+                exc_parameters,
+                exc_values,
+                EXCITATION_KEYS_TO_ELEMENT_KEYS)
+            fig_canvas_agg = None
         data = maths.excitation()
         sg.PopupOK("Recording Complete")
         window.find_element('Load').Update(disabled=False)

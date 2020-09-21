@@ -42,7 +42,7 @@ def create_main_window(parameters, password_attempt, PASSWORD):
             sg.Button(
             'Logout',
             visible=True if password_attempt == PASSWORD else False),
-            sg.Button('Insert Parameters', visible=True if password_attempt == PASSWORD else False)],
+            sg.Button('Insert Parameters', auto_size_button=True, visible=True if password_attempt == PASSWORD else False)],
 
 
 
@@ -87,9 +87,6 @@ def create_insert_parameters_window(
               [TextLabel('Frequency perturbation'), sg.Input(key='-FREQ PERT-')],
               [TextLabel('Band-width window'), sg.Input(key='-BW WINDOW-')],
               [TextLabel('Env lpf bandwidth'), sg.Input(key='-LPF BW-')],
-              [TextLabel('Harmonic to Use'), sg.Input(key='-HARMONIC-')],
-              [TextLabel('Maximum Time'), sg.Input(key='-MAX TIME-')],
-              [TextLabel('Maximum Width'), sg.Input(key='-MAX WIDTH-')],
               [TextLabel('Sample Rate'), sg.Input(key='-SAMPLE RATE-')],
               [TextLabel('Theme'), sg.Combo(sg.theme_list(), size=(20, 20), key='-THEME-')],
               [sg.Button('Save'), sg.Button('Exit')]]
@@ -103,6 +100,41 @@ def create_insert_parameters_window(
     for key in PARAMETER_KEYS_TO_ELEMENT_KEYS:  # update window with the values read from settings file
         try:
             window[PARAMETER_KEYS_TO_ELEMENT_KEYS[key]].update(
+                value=parameters[key])
+        except Exception as e:
+            print(
+                f'Problem updating PySimpleGUI window from parameters. Key = {key}')
+
+    return window
+
+
+def create_excitation_parameters_window(
+        exc_parameters,
+        EXCITATION_KEYS_TO_ELEMENT_KEYS):
+
+    def TextLabel(text):
+        return sg.Text(text + ':', justification='r', size=(30, 1))
+
+    layout = [[sg.Text('Parameters', justification='center', font='Helvetica 18')],
+              [TextLabel('amplitude'), sg.Input(key='-AMPLITUDE-')],
+              [TextLabel('stable'), sg.Input(key='-STABLE-')],
+              [TextLabel('sample_rate'), sg.Input(key='-EXC SAMPLE RATE-')],
+              [TextLabel('duration'), sg.Input(key='-DURATION-')],
+              [TextLabel('frequency'), sg.Input(key='-FREQ-')],
+              [TextLabel('v1'), sg.Input(key='-V1-')],
+              [TextLabel('v2'), sg.Input(key='-V2-')],
+              [TextLabel('v3'), sg.Input(key='-V3-')],
+              [sg.Button('Save'), sg.Button('Exit')]]
+
+    window = sg.Window(
+        'Excitation Parameters',
+        layout,
+        keep_on_top=True,
+        finalize=True)
+
+    for key in EXCITATION_KEYS_TO_ELEMENT_KEYS:  # update window with the values read from settings file
+        try:
+            window[EXCITATION_KEYS_TO_ELEMENT_KEYS[key]].update(
                 value=parameters[key])
         except Exception as e:
             print(
