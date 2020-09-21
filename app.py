@@ -389,6 +389,7 @@ while True:
                          curve_2[index_of_peak], curve_1[index_of_peak]], color='r')
                 plt.fill_between(t, curve_1, curve_2, color='y', alpha=0.3)
 
+        
         fig.suptitle('Results', fontsize=16)
         fig.set_size_inches(9, 6)
         fig.set_dpi(100)
