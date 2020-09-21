@@ -144,7 +144,7 @@ while True:
             ylabel='Current').plot(
             t,
             i,
-            color='#40BAD2')
+            c='#40BAD2')
 
         fig_canvas_agg, toolbar = draw_figure(window['-CANVAS-'].TKCanvas, fig)
 
@@ -161,7 +161,7 @@ while True:
                         xlabel='frequency',
                         ylabel='Magnitude of Current').plot(f,
                                                             Imag,
-                                                            color='#40BAD2')
+                                                            c='#40BAD2')
 
         fig_canvas_agg, toolbar = draw_figure(window['-CANVAS-'].TKCanvas, fig)
 
@@ -178,7 +178,7 @@ while True:
             ylabel='int_ienv').plot(
             t,
             int_ienv,
-            color='#40BAD2')
+            c='#40BAD2')
 
         fig_canvas_agg, toolbar = draw_figure(window['-CANVAS-'].TKCanvas, fig)
 
@@ -244,7 +244,7 @@ while True:
                     figsize=(9, 6), dpi=100)
                 fig.add_subplot(
                     111, xlabel='Time (s)', ylabel='Current (S.U)').plot(
-                    t, harm_two, color='#40BAD2')
+                    t, harm_two, c='#40BAD2')
                 fig.suptitle('Selected Harmonics', fontsize=16)
                 fig_canvas_agg, toolbar = draw_figure(
                     window['-CANVAS-'].TKCanvas, fig)
@@ -321,14 +321,36 @@ while True:
             file.writeFile(outFile, df_Post, 1)
 
     elif event == 'Define baseline':
-        if (len(xdata) >= 1):
+        if (len(xdata) >= 2):
             xdata = []
             ydata = []
         clickEvent = fig_canvas_agg.mpl_connect('button_press_event', onclick)
         window.find_element('Map baseline').Update(disabled=False)
 
     elif event == 'Map baseline':
+        copy_t = np.full(np.size(t), xdata[0])
+        copy_t = copy_t - t
+        copy_t = np.abs(copy_t)
+        x_start = np.where(copy_t == (np.min(np.abs(copy_t))))
+        xdata[0] = x_start[0][0]
+        copy_t = np.full(np.size(t), xdata[1])
+        copy_t = copy_t - t
+        copy_t = np.abs(copy_t)
+        x_end = np.where(copy_t == (np.min(np.abs(copy_t))))
+        xdata[1] = x_end[0][0]
 
+        area_under_curve = np.trapz(
+            t[xdata[0]:xdata[1]], ienv_filtered[xdata[0]:xdata[1]])
+        area_under_baseline = np.trapz(xdata, ydata)
+        area_between_curves = area_under_curve - area_under_curve
+        curve_1 = np.copy(ienv_filtered)
+        curve_2 = np.copy(ienv_filtered)
+        curve_2[xdata[0]:xdata[1]] = np.linspace(
+            ydata[0], ydata[1], xdata[1] - xdata[0])
+        diff_curves = curve_1 - curve_2
+
+        peak_height = np.max(diff_curves)
+        index_of_peak = np.where(peak_height == diff_curves)[0][0]
         fig = plt.figure()
         if window['r1'].get():
             plt.plot(t, harm_one, color='b')
@@ -388,6 +410,11 @@ while True:
                          curve_2[index_of_peak], curve_1[index_of_peak]], color='r')
                 plt.fill_between(t, curve_1, curve_2, color='y', alpha=0.3)
 
+        plt.plot(t, curve_1, c='#40BAD3')
+        plt.plot(t, curve_2, c='#40BAD3')
+        plt.plot([t[index_of_peak], t[index_of_peak]], [
+                 curve_2[index_of_peak], curve_1[index_of_peak]], c='r')
+        plt.fill_between(t, curve_1, curve_2, alpha=0.3)
         fig.suptitle('Results', fontsize=16)
         fig.set_size_inches(9, 6)
         fig.set_dpi(100)
