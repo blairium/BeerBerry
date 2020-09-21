@@ -192,19 +192,17 @@ def excitation():
     #settings
     amplitude = 0.06 # This is as a fraction of the maximum amplitude 1 = 2.96 V 
     stable = 2.0 #stable duration in seconds
-    sample_rate = 44100 #Doesn't necessarily work for other sample rates
+    sample_rate = 8000 #Doesn't necessarily work for other sample rates
     duration = 8.0 # recording duration in seconds
     frequency = 115.0 # Frequency
     v1 = 0.0 #Stable "Voltage" actually a fraction of max output positive values only 
     v2 = 0.0 #Recording Start "Voltage" actually a fraction of max output 0.1 = ~0.045V
     v3 = 0.7 #Recording stop "Voltage" actually a fraction of max output 1.0 = ~1.265
 
-    #timestamp of start time
-    startTime = datetime.now()
+
     sramp = np.linspace(v1,v1,int(stable*sample_rate)) #ramp for stable period
     ramp = np.linspace(v2,v3,int(duration*sample_rate)) #ramp for excitation
 
-    filename = str(filename_string + '_'+ date + '.wav')
     #stable duration
     xls = np.linspace(0, stable * 2 * np.pi, int(stable * sample_rate)) #Left channel wave form
     xrs = np.linspace(0, stable * 2 * np.pi, int(stable * sample_rate)) #Right Channel waveform
