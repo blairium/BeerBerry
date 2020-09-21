@@ -128,6 +128,7 @@ def get_time_values(amps, sample_rate):
     f = n * df
     return f, t
 
+
 def map_baseline(t, ienv, xdata, ydata):
     copy_t = np.full(np.size(t), xdata[0])
     copy_t = copy_t - t
@@ -159,6 +160,7 @@ def map_baseline(t, ienv, xdata, ydata):
 
     return curve_1, curve_2, peak_height, index_of_peak, diff_curves
 
+
 def is_y_valid(t, ienv, xdata, ydata):
     copy_t = np.full(np.size(t), xdata[0])
     copy_t = copy_t - t
@@ -174,74 +176,77 @@ def is_y_valid(t, ienv, xdata, ydata):
     to_compare = np.linspace(
         ydata[0], ydata[1], x_end[0][0] - x_start[0][0])
     valid = -1
-    for i in range(x_end[0][0]-x_start[0][0]):
+    for i in range(x_end[0][0] - x_start[0][0]):
         if subset[i] - to_compare[i] > valid:
             valid = subset[i] - to_compare[i]
     if valid > 0:
         return True
     return False
 
+
 def excitation():
+    # settings
+    amplitude = 0.06  # This is as a fraction of the maximum amplitude 1 = 2.96 V
+    stable = 2.0  # stable duration in seconds
+    sample_rate = 8000  # Doesn't necessarily work for other sample rates
+    duration = 8.0  # recording duration in seconds
+    frequency = 115.0  # Frequency
+    v1 = 0.0  # Stable "Voltage" actually a fraction of max output positive values only
+    v2 = 0.0  # Recording Start "Voltage" actually a fraction of max output 0.1 = ~0.045V
+    v3 = 0.7  # Recording stop "Voltage" actually a fraction of max output 1.0 = ~1.265
 
-    path = os.getcwd()
-    newpath = str(path) + '/' + 'Electrobe_output_'+ str(datetime.now().strftime("%d_%m_%Y"))
-    if not os.path.exists(newpath):
-        os.makedirs(newpath)
+    sramp = np.linspace(v1, v1, int(stable * sample_rate)
+                        )  # ramp for stable period
+    ramp = np.linspace(v2, v3, int(duration * sample_rate)
+                       )  # ramp for excitation
 
-    date = datetime.now().strftime("%d-%m-%Y_%I-%M_%p")
-    #settings
-    amplitude = 0.06 # This is as a fraction of the maximum amplitude 1 = 2.96 V 
-    stable = 2.0 #stable duration in seconds
-    sample_rate = 8000 #Doesn't necessarily work for other sample rates
-    duration = 8.0 # recording duration in seconds
-    frequency = 115.0 # Frequency
-    v1 = 0.0 #Stable "Voltage" actually a fraction of max output positive values only 
-    v2 = 0.0 #Recording Start "Voltage" actually a fraction of max output 0.1 = ~0.045V
-    v3 = 0.7 #Recording stop "Voltage" actually a fraction of max output 1.0 = ~1.265
+    # stable duration
+    # Left channel wave form
+    xls = np.linspace(0, stable * 2 * np.pi, int(stable * sample_rate))
+    # Right Channel waveform
+    xrs = np.linspace(0, stable * 2 * np.pi, int(stable * sample_rate))
 
+    s_left_channel = np.sin(frequency * xls) * amplitude
+    s_right_channel = np.sin(frequency * xrs + np.pi) * amplitude
 
-    sramp = np.linspace(v1,v1,int(stable*sample_rate)) #ramp for stable period
-    ramp = np.linspace(v2,v3,int(duration*sample_rate)) #ramp for excitation
-
-    #stable duration
-    xls = np.linspace(0, stable * 2 * np.pi, int(stable * sample_rate)) #Left channel wave form
-    xrs = np.linspace(0, stable * 2 * np.pi, int(stable * sample_rate)) #Right Channel waveform
-
-    s_left_channel = np.sin(frequency * xls)*amplitude 
-    s_right_channel = np.sin(frequency * xrs + np.pi)*amplitude
-
-    s_left_channel  -= sramp
+    s_left_channel -= sramp
     s_right_channel += sramp
 
-    stable_waveform_stereo = np.vstack((s_left_channel, s_right_channel)).T #combine left and right channels
+    stable_waveform_stereo = np.vstack(
+        (s_left_channel, s_right_channel)).T  # combine left and right channels
 
-    #record duration
+    # record duration
     xl = np.linspace(0, duration * 2 * np.pi, int(duration * sample_rate))
     xr = np.linspace(0, duration * 2 * np.pi, int(duration * sample_rate))
 
-    left_channel = amplitude*np.sin(frequency * xl)
-    right_channel = amplitude*np.sin(frequency * xr + np.pi)
+    left_channel = amplitude * np.sin(frequency * xl)
+    right_channel = amplitude * np.sin(frequency * xr + np.pi)
 
     left_channel -= ramp
 
     right_channel += ramp
-    
-    waveform_stereo = np.vstack((left_channel, right_channel)).T #combine left and right channels
 
-    #create total waveform
-    total_waveform = (np.append(stable_waveform_stereo, waveform_stereo, axis=0))
+    # combine left and right channels
+    waveform_stereo = np.vstack((left_channel, right_channel)).T
 
-    #record data
+    # create total waveform
+    total_waveform = (
+        np.append(
+            stable_waveform_stereo,
+            waveform_stereo,
+            axis=0))
+
+    # record data
     rec_data = sd.playrec(total_waveform, sample_rate, channels=1)
-    time.sleep(stable+duration)
+    time.sleep(stable + duration)
     sd.stop()
 
     rec = len(rec_data)
     zeroCol = np.zeros(rec, dtype=int)
     df = pd.DataFrame(zeroCol)
-    df.insert(loc = 1, column = 1, value = rec_data)
+    df.insert(loc=1, column=1, value=rec_data)
     blank_samples = 4000
-    df.iloc[0:blank_samples,1] = 0
+    df.iloc[0:blank_samples, 1] = 0
     return df
 
 # FFT filtering

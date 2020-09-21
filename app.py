@@ -109,7 +109,6 @@ while True:
     if event == '-FILENAME-':
         data = file.readFile(fname, 0)
         window.find_element('Load').Update(disabled=False)
-        
 
     elif event == 'plot' or event == 'r1' or event == 'r2' or event == 'r3' or event == 'r4' or event == 'r5':
         if fig_canvas_agg:
@@ -118,15 +117,15 @@ while True:
         fig = plt.figure()
         window.find_element('Define baseline').Update(disabled=False)
         if window['r1'].get():
-            plt.plot(t, harm_one, color = 'b')
+            plt.plot(t, harm_one, color='b')
         if window['r2'].get():
-            plt.plot(t, harm_two, color ='#40BAD3')
+            plt.plot(t, harm_two, color='#40BAD3')
         if window['r3'].get():
-            plt.plot(t, harm_three, color = 'orange')
+            plt.plot(t, harm_three, color='orange')
         if window['r4'].get():
-            plt.plot(t, harm_four, color = 'g')
+            plt.plot(t, harm_four, color='g')
         if window['r5'].get():
-            plt.plot(t, harm_five, color = 'y')
+            plt.plot(t, harm_five, color='y')
 
         fig.suptitle('Selected Harmonics', fontsize=16)
         fig.set_size_inches(9, 6)
@@ -189,7 +188,7 @@ while True:
 
         # if default radio button is clicked, returns true for precalc
         if tmp:
-            
+
             if len(data.columns) == 2:
                 # Column 1: Voltage
                 v = data.iloc[:, 0].values
@@ -336,52 +335,58 @@ while True:
             if maths.is_y_valid(t, harm_one, xdata, ydata):
                 copy_x_data = np.copy(xdata)
                 copy_y_data = np.copy(ydata)
-                curve_1, curve_2, peak_height, index_of_peak, diff_curves = maths.map_baseline(t, harm_one, copy_x_data, copy_y_data )
+                curve_1, curve_2, peak_height, index_of_peak, diff_curves = maths.map_baseline(
+                    t, harm_one, copy_x_data, copy_y_data)
                 plt.plot(t, curve_2, color='b')
                 plt.plot([t[index_of_peak], t[index_of_peak]], [
                          curve_2[index_of_peak], curve_1[index_of_peak]], color='r')
-                plt.fill_between(t, curve_1, curve_2, color = 'b', alpha=0.3)
+                plt.fill_between(t, curve_1, curve_2, color='b', alpha=0.3)
         if window['r2'].get():
-            plt.plot(t, harm_two, color = '#40BAD3')
+            plt.plot(t, harm_two, color='#40BAD3')
             if maths.is_y_valid(t, harm_two, xdata, ydata):
                 copy_x_data = np.copy(xdata)
                 copy_y_data = np.copy(ydata)
-                curve_1, curve_2, peak_height, index_of_peak, diff_curves = maths.map_baseline(t, harm_two, copy_x_data, copy_y_data )
-                plt.plot(t, curve_2, color = '#40BAD3')
+                curve_1, curve_2, peak_height, index_of_peak, diff_curves = maths.map_baseline(
+                    t, harm_two, copy_x_data, copy_y_data)
+                plt.plot(t, curve_2, color='#40BAD3')
                 plt.plot([t[index_of_peak], t[index_of_peak]], [
                          curve_2[index_of_peak], curve_1[index_of_peak]], color='r')
-                plt.fill_between(t, curve_1, curve_2, color = '#40BAD3', alpha=0.3)
+                plt.fill_between(
+                    t, curve_1, curve_2, color='#40BAD3', alpha=0.3)
         if window['r3'].get():
-            plt.plot(t, harm_three, color = 'orange')
+            plt.plot(t, harm_three, color='orange')
             if maths.is_y_valid(t, harm_three, xdata, ydata):
                 copy_x_data = np.copy(xdata)
                 copy_y_data = np.copy(ydata)
-                curve_1, curve_2, peak_height, index_of_peak, diff_curves = maths.map_baseline(t, harm_three, copy_x_data, copy_y_data )
-                plt.plot(t, curve_2, color = 'orange')
+                curve_1, curve_2, peak_height, index_of_peak, diff_curves = maths.map_baseline(
+                    t, harm_three, copy_x_data, copy_y_data)
+                plt.plot(t, curve_2, color='orange')
                 plt.plot([t[index_of_peak], t[index_of_peak]], [
                          curve_2[index_of_peak], curve_1[index_of_peak]], color='r')
-                plt.fill_between(t, curve_1, curve_2, color = 'orange', alpha=0.3)
+                plt.fill_between(
+                    t, curve_1, curve_2, color='orange', alpha=0.3)
         if window['r4'].get():
-            plt.plot(t, harm_four, color = 'g')
+            plt.plot(t, harm_four, color='g')
             if maths.is_y_valid(t, harm_four, xdata, ydata):
                 copy_x_data = np.copy(xdata)
                 copy_y_data = np.copy(ydata)
-                curve_1, curve_2, peak_height, index_of_peak, diff_curves = maths.map_baseline(t, harm_four, copy_x_data, copy_y_data )
-                plt.plot(t, curve_2, color = 'g')
+                curve_1, curve_2, peak_height, index_of_peak, diff_curves = maths.map_baseline(
+                    t, harm_four, copy_x_data, copy_y_data)
+                plt.plot(t, curve_2, color='g')
                 plt.plot([t[index_of_peak], t[index_of_peak]], [
                          curve_2[index_of_peak], curve_1[index_of_peak]], color='r')
-                plt.fill_between(t, curve_1, curve_2, color = 'g', alpha=0.3)
+                plt.fill_between(t, curve_1, curve_2, color='g', alpha=0.3)
         if window['r5'].get():
-            plt.plot(t, harm_five, color = 'y')
+            plt.plot(t, harm_five, color='y')
             if maths.is_y_valid(t, harm_five, xdata, ydata):
                 copy_x_data = np.copy(xdata)
                 copy_y_data = np.copy(ydata)
-                curve_1, curve_2, peak_height, index_of_peak, diff_curves = maths.map_baseline(t, harm_five, copy_x_data, copy_y_data )
-                plt.plot(t, curve_2, color = 'y')
+                curve_1, curve_2, peak_height, index_of_peak, diff_curves = maths.map_baseline(
+                    t, harm_five, copy_x_data, copy_y_data)
+                plt.plot(t, curve_2, color='y')
                 plt.plot([t[index_of_peak], t[index_of_peak]], [
                          curve_2[index_of_peak], curve_1[index_of_peak]], color='r')
-                plt.fill_between(t, curve_1, curve_2, color = 'y', alpha=0.3)
-
+                plt.fill_between(t, curve_1, curve_2, color='y', alpha=0.3)
 
         fig.suptitle('Results', fontsize=16)
         fig.set_size_inches(9, 6)
