@@ -185,16 +185,16 @@ def is_y_valid(t, ienv, xdata, ydata):
     return False
 
 
-def excitation():
+def excitation(exc_parameters):
     # settings
-    amplitude = 0.06  # This is as a fraction of the maximum amplitude 1 = 2.96 V
-    stable = 2.0  # stable duration in seconds
-    sample_rate = 8000  # Doesn't necessarily work for other sample rates
-    duration = 8.0  # recording duration in seconds
-    frequency = 60.0  # Frequency
-    v1 = 0.0  # Stable "Voltage" actually a fraction of max output positive values only
-    v2 = 0.0  # Recording Start "Voltage" actually a fraction of max output 0.1 = ~0.045V
-    v3 = 0.7  # Recording stop "Voltage" actually a fraction of max output 1.0 = ~1.265
+    amplitude = float(exc_parameters['amplitude'])  # This is as a fraction of the maximum amplitude 1 = 2.96 V
+    stable = float(exc_parameters['stable'])  # stable duration in seconds
+    sample_rate = float(exc_parameters['sample_rate'])  # Doesn't necessarily work for other sample rates
+    duration = float(exc_parameters['duration'])  # recording duration in seconds
+    frequency = float(exc_parameters['frequency'])  # Frequency
+    v1 = float(exc_parameters['v1'])  # Stable "Voltage" actually a fraction of max output positive values only
+    v2 = float(exc_parameters['v2']) # Recording Start "Voltage" actually a fraction of max output 0.1 = ~0.045V
+    v3 = float(exc_parameters['v3'])  # Recording stop "Voltage" actually a fraction of max output 1.0 = ~1.265
 
     sramp = np.linspace(v1, v1, int(stable * sample_rate)
                         )  # ramp for stable period

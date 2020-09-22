@@ -70,7 +70,8 @@ def create_main_window(parameters, password_attempt, PASSWORD):
         'BeerBerry',
         layout,
         element_justification='center',
-        font='Helvetica 18')
+        font='Helvetica 18',
+        resizable=True)
 
 ####### Creating parameters window ##############################
 
@@ -204,4 +205,8 @@ def save_parameters(
     with open(parameters_file, 'w') as f:
         jsondump(parameters, f)
 
+<<<<<<< HEAD
     sg.popup('Parameters saved')
+=======
+    
+>>>>>>> 802dfb915d1504805b4bb33e0fded5775aa1e0eb
