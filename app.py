@@ -364,12 +364,10 @@ while True:
                 plt.plot(t, curve_2, color='b')
                 plt.plot([t[index_of_peak], t[index_of_peak]], [
                          curve_2[index_of_peak], curve_1[index_of_peak]], color='r')
-<<<<<<< HEAD
-                plt.fill_between(t, curve_1, curve_2, color='b', alpha=0.3)
-=======
+
                 plt.fill_between(t, curve_1, curve_2, alpha=0.3)
                 print("Harm One")
->>>>>>> 802dfb915d1504805b4bb33e0fded5775aa1e0eb
+
         if window['r2'].get():
             plt.plot(t, harm_two, color='#40BAD3')
             if maths.is_y_valid(t, harm_two, xdata, ydata):
@@ -380,12 +378,9 @@ while True:
                 plt.plot(t, curve_2, color='#40BAD3')
                 plt.plot([t[index_of_peak], t[index_of_peak]], [
                          curve_2[index_of_peak], curve_1[index_of_peak]], color='r')
-<<<<<<< HEAD
-                plt.fill_between(t, curve_1, curve_2, color='#40BAD3', alpha=0.3)
-=======
+
                 plt.fill_between(t, curve_1, curve_2, alpha=0.3)
                 print("Harm Two")
->>>>>>> 802dfb915d1504805b4bb33e0fded5775aa1e0eb
         if window['r3'].get():
             plt.plot(t, harm_three, color='orange')
             if maths.is_y_valid(t, harm_three, xdata, ydata):
@@ -396,11 +391,7 @@ while True:
                 plt.plot(t, curve_2, color='orange')
                 plt.plot([t[index_of_peak], t[index_of_peak]], [
                          curve_2[index_of_peak], curve_1[index_of_peak]], color='r')
-<<<<<<< HEAD
-                plt.fill_between(t, curve_1, curve_2, color='orange', alpha=0.3)
-=======
                 plt.fill_between(t, curve_1, curve_2, alpha=0.3)
->>>>>>> 802dfb915d1504805b4bb33e0fded5775aa1e0eb
         if window['r4'].get():
             plt.plot(t, harm_four, color='g')
             if maths.is_y_valid(t, harm_four, xdata, ydata):
