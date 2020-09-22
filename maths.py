@@ -162,6 +162,7 @@ def map_baseline(t, ienv, xdata, ydata):
 
 
 def is_y_valid(t, ienv, xdata, ydata):
+    print("Checking if y is valid")
     copy_t = np.full(np.size(t), xdata[0])
     copy_t = copy_t - t
     copy_t = np.abs(copy_t)

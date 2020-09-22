@@ -163,7 +163,7 @@ while True:
             ylabel='Current').plot(
             t,
             i,
-            color='#40BAD2')
+            c='#40BAD2')
 
         fig_canvas_agg, toolbar = draw_figure(window['-CANVAS-'].TKCanvas, fig)
 
@@ -180,7 +180,7 @@ while True:
                         xlabel='frequency',
                         ylabel='Magnitude of Current').plot(f,
                                                             Imag,
-                                                            color='#40BAD2')
+                                                            c='#40BAD2')
 
         fig_canvas_agg, toolbar = draw_figure(window['-CANVAS-'].TKCanvas, fig)
 
@@ -197,7 +197,7 @@ while True:
             ylabel='int_ienv').plot(
             t,
             int_ienv,
-            color='#40BAD2')
+            c='#40BAD2')
 
         fig_canvas_agg, toolbar = draw_figure(window['-CANVAS-'].TKCanvas, fig)
 
@@ -263,7 +263,7 @@ while True:
                     figsize=(9, 6), dpi=100)
                 fig.add_subplot(
                     111, xlabel='Time (s)', ylabel='Current (S.U)').plot(
-                    t, harm_two, color='#40BAD2')
+                    t, harm_two, c='#40BAD2')
                 fig.suptitle('Selected Harmonics', fontsize=16)
                 fig_canvas_agg, toolbar = draw_figure(
                     window['-CANVAS-'].TKCanvas, fig)
@@ -351,14 +351,13 @@ while True:
             file.writeFile(outFile, df_Post, 1)
 
     elif event == 'Define baseline':
-        if (len(xdata) >= 1):
+        if (len(xdata) >= 2):
             xdata = []
             ydata = []
         clickEvent = fig_canvas_agg.mpl_connect('button_press_event', onclick)
         window.find_element('Map baseline').Update(disabled=False)
 
     elif event == 'Map baseline':
-
         fig = plt.figure()
         if window['r1'].get():
             plt.plot(t, harm_one, color='b')
@@ -371,6 +370,7 @@ while True:
                 plt.plot([t[index_of_peak], t[index_of_peak]], [
                          curve_2[index_of_peak], curve_1[index_of_peak]], color='r')
                 plt.fill_between(t, curve_1, curve_2, color='b', alpha=0.3)
+                print("Harm One")
         if window['r2'].get():
             plt.plot(t, harm_two, color='#40BAD3')
             if maths.is_y_valid(t, harm_two, xdata, ydata):
@@ -383,6 +383,7 @@ while True:
                          curve_2[index_of_peak], curve_1[index_of_peak]], color='r')
                 plt.fill_between(
                     t, curve_1, curve_2, color='#40BAD3', alpha=0.3)
+                print("Harm Two")
         if window['r3'].get():
             plt.plot(t, harm_three, color='orange')
             if maths.is_y_valid(t, harm_three, xdata, ydata):
@@ -418,9 +419,11 @@ while True:
                          curve_2[index_of_peak], curve_1[index_of_peak]], color='r')
                 plt.fill_between(t, curve_1, curve_2, color='y', alpha=0.3)
 
+        
         fig.suptitle('Results', fontsize=16)
         fig.set_size_inches(9, 6)
         fig.set_dpi(100)
+        print("Here")
         destroy_figure(fig_canvas_agg, toolbar)
         fig_canvas_agg, toolbar = draw_figure(window['-CANVAS-'].TKCanvas, fig)
 
