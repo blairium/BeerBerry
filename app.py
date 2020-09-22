@@ -110,9 +110,6 @@ xdata = []
 ydata = []
 clickEvent = None
 toolbar = None
-print(parameters)
-print(exc_parameters)
-print(EXCITATION_KEYS_TO_ELEMENT_KEYS)
 while True:
 
     if window is None:
@@ -156,7 +153,7 @@ while True:
             destroy_figure(fig_canvas_agg, toolbar)
 
         window.find_element('Define baseline').Update(disabled=True)
-        fig = matplotlib.figure.Figure(figsize=(9, 6), dpi=100)
+        fig = matplotlib.figure.Figure(figsize=(6, 6), dpi=100)
         fig.add_subplot(
             111,
             xlabel='Time (s)',
@@ -173,7 +170,7 @@ while True:
 
         window.find_element('Define baseline').Update(disabled=True)
 
-        fig = matplotlib.figure.Figure(figsize=(9, 6), dpi=100)
+        fig = matplotlib.figure.Figure(figsize=(6, 6), dpi=100)
         fig.add_subplot(111,
                         xlim=(0,
                               int(parameters['freq_pert']) * 10),
@@ -190,7 +187,7 @@ while True:
 
         window.find_element('Define baseline').Update(disabled=True)
 
-        fig = matplotlib.figure.Figure(figsize=(9, 6), dpi=100)
+        fig = matplotlib.figure.Figure(figsize=(6, 6), dpi=100)
         fig.add_subplot(
             111,
             xlabel='Time (s)',
@@ -260,7 +257,7 @@ while True:
                     destroy_figure(fig_canvas_agg, toolbar)
 
                 fig = matplotlib.figure.Figure(
-                    figsize=(9, 6), dpi=100)
+                    figsize=(6, 6), dpi=100)
                 fig.add_subplot(
                     111, xlabel='Time (s)', ylabel='Current (S.U)').plot(
                     t, harm_two, c='#40BAD2')
@@ -331,7 +328,7 @@ while True:
             exc_parameters,
             exc_values,
             EXCITATION_KEYS_TO_ELEMENT_KEYS)
-            data = maths.excitation()
+            data = maths.excitation(exc_parameters)
             sg.PopupOK("Recording Complete")
             window.find_element('Load').Update(disabled=False)
 
@@ -418,7 +415,7 @@ while True:
 
         
         fig.suptitle('Results', fontsize=16)
-        fig.set_size_inches(9, 6)
+        fig.set_size_inches(6, 6)
         fig.set_dpi(100)
         print("Here")
         destroy_figure(fig_canvas_agg, toolbar)
@@ -449,5 +446,6 @@ while True:
                 parameters,
                 values,
                 PARAMETER_KEYS_TO_ELEMENT_KEYS)
+            sg.popup('Parameters saved')
 
 window.close()
