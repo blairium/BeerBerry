@@ -55,7 +55,7 @@ def create_main_window(parameters, password_attempt, PASSWORD):
         [sg.Checkbox('1st Harmonic', enable_events=True, key='r1'), sg.Checkbox('2nd Harmonic', default=True, enable_events=True, key='r2'), sg.Checkbox('3rd Harmonic', enable_events=True, key='r3'),
          sg.Checkbox('4th Harmonic', enable_events=True, key='r4'), sg.Checkbox('5th Harmonic', enable_events=True, key='r5')],
         [sg.Button('plot', disabled=True, auto_size_button=True), sg.Button('plot2', disabled=True, auto_size_button=True),
-         sg.Button('Freq vs Mag of Current', disabled=True, ), sg.Button('Cumulative Sum', disabled=True, ),
+         sg.Button('Freq vs Mag of Current', disabled=True, ), sg.Button('Cumulative Sum', disabled=True ), sg.Button('Envelope', disabled = True),
          sg.Button('Define baseline', disabled=True, auto_size_button=True), sg.Button('Map baseline', disabled=True, auto_size_button=True),
 
          sg.FileSaveAs(button_text='save', disabled=True, target='save', enable_events=True, key='save',

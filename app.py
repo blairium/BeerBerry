@@ -274,7 +274,8 @@ while True:
                     'Freq vs Mag of Current').Update(disabled=False)
                 window.find_element(
                     'Cumulative Sum').Update(disabled=False)
-
+                window.find_element(
+                    'Envelope').Update(disabled=False)
                 d = {
                     't': t,
                     'i': i,
@@ -367,7 +368,6 @@ while True:
                 plt.plot([t[index_of_peak], t[index_of_peak]], [
                          curve_2[index_of_peak], curve_1[index_of_peak]], color='r')
                 plt.fill_between(t, curve_1, curve_2, color='b', alpha=0.3)
-                print("Harm One")
         if window['r2'].get():
             plt.plot(t, harm_two, color='#40BAD3')
             if maths.is_y_valid(t, harm_two, xdata, ydata):
@@ -378,9 +378,7 @@ while True:
                 plt.plot(t, curve_2, color='#40BAD3')
                 plt.plot([t[index_of_peak], t[index_of_peak]], [
                          curve_2[index_of_peak], curve_1[index_of_peak]], color='r')
-                plt.fill_between(
-                    t, curve_1, curve_2, color='#40BAD3', alpha=0.3)
-                print("Harm Two")
+                plt.fill_between(t, curve_1, curve_2, color='#40BAD3', alpha=0.3)
         if window['r3'].get():
             plt.plot(t, harm_three, color='orange')
             if maths.is_y_valid(t, harm_three, xdata, ydata):
@@ -391,8 +389,7 @@ while True:
                 plt.plot(t, curve_2, color='orange')
                 plt.plot([t[index_of_peak], t[index_of_peak]], [
                          curve_2[index_of_peak], curve_1[index_of_peak]], color='r')
-                plt.fill_between(
-                    t, curve_1, curve_2, color='orange', alpha=0.3)
+                plt.fill_between(t, curve_1, curve_2, color='orange', alpha=0.3)
         if window['r4'].get():
             plt.plot(t, harm_four, color='g')
             if maths.is_y_valid(t, harm_four, xdata, ydata):
@@ -416,7 +413,7 @@ while True:
                          curve_2[index_of_peak], curve_1[index_of_peak]], color='r')
                 plt.fill_between(t, curve_1, curve_2, color='y', alpha=0.3)
 
-        
+
         fig.suptitle('Results', fontsize=16)
         fig.set_size_inches(9, 6)
         fig.set_dpi(100)
@@ -449,5 +446,29 @@ while True:
                 parameters,
                 values,
                 PARAMETER_KEYS_TO_ELEMENT_KEYS)
+
+    elif event == 'Envelope':
+        fig = plt.figure()
+        if window['r1'].get():
+            envelope = pk.envelope(harm_one, deg=5, max_it=None, tol=1e-3)
+            plt.plot(t, envelope, color='b')
+        if window['r2'].get():
+            envelope = pk.envelope(harm_two,  deg=5, max_it=None, tol=1e-3)
+            plt.plot(t, envelope, color='#40BAD3')
+        if window['r3'].get():
+            envelope = pk.envelope(harm_three, deg=5, max_it=None, tol=1e-3)
+            plt.plot(t, envelope, color='orange')
+        if window['r4'].get():
+            envelope = pk.envelope(harm_four, deg=5, max_it=100, tol=1e-3)
+            plt.plot(t, envelope, color='g')
+        if window['r5'].get():
+            envelope = pk.envelope(harm_five, deg=5, max_it=100, tol=1e-3)
+            plt.plot(t, envelope, color='y')
+
+        fig.suptitle('Envelope', fontsize=16)
+        fig.set_size_inches(9, 6)
+        fig.set_dpi(100)
+        destroy_figure(fig_canvas_agg, toolbar)
+        fig_canvas_agg, toolbar = draw_figure(window['-CANVAS-'].TKCanvas, fig)
 
 window.close()
