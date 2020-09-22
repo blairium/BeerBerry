@@ -48,7 +48,7 @@ def create_main_window(parameters, password_attempt, PASSWORD):
 
 
         # third row contains the canvas for the graphs
-        [sg.Canvas(size=(598, 634), key='-CANVAS-')],
+        [sg.Canvas(size=(898, 634), key='-CANVAS-')],
 
         # elements in the fourth row are (buttons to switch different graphs, the define baseline button,
         # map baseline button, save button, radio buttons saving raw or calculated data, and an exit button)
