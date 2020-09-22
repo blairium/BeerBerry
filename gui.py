@@ -124,7 +124,7 @@ def create_excitation_parameters_window(
               [TextLabel('v1'), sg.Input(key='-V1-')],
               [TextLabel('v2'), sg.Input(key='-V2-')],
               [TextLabel('v3'), sg.Input(key='-V3-')],
-              [sg.Button('Save'), sg.Button('Exit')]]
+              [sg.Button('Record'), sg.Button('Cancel')]]
 
     window = sg.Window(
         'Excitation Parameters',
@@ -135,7 +135,7 @@ def create_excitation_parameters_window(
     for key in EXCITATION_KEYS_TO_ELEMENT_KEYS:  # update window with the values read from settings file
         try:
             window[EXCITATION_KEYS_TO_ELEMENT_KEYS[key]].update(
-                value=parameters[key])
+                value=exc_parameters[key])
         except Exception as e:
             print(
                 f'Problem updating PySimpleGUI window from parameters. Key = {key}')

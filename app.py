@@ -325,18 +325,15 @@ while True:
     elif event == 'Record Data':
         exc_event, exc_values = create_excitation_parameters_window(exc_parameters, EXCITATION_KEYS_TO_ELEMENT_KEYS).read(
         close=True)
-        if event == 'Save':
-            window.close()
-            window = None
+        if exc_event == 'Record':
             save_parameters(
-                EXCITATION_PARAMETER,
-                exc_parameters,
-                exc_values,
-                EXCITATION_KEYS_TO_ELEMENT_KEYS)
-            fig_canvas_agg = None
-        data = maths.excitation()
-        sg.PopupOK("Recording Complete")
-        window.find_element('Load').Update(disabled=False)
+            EXCITATION_PARAMETER,
+            exc_parameters,
+            exc_values,
+            EXCITATION_KEYS_TO_ELEMENT_KEYS)
+            data = maths.excitation()
+            sg.PopupOK("Recording Complete")
+            window.find_element('Load').Update(disabled=False)
 
     elif event == 'save':
 
@@ -443,17 +440,14 @@ while True:
         window.find_element('Insert Parameters').Update(visible=False)
 
     elif event == 'Insert Parameters':
-        event, values = create_insert_parameters_window(
+        param_event, values = create_insert_parameters_window(
             parameters, PARAMETER_KEYS_TO_ELEMENT_KEYS).read(
             close=True)
-        if event == 'Save':
-            window.close()
-            window = None
+        if param_event == 'Save':
             save_parameters(
                 PARAMETERS_FILE,
                 parameters,
                 values,
                 PARAMETER_KEYS_TO_ELEMENT_KEYS)
-            fig_canvas_agg = None
 
 window.close()
