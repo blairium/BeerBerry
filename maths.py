@@ -11,7 +11,7 @@ import os
 from scipy import signal
 from datetime import datetime
 from scipy import signal
-import peakutils
+from peakutils import baseline
 import ntpath
 
 
@@ -250,6 +250,9 @@ def excitation(exc_parameters):
     df.iloc[0:blank_samples, 1] = 0
     return df
 
+def upper_envelope(ienv):
+    tmp = baseline.envelope(ienv, deg=None, max_it=None, tol=None)
+    return tmp
 # FFT filtering
 # frequency domain
 # p = np.fft.fft(i)
