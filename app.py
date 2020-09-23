@@ -217,37 +217,42 @@ while True:
 
                 window.find_element(
                     'Define baseline').Update(disabled=False)
-
-                harm_one = maths.get_ienv(
-                    i, int(
-                        parameters['freq_pert']), 1, int(
-                        parameters['bandwith_window']), float(
-                        parameters['sample_rate']), int(
-                        parameters['lpf_bw']), t)
-                harm_two = maths.get_ienv(
-                    i, int(
-                        parameters['freq_pert']), 2, int(
-                        parameters['bandwith_window']), float(
-                        parameters['sample_rate']), int(
-                        parameters['lpf_bw']), t)
-                harm_three = maths.get_ienv(
-                    i, int(
-                        parameters['freq_pert']), 3, int(
-                        parameters['bandwith_window']), float(
-                        parameters['sample_rate']), int(
-                        parameters['lpf_bw']), t)
-                harm_four = maths.get_ienv(
-                    i, int(
-                        parameters['freq_pert']), 4, int(
-                        parameters['bandwith_window']), float(
-                        parameters['sample_rate']), int(
-                        parameters['lpf_bw']), t)
-                harm_five = maths.get_ienv(
-                    i, int(
-                        parameters['freq_pert']), 5, int(
-                        parameters['bandwith_window']), float(
-                        parameters['sample_rate']), int(
-                        parameters['lpf_bw']), t)
+                for x in range(1,6):
+                    if x == 1:
+                        harm_one = maths.get_ienv(
+                            i, int(
+                                parameters['freq_pert']), 1, int(
+                                parameters['bandwith_window']), float(
+                                parameters['sample_rate']), int(
+                                parameters['lpf_bw']), t)
+                    if x == 2:
+                        harm_two = maths.get_ienv(
+                            i, int(
+                                parameters['freq_pert']), 2, int(
+                                parameters['bandwith_window']), float(
+                                parameters['sample_rate']), int(
+                                parameters['lpf_bw']), t)
+                    if x == 3:
+                        harm_three = maths.get_ienv(
+                            i, int(
+                                parameters['freq_pert']), 3, int(
+                                parameters['bandwith_window']), float(
+                                parameters['sample_rate']), int(
+                                parameters['lpf_bw']), t)
+                    if x == 4:
+                        harm_four = maths.get_ienv(
+                            i, int(
+                                parameters['freq_pert']), 4, int(
+                                parameters['bandwith_window']), float(
+                                parameters['sample_rate']), int(
+                                parameters['lpf_bw']), t)
+                    if x == 5:
+                        harm_five = maths.get_ienv(
+                            i, int(
+                                parameters['freq_pert']), 5, int(
+                                parameters['bandwith_window']), float(
+                                parameters['sample_rate']), int(
+                                parameters['lpf_bw']), t)
 
                 int_ienv = maths.cumulative_sum_ienv(harm_two)
                 ienv_filtered = maths.filter_ienv(
