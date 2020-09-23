@@ -34,7 +34,7 @@ def create_main_window(parameters, password_attempt, PASSWORD):
         [sg.Radio('Raw Data', 'RAD1', default=True, font=['Helvetica', 10], key='OP1'),
          sg.Radio('Post Calculation', 'RAD1', font=['Helvetica', 10]),
          sg.In(key='-FILENAME-', enable_events=True), sg.FileBrowse(),
-         sg.Button('Record Data', auto_size_button=True),
+         sg.Button('Record Data'),
          sg.Button('Load', disabled=True),
          sg.Button(
             'Log in',
@@ -42,7 +42,7 @@ def create_main_window(parameters, password_attempt, PASSWORD):
             sg.Button(
             'Logout',
             visible=True if password_attempt == PASSWORD else False),
-            sg.Button('Insert Parameters', auto_size_button=True, visible=True if password_attempt == PASSWORD else False)],
+            sg.Button('Insert Parameters', visible=True if password_attempt == PASSWORD else False)],
 
 
 
