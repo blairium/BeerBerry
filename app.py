@@ -253,6 +253,12 @@ while True:
                 ienv_filtered = maths.filter_ienv(
                     harm_two, 200)
 
+                window['r1'].update(value=False)
+                window['r2'].update(value=True)
+                window['r3'].update(value=False)
+                window['r4'].update(value=False)
+                window['r5'].update(value=False)
+
                 if fig_canvas_agg:
                     destroy_figure(fig_canvas_agg, toolbar)
 

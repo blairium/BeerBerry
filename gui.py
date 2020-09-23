@@ -204,5 +204,3 @@ def save_parameters(
 
     with open(parameters_file, 'w') as f:
         jsondump(parameters, f)
-
-    sg.popup('Parameters saved')
