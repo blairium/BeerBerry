@@ -6,6 +6,7 @@ import pandas as pd
 import numpy as np
 import peakutils as pk
 import matplotlib.pyplot as plt
+import time
 
 from os import path
 from json import (load as jsonload, dump as jsondump)
@@ -71,7 +72,6 @@ PARAMETER_KEYS_TO_ELEMENT_KEYS = {
     'sample_rate': '-SAMPLE RATE-',
     'theme': '-THEME-'}
 
-
 EXCITATION_PARAMETER = path.join(path.dirname(__file__), r'exciation_file.cfg')
 EXCITATION_SETTINGS = {
     'amplitude': 0.06,
@@ -93,7 +93,6 @@ EXCITATION_KEYS_TO_ELEMENT_KEYS = {
     'v2': '-V2-',
     'v3': '-V3-'}
 
-
 # Initialising empty variables so they can remain within the whole program
 # scope
 t, i, f, Imag, Imagfilt, ifilt, ienv, int_ienv, ienv_filtered = (
@@ -106,7 +105,7 @@ data = None
 password_attempt = None
 window, parameters, exc_parameters = None, load_parameters(
     PARAMETERS_FILE, DEFAULT_SETTINGS, PARAMETER_KEYS_TO_ELEMENT_KEYS), load_parameters(
-        EXCITATION_PARAMETER, EXCITATION_SETTINGS, EXCITATION_KEYS_TO_ELEMENT_KEYS)
+    EXCITATION_PARAMETER, EXCITATION_SETTINGS, EXCITATION_KEYS_TO_ELEMENT_KEYS)
 xdata = []
 ydata = []
 clickEvent = None
@@ -201,6 +200,21 @@ while True:
 
     elif event == 'Load':
 
+        # this is for the Layout Design of the Window
+        layout2 = [[sg.Text('Loading')],
+                   [sg.ProgressBar(1, orientation='h', size=(20, 20), key='progress', style='winnative')],
+                   ]
+
+        # This Creates the Physical Window
+        window2 = sg.Window('File Load', layout2).Finalize()
+        progress_bar = window2.FindElement('progress')
+
+        # This Updates the Window
+        # progress_bar.UpdateBar(Current Value to show, Maximum Value to show)
+        progress_bar.UpdateBar(0, 5)
+        # adding time.sleep(length in Seconds) has been used to Simulate adding your script in between Bar Updates
+        time.sleep(.5)
+
         tmp = window['OP1'].get()
 
         # if default radio button is clicked, returns true for precalc
@@ -218,42 +232,54 @@ while True:
 
                 window.find_element(
                     'Define baseline').Update(disabled=False)
-                for x in range(1, 6):
-                    if x == 1:
-                        harm_one = maths.get_ienv(
-                            i, int(
-                                parameters['freq_pert']), 1, int(
-                                parameters['bandwith_window']), float(
-                                parameters['sample_rate']), int(
-                                parameters['lpf_bw']), t)
-                    if x == 2:
-                        harm_two = maths.get_ienv(
-                            i, int(
-                                parameters['freq_pert']), 2, int(
-                                parameters['bandwith_window']), float(
-                                parameters['sample_rate']), int(
-                                parameters['lpf_bw']), t)
-                    if x == 3:
-                        harm_three = maths.get_ienv(
-                            i, int(
-                                parameters['freq_pert']), 3, int(
-                                parameters['bandwith_window']), float(
-                                parameters['sample_rate']), int(
-                                parameters['lpf_bw']), t)
-                    if x == 4:
-                        harm_four = maths.get_ienv(
-                            i, int(
-                                parameters['freq_pert']), 4, int(
-                                parameters['bandwith_window']), float(
-                                parameters['sample_rate']), int(
-                                parameters['lpf_bw']), t)
-                    if x == 5:
-                        harm_five = maths.get_ienv(
-                            i, int(
-                                parameters['freq_pert']), 5, int(
-                                parameters['bandwith_window']), float(
-                                parameters['sample_rate']), int(
-                                parameters['lpf_bw']), t)
+
+                harm_one = maths.get_ienv(
+                    i, int(
+                        parameters['freq_pert']), 1, int(
+                        parameters['bandwith_window']), float(
+                        parameters['sample_rate']), int(
+                        parameters['lpf_bw']), t)
+
+                progress_bar.UpdateBar(1, 5)
+
+                harm_two = maths.get_ienv(
+                    i, int(
+                        parameters['freq_pert']), 2, int(
+                        parameters['bandwith_window']), float(
+                        parameters['sample_rate']), int(
+                        parameters['lpf_bw']), t)
+
+                progress_bar.UpdateBar(2, 5)
+                time.sleep(.5)
+
+                harm_three = maths.get_ienv(
+                    i, int(
+                        parameters['freq_pert']), 3, int(
+                        parameters['bandwith_window']), float(
+                        parameters['sample_rate']), int(
+                        parameters['lpf_bw']), t)
+
+                progress_bar.UpdateBar(3, 5)
+
+                harm_four = maths.get_ienv(
+                    i, int(
+                        parameters['freq_pert']), 4, int(
+                        parameters['bandwith_window']), float(
+                        parameters['sample_rate']), int(
+                        parameters['lpf_bw']), t)
+                progress_bar.UpdateBar(4, 5)
+
+                harm_five = maths.get_ienv(
+                    i, int(
+                        parameters['freq_pert']), 5, int(
+                        parameters['bandwith_window']), float(
+                        parameters['sample_rate']), int(
+                        parameters['lpf_bw']), t)
+                progress_bar.UpdateBar(5, 5)
+
+                time.sleep(0.5)
+                # This will Close The Window
+                window2.Close()
 
                 int_ienv = maths.cumulative_sum_ienv(harm_two)
                 ienv_filtered = maths.filter_ienv(
@@ -375,7 +401,7 @@ while True:
                     t, harm_one, copy_x_data, copy_y_data)
                 plt.plot(t, curve_2, color='b')
                 plt.plot([t[index_of_peak], t[index_of_peak]], [
-                         curve_2[index_of_peak], curve_1[index_of_peak]], color='r')
+                    curve_2[index_of_peak], curve_1[index_of_peak]], color='r')
 
                 plt.fill_between(t, curve_1, curve_2, alpha=0.3)
                 print("Harm One")
@@ -389,7 +415,7 @@ while True:
                     t, harm_two, copy_x_data, copy_y_data)
                 plt.plot(t, curve_2, color='#40BAD3')
                 plt.plot([t[index_of_peak], t[index_of_peak]], [
-                         curve_2[index_of_peak], curve_1[index_of_peak]], color='r')
+                    curve_2[index_of_peak], curve_1[index_of_peak]], color='r')
 
                 plt.fill_between(t, curve_1, curve_2, alpha=0.3)
                 print("Harm Two")
@@ -402,7 +428,7 @@ while True:
                     t, harm_three, copy_x_data, copy_y_data)
                 plt.plot(t, curve_2, color='orange')
                 plt.plot([t[index_of_peak], t[index_of_peak]], [
-                         curve_2[index_of_peak], curve_1[index_of_peak]], color='r')
+                    curve_2[index_of_peak], curve_1[index_of_peak]], color='r')
                 plt.fill_between(t, curve_1, curve_2, alpha=0.3)
         if window['r4'].get():
             plt.plot(t, harm_four, color='g')
@@ -413,7 +439,7 @@ while True:
                     t, harm_four, copy_x_data, copy_y_data)
                 plt.plot(t, curve_2, color='g')
                 plt.plot([t[index_of_peak], t[index_of_peak]], [
-                         curve_2[index_of_peak], curve_1[index_of_peak]], color='r')
+                    curve_2[index_of_peak], curve_1[index_of_peak]], color='r')
                 plt.fill_between(t, curve_1, curve_2, alpha=0.3)
         if window['r5'].get():
             plt.plot(t, harm_five, color='y')
@@ -424,7 +450,7 @@ while True:
                     t, harm_five, copy_x_data, copy_y_data)
                 plt.plot(t, curve_2, color='y')
                 plt.plot([t[index_of_peak], t[index_of_peak]], [
-                         curve_2[index_of_peak], curve_1[index_of_peak]], color='r')
+                    curve_2[index_of_peak], curve_1[index_of_peak]], color='r')
                 plt.fill_between(t, curve_1, curve_2, alpha=0.3)
 
         fig.suptitle('Results', fontsize=16)
