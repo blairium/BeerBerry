@@ -105,7 +105,8 @@ df_Post = None
 data = None
 password_attempt = None
 window, parameters, exc_parameters = None, load_parameters(
-    PARAMETERS_FILE, DEFAULT_SETTINGS, PARAMETER_KEYS_TO_ELEMENT_KEYS), load_parameters(EXCITATION_PARAMETER, EXCITATION_SETTINGS, EXCITATION_KEYS_TO_ELEMENT_KEYS)
+    PARAMETERS_FILE, DEFAULT_SETTINGS, PARAMETER_KEYS_TO_ELEMENT_KEYS), load_parameters(
+        EXCITATION_PARAMETER, EXCITATION_SETTINGS, EXCITATION_KEYS_TO_ELEMENT_KEYS)
 xdata = []
 ydata = []
 clickEvent = None
@@ -126,7 +127,7 @@ while True:
         data = file.readFile(fname, 0)
         window.find_element('Load').Update(disabled=False)
 
-    elif event == 'plot' or event == 'r1' or event == 'r2' or event == 'r3' or event == 'r4' or event == 'r5':
+    elif event == 'Harmonics' or event == 'r1' or event == 'r2' or event == 'r3' or event == 'r4' or event == 'r5':
         if fig_canvas_agg:
             destroy_figure(fig_canvas_agg, toolbar)
 
@@ -148,7 +149,7 @@ while True:
         fig.set_dpi(100)
         fig_canvas_agg, toolbar = draw_figure(window['-CANVAS-'].TKCanvas, fig)
 
-    elif event == 'plot2':
+    elif event == 'Time Domain':
         if fig_canvas_agg:
             destroy_figure(fig_canvas_agg, toolbar)
 
@@ -164,7 +165,7 @@ while True:
 
         fig_canvas_agg, toolbar = draw_figure(window['-CANVAS-'].TKCanvas, fig)
 
-    elif event == 'Freq vs Mag of Current':
+    elif event == 'Freq Domain':
         if fig_canvas_agg:
             destroy_figure(fig_canvas_agg, toolbar)
 
@@ -217,7 +218,7 @@ while True:
 
                 window.find_element(
                     'Define baseline').Update(disabled=False)
-                for x in range(1,6):
+                for x in range(1, 6):
                     if x == 1:
                         harm_one = maths.get_ienv(
                             i, int(
@@ -276,10 +277,10 @@ while True:
                 fig_canvas_agg, toolbar = draw_figure(
                     window['-CANVAS-'].TKCanvas, fig)
 
-                window.find_element('plot').Update(disabled=False)
-                window.find_element('plot2').Update(disabled=False)
+                window.find_element('Harmonics').Update(disabled=False)
+                window.find_element('Time Domain').Update(disabled=False)
                 window.find_element(
-                    'Freq vs Mag of Current').Update(disabled=False)
+                    'Freq Domain').Update(disabled=False)
                 window.find_element(
                     'Cumulative Sum').Update(disabled=False)
                 window.find_element(
@@ -318,10 +319,10 @@ while True:
                 int_ienv = df_Post['int_ienv']
                 ienv_filtered = df_Post['ienv_filtered']
 
-                window.find_element('plot').Update(disabled=False)
-                window.find_element('plot2').Update(disabled=False)
+                window.find_element('Harmonics').Update(disabled=False)
+                window.find_element('Time Domain').Update(disabled=False)
                 window.find_element(
-                    'Freq vs Mag of Current').Update(disabled=False)
+                    'Freq Domain').Update(disabled=False)
                 window.find_element('Cumulative Sum').Update(disabled=False)
 
                 if df_Post is not None:
@@ -332,14 +333,14 @@ while True:
                 sg.popup_error('Error: Incompatible Data File')
 
     elif event == 'Record Data':
-        exc_event, exc_values = create_excitation_parameters_window(exc_parameters, EXCITATION_KEYS_TO_ELEMENT_KEYS).read(
-        close=True)
+        exc_event, exc_values = create_excitation_parameters_window(
+            exc_parameters, EXCITATION_KEYS_TO_ELEMENT_KEYS).read(close=True)
         if exc_event == 'Record':
             save_parameters(
-            EXCITATION_PARAMETER,
-            exc_parameters,
-            exc_values,
-            EXCITATION_KEYS_TO_ELEMENT_KEYS)
+                EXCITATION_PARAMETER,
+                exc_parameters,
+                exc_values,
+                EXCITATION_KEYS_TO_ELEMENT_KEYS)
             data = maths.excitation(exc_parameters)
             sg.PopupOK("Recording Complete")
             window.find_element('Load').Update(disabled=False)
@@ -426,7 +427,6 @@ while True:
                          curve_2[index_of_peak], curve_1[index_of_peak]], color='r')
                 plt.fill_between(t, curve_1, curve_2, alpha=0.3)
 
-
         fig.suptitle('Results', fontsize=16)
         fig.set_size_inches(9, 6)
         fig.set_dpi(100)
@@ -467,7 +467,7 @@ while True:
             envelope = pk.envelope(harm_one, deg=5, max_it=None, tol=1e-3)
             plt.plot(t, envelope, color='b')
         if window['r2'].get():
-            envelope = pk.envelope(harm_two,  deg=5, max_it=None, tol=1e-3)
+            envelope = pk.envelope(harm_two, deg=5, max_it=None, tol=1e-3)
             plt.plot(t, envelope, color='#40BAD3')
         if window['r3'].get():
             envelope = pk.envelope(harm_three, deg=5, max_it=None, tol=1e-3)

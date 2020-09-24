@@ -187,14 +187,20 @@ def is_y_valid(t, ienv, xdata, ydata):
 
 def excitation(exc_parameters):
     # settings
-    amplitude = float(exc_parameters['amplitude'])  # This is as a fraction of the maximum amplitude 1 = 2.96 V
+    # This is as a fraction of the maximum amplitude 1 = 2.96 V
+    amplitude = float(exc_parameters['amplitude'])
     stable = float(exc_parameters['stable'])  # stable duration in seconds
-    sample_rate = float(exc_parameters['sample_rate'])  # Doesn't necessarily work for other sample rates
-    duration = float(exc_parameters['duration'])  # recording duration in seconds
+    # Doesn't necessarily work for other sample rates
+    sample_rate = float(exc_parameters['sample_rate'])
+    # recording duration in seconds
+    duration = float(exc_parameters['duration'])
     frequency = float(exc_parameters['frequency'])  # Frequency
-    v1 = float(exc_parameters['v1'])  # Stable "Voltage" actually a fraction of max output positive values only
-    v2 = float(exc_parameters['v2']) # Recording Start "Voltage" actually a fraction of max output 0.1 = ~0.045V
-    v3 = float(exc_parameters['v3'])  # Recording stop "Voltage" actually a fraction of max output 1.0 = ~1.265
+    # Stable "Voltage" actually a fraction of max output positive values only
+    v1 = float(exc_parameters['v1'])
+    # Recording Start "Voltage" actually a fraction of max output 0.1 = ~0.045V
+    v2 = float(exc_parameters['v2'])
+    # Recording stop "Voltage" actually a fraction of max output 1.0 = ~1.265
+    v3 = float(exc_parameters['v3'])
 
     sramp = np.linspace(v1, v1, int(stable * sample_rate)
                         )  # ramp for stable period
@@ -250,6 +256,7 @@ def excitation(exc_parameters):
     df.iloc[0:blank_samples, 1] = 0
     return df
 
+
 def upper_envelope(ienv):
     tmp = baseline.envelope(ienv, deg=None, max_it=None, tol=None)
     return tmp
@@ -275,3 +282,11 @@ def upper_envelope(ienv):
 # #time domain waveform
 # p_wave = np.fft.ifft(p_filtered)
 # p_wave = p_wave.real
+
+
+##################################
+
+# Karina: implement conc function
+
+def conc(a, b, c, area):
+    return 0

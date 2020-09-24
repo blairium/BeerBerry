@@ -54,13 +54,16 @@ def create_main_window(parameters, password_attempt, PASSWORD):
         # map baseline button, save button, radio buttons saving raw or calculated data, and an exit button)
         [sg.Checkbox('1st Harmonic', enable_events=True, key='r1'), sg.Checkbox('2nd Harmonic', default=True, enable_events=True, key='r2'), sg.Checkbox('3rd Harmonic', enable_events=True, key='r3'),
          sg.Checkbox('4th Harmonic', enable_events=True, key='r4'), sg.Checkbox('5th Harmonic', enable_events=True, key='r5')],
-        [sg.Button('plot', disabled=True, auto_size_button=True), sg.Button('plot2', disabled=True, auto_size_button=True),
-         sg.Button('Freq vs Mag of Current', disabled=True, ), sg.Button('Cumulative Sum', disabled=True ), sg.Button('Envelope', disabled = True),
-         sg.Button('Define baseline', disabled=True, auto_size_button=True), sg.Button('Map baseline', disabled=True, auto_size_button=True),
+        [sg.Button('Harmonics', disabled=True, auto_size_button=True), sg.Button('Time Domain', disabled=True, auto_size_button=True),
+         sg.Button('Freq Domain', disabled=True, ), sg.Button(
+             'Cumulative Sum', disabled=True), sg.Button('Envelope', disabled=True),
+         sg.Button('Define baseline', disabled=True, auto_size_button=True), sg.Button(
+             'Map baseline', disabled=True, auto_size_button=True),
 
-         sg.FileSaveAs(button_text='save', disabled=True, target='save', enable_events=True, key='save',
+         sg.FileSaveAs(button_text='Save', disabled=True, target='save', enable_events=True, key='save',
                        file_types=(('DATA', '.data'), ('BIN', '.bin'), ('CSV', '.csv'), ('All Files', '*.*')), auto_size_button=True),
-         sg.Radio('Raw Data', 'RAD2', default=True, font=['Helvetica', 10], key='OP2'),
+         sg.Radio('Raw Data', 'RAD2', default=True,
+                  font=['Helvetica', 10], key='OP2'),
          sg.Radio('Post Calculation', 'RAD2', font=['Helvetica', 10]),
          sg.Button('Exit', auto_size_button=True)]
     ]
@@ -85,11 +88,13 @@ def create_insert_parameters_window(
         return sg.Text(text + ':', justification='r', size=(30, 1))
 
     layout = [[sg.Text('Parameters', justification='center', font='Helvetica 18')],
-              [TextLabel('Frequency perturbation'), sg.Input(key='-FREQ PERT-')],
+              [TextLabel('Frequency perturbation'),
+               sg.Input(key='-FREQ PERT-')],
               [TextLabel('Band-width window'), sg.Input(key='-BW WINDOW-')],
               [TextLabel('Env lpf bandwidth'), sg.Input(key='-LPF BW-')],
               [TextLabel('Sample Rate'), sg.Input(key='-SAMPLE RATE-')],
-              [TextLabel('Theme'), sg.Combo(sg.theme_list(), size=(20, 20), key='-THEME-')],
+              [TextLabel('Theme'), sg.Combo(
+                  sg.theme_list(), size=(20, 20), key='-THEME-')],
               [sg.Button('Save'), sg.Button('Exit')]]
 
     window = sg.Window(
