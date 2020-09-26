@@ -1,8 +1,10 @@
 import unittest
-import File
+
+import file
+import maths
 
 
-class TestStringMethods(unittest.TestCase):
+class TestMethods(unittest.TestCase):
 
     # example test 1
     def test_upper(self):
@@ -21,52 +23,79 @@ class TestStringMethods(unittest.TestCase):
         with self.assertRaises(TypeError):
             s.split(2)
 
-    # **************** UNIT TESTS ******************
-    # And_AC_Volt_Python: major_function
-    # And_AC_Volt_Python: get_time_values
+# **************** file.py ******************
 
-    # Helper.py: get_time_values
-    # Helper.py: binary_Read
+    # test read .bin file
+    # def test_binRead(self):
+        # data = file.binary_Read("UnitTest.bin")
+        # self.assertTrue(data is None)
 
-    def test_binRead(self):
-        data = File.binary_Read("UnitTest.bin")
-        self.assertTrue(data is None)
+        # with self.assertRaises(OSError):
+        # file.binary_Read("UnitTest.bin")
 
-        with self.assertRaises(OSError):
-            File.binary_Read("UnitTest.bin")
+    # test read .csv file
+    # def test_csvRead(self):
+        # data = file.binary_Read("UnitTest.csv")
+        # self.assertTrue(data is None)
 
-    # Helper.py: csv_read
+        # with self.assertRaises(OSError):
+        # file.binary_Read("UnitTest.csv")
 
-    def test_binRead(self):
-        data = File.binary_Read("UnitTest.csv")
-        self.assertTrue(data is None)
+    # test read .data file
+    # def test_dataRead(self):
+        # data = file.binary_Read("UnitTest.data")
+        # self.assertTrue(data is None)
 
-        with self.assertRaises(OSError):
-            File.binary_Read("UnitTest.csv")
+        # with self.assertRaises(OSError):
+        # file.binary_Read("UnitTest.data")
 
-    # Helper.py: data_read
-    def test_binRead(self):
-        data = File.binary_Read("UnitTest.data")
-        self.assertTrue(data is None)
+    # test read file 1
+    # def test_readFile1(self):
+        # post_calc = 1
+        # data = file.readFile("UnitTest.data", post_calc)
+        # self.assertEqual(data, None)
 
-        with self.assertRaises(OSError):
-            File.binary_Read("UnitTest.data")
-
-    # Helper.py: readFile
-
-    def test_readFile1(self):
-        post = 1
-        data = File.readFile("UnitTest.data", post)
-        self.assertEqual(data, None)
-
-    # Helper.py: readFile2
+    # test read file 2
     def test_readFile2(self):
-        post = 2
-        self.assertTrue(post == 1)
-        self.assertTrue(post == 0)
-        self.assertFalse(post == 2)
-        with self.assertIsNone():
-            data = File.readFile("UnitTest.data", post)
+        post_calc = 2
+        self.assertFalse(post_calc < 1)
+        self.assertFalse(post_calc > 2)
+        self.assertTrue(post_calc == 1 or post_calc == 2)
+        # with self.assertIsNone():
+        # data = file.readFile("UnitTest.data", post_calc)
+
+# **************** gui.py *******************
+
+# **************** maths.py *****************
+
+    def test_maths(self):
+        data = file.readFile("./data/5ppm.data", 0)
+        v = data.iloc[:, 0].values
+        i = data.iloc[:, 1].values
+
+        # test blanking_first_samples
+        v, i = maths.blanking_first_samples(4000, v, i)
+
+        # test get_time_values
+        f, t = maths.get_time_values(i, 44100)
+
+        # test get_ienv
+        harmonic = maths.get_ienv(i, 60, 1, 10, 8000, 10, t)
+
+        # test magnitude_of_current
+        Imag = maths.magnitude_of_current(i, i.size)
+
+        # test cumulative_sum_ienv
+        int_ienv = maths.cumulative_sum_ienv(harmonic)
+
+        # test filter_ienv
+        ienv_filtered = maths.filter_ienv(harmonic, 200)
+
+        # test is_y_valid ?
+
+        # test upper_envelope ?
+
+        # test conc ?
 
 
 if __name__ == '__main__':
