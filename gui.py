@@ -115,7 +115,7 @@ def create_insert_parameters_window(
 
 
 def create_excitation_parameters_window(
-        exc_parameters,
+        exc_parameters, 
         EXCITATION_KEYS_TO_ELEMENT_KEYS):
 
     def TextLabel(text):
