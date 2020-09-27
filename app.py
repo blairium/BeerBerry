@@ -350,6 +350,8 @@ while True:
                 window.find_element(
                     'Freq Domain').Update(disabled=False)
                 window.find_element('Cumulative Sum').Update(disabled=False)
+                # This will Close The Window
+                window2.Close()
 
                 if df_Post is not None:
                     window.find_element('save').Update(disabled=False)
