@@ -8,9 +8,6 @@ import pyautogui as gui
 gui.FAILSAFE = False
 
 
-
-
-
 class TestMethods(unittest.TestCase):
 
     # example test 1
@@ -71,8 +68,6 @@ class TestMethods(unittest.TestCase):
         # with self.assertIsNone():
         # data = file.readFile("UnitTest.data", post_calc)
 
-    # **************** gui.py *******************
-
     # **************** maths.py *****************
 
     def test_maths(self):
@@ -104,7 +99,7 @@ class TestMethods(unittest.TestCase):
 
         # test conc ?
 
-    #GUI TEST
+    # **************** gui.py *******************
     def test_guiTest(self):
         print("yes")
 
@@ -125,13 +120,11 @@ class TestMethods(unittest.TestCase):
         gui.moveTo(1466, 207)
         gui.click()
 
-
-
         # screenWidth, screenHeight = gui.size()
         #gui.moveTo(0, screenHeight)
-        #gui.click()
+        # gui.click()
 
-        thisText = gui.locateOnScreen("m9jr7NQ.png")
+        thisText = gui.locateOnScreen("test/m9jr7NQ.png")
         self.assertTrue(not thisText is None)
 
     def test_guiTest_login(self):
@@ -141,7 +134,7 @@ class TestMethods(unittest.TestCase):
         gui.moveTo(835, 598)
         gui.click()
         print("no")
-        thisText = gui.locateOnScreen("YNhrNcM.png")
+        thisText = gui.locateOnScreen("test/YNhrNcM.png")
         self.assertTrue(thisText)
 
     def test_guiTest_Harmonics(self):
