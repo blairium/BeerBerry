@@ -376,17 +376,40 @@ while True:
                 sg.popup_error('Error: Incompatible Data File')
 
     elif event == 'Record Data':
+
+
+
         exc_event, exc_values = create_excitation_parameters_window(
             exc_parameters, EXCITATION_KEYS_TO_ELEMENT_KEYS).read(close=True)
         if exc_event == 'Record':
+            layout2 = [[sg.Text('Loading')],
+                       [sg.ProgressBar(1, orientation='h', size=(20, 20), key='progress', style='winnative')],
+                       ]
+
+            # This Creates the Physical Window
+            window2 = sg.Window('File Load', layout2).Finalize()
+            progress_bar = window2.FindElement('progress')
+            progress_bar.UpdateBar(0, 5)
+            time.sleep(1)
+            progress_bar.UpdateBar(1, 5)
             save_parameters(
                 EXCITATION_PARAMETER,
                 exc_parameters,
                 exc_values,
                 EXCITATION_KEYS_TO_ELEMENT_KEYS)
+
+            progress_bar.UpdateBar(3, 5)
+
             data = maths.excitation(exc_parameters)
+            progress_bar.UpdateBar(4, 5)
+            time.sleep(1)
+            progress_bar.UpdateBar(5, 5)
+            time.sleep(1)
+            window2.close()
             sg.PopupOK("Recording Complete")
             window.find_element('Load').Update(disabled=False)
+
+
 
     elif event == 'save':
 
