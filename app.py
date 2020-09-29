@@ -316,7 +316,11 @@ while True:
                     'i': i,
                     'f': f,
                     'Imag': Imag,
-                    'ienv': harm_two,
+                    'harm_one': harm_one,
+                    'harm_two': harm_two,
+                    'harm_three': harm_three,
+                    'harm_four': harm_four,
+                    'harm_five': harm_five,
                     'int_ienv': int_ienv,
                     'ienv_filtered': ienv_filtered
                 }
@@ -325,7 +329,7 @@ while True:
                     window.find_element(
                         'save').Update(disabled=False)
 
-            elif len(data.columns) == 9:
+            elif len(data.columns) == 11:
                 sg.popup_error(
                     'Error: Select Post Calculation to Load Calculated Data Files')
             else:
@@ -334,14 +338,16 @@ while True:
             df_Post = file.readFile(fname, 1)
             print(df_Post)
             print(len(df_Post.columns))
-            if len(df_Post.columns) == 9:
+            if len(df_Post.columns) == 11:
                 t = df_Post['t']
                 i = df_Post['i']
                 f = df_Post['f']
                 Imag = df_Post['Imag']
-                Imagfilt = df_Post['Imagfilt']
-                ifilt = df_Post['ifilt']
-                ienv = df_Post['ienv']
+                harm_one = df_Post['harm_one']
+                harm_two = df_Post['harm_two']
+                harm_three = df_Post['harm_three']
+                harm_four = df_Post['harm_four']
+                harm_five = df_Post['harm_five']
                 int_ienv = df_Post['int_ienv']
                 ienv_filtered = df_Post['ienv_filtered']
 
@@ -350,6 +356,15 @@ while True:
                 window.find_element(
                     'Freq Domain').Update(disabled=False)
                 window.find_element('Cumulative Sum').Update(disabled=False)
+
+                time.sleep(0.1)
+                progress_bar.UpdateBar(1, 5)
+                progress_bar.UpdateBar(2, 5)
+                time.sleep(0.2)
+                progress_bar.UpdateBar(3, 5)
+                progress_bar.UpdateBar(4, 5)
+                progress_bar.UpdateBar(5, 5)
+                time.sleep(0.5)
                 # This will Close The Window
                 window2.Close()
 
