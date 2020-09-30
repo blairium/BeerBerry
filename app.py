@@ -345,8 +345,7 @@ while True:
                     i, float(parameters['sample_rate']))
                 Imag = maths.magnitude_of_current(i, i.size)
 
-                window.find_element(
-                    'Define baseline').Update(disabled=False)
+                window.find_element('Define baseline').Update(disabled=False)
 
                 harm_one = maths.get_ienv(
                     i, int(
@@ -418,6 +417,7 @@ while True:
                 fig_canvas_agg, toolbar = draw_figure(
                     window['-CANVAS-'].TKCanvas, fig)
 
+                window.find_element('Graph Controls').Update(visible=True)
                 window.find_element('Harmonics').Update(disabled=False)
                 window.find_element('Time Domain').Update(disabled=False)
                 window.find_element('Freq Domain').Update(disabled=False)
@@ -466,6 +466,7 @@ while True:
                 int_ienv = df_Post['int_ienv']
                 ienv_filtered = df_Post['ienv_filtered']
 
+                window.find_element('Graph Controls').Update(visible=True)
                 window.find_element('Harmonics').Update(disabled=False)
                 window.find_element('Time Domain').Update(disabled=False)
                 window.find_element('Freq Domain').Update(disabled=False)
@@ -594,11 +595,13 @@ while True:
                     curve_2[index_of_peak], curve_1[index_of_peak]], color='r')
                 plt.fill_between(t, curve_1, curve_2, alpha=0.3)
 
-        fig.suptitle('Results', fontsize=16)
+        fig.suptitle('Harmonics', fontsize=16)
         fig.set_size_inches(9, 6)
         fig.set_dpi(100)
         print("Here")
         destroy_figure(fig_canvas_agg, toolbar)
         fig_canvas_agg, toolbar = draw_figure(window['-CANVAS-'].TKCanvas, fig)
+
+        window.find_element('Results').Update(visible = True)
 
 window.close()

@@ -55,23 +55,28 @@ def create_main_window(parameters, password_attempt, PASSWORD):
 
         # Row 3: graph controls, canvas and results
         [
-            sg.Frame('Graphs', 
+            sg.Column([
                 [
-                    [sg.Button('Harmonics', disabled=True, auto_size_button=True)],
-                    [sg.Button('Time Domain', disabled=True, auto_size_button=True)],
-                    [sg.Button('Freq Domain', disabled=True, auto_size_button=True)],
-                    [sg.Button('Cumulative Sum', disabled=True, auto_size_button=True)],
-                    [sg.Button('Envelope', disabled=True, auto_size_button=True)]
-                ]), 
-                            
-            sg.Canvas(size=(898, 634), key='-CANVAS-'),
-         
-            sg.Frame('Results', 
+                    sg.Radio('Harmonics', key='Harmonics', group_id='graph_control_radio', disabled=True, enable_events=True, font='Helvetica 12', default=True ),
+                    sg.Radio('Time Domain', key='Time Domain', group_id='graph_control_radio', disabled=True, enable_events=True, font='Helvetica 12'),
+                    sg.Radio('Freq Domain', key='Freq Domain', group_id='graph_control_radio', disabled=True, enable_events=True, font='Helvetica 12'),
+                    sg.Radio('Cumulative Sum', key='Cumulative Sum', group_id='graph_control_radio', disabled=True, enable_events=True, font='Helvetica 12'),
+                    sg.Radio('Envelope', key='Envelope', group_id='graph_control_radio', disabled=True, enable_events=True, font='Helvetica 12')
+                ],
                 [
-                    [sg.Text('Conc: 25ppm')], 
-                    [sg.Text('Peak Area: 50')], 
-                    [sg.Text('Peak Height: 10')]
-                ])
+                    sg.Canvas(size=(898, 634), key='-CANVAS-'),
+                ]
+            ], key='Graph Controls', visible=False, element_justification='center', justification='center'),  
+
+            sg.Column([[
+                #sg.Frame('Results', 
+                #    [
+                #        [sg.Text('Conc: 25ppm')], 
+                #        [sg.Text('Peak Area: 50')], 
+                #        [sg.Text('Peak Height: 10')]
+                #    ])
+                sg.Text('Result: 5 ppm free So2. Peak Area = 50', text_color='green')
+             ]], key='Results', visible=False, element_justification='center', justification='center')
         ],
 
         # Row 4: harmonic checkboxes
@@ -85,7 +90,12 @@ def create_main_window(parameters, password_attempt, PASSWORD):
             ]], key='Harmonic Container', justification='center', visible=False)
         ],
 
-        # Row 5: define baseline, calculate result, save data, exit
+        # Ro 5: graph controls
+        #[
+            
+        #],
+
+        # Row 6: define baseline, calculate result, save data, exit
         [
             sg.Button('Define baseline', disabled=True, auto_size_button=True), 
             sg.Button('Calculate Result', disabled=True, auto_size_button=True),
