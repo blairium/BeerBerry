@@ -257,36 +257,10 @@ def excitation(exc_parameters):
     return df
 
 
-def upper_envelope(ienv):
-    tmp = baseline.envelope(ienv, deg=None, max_it=None, tol=None)
-    return tmp
-# FFT filtering
-# frequency domain
-# p = np.fft.fft(i)
-# #sample position of freq_pert x 2
-# sample_freq_pert = freq_pert*2/sample_rate*nod
-# #sample number of lpf_bw
-# sample_lpf_bw = sec_har_bw/sample_rate*nod
-# #blanking of fft date
-# p_filtered = p
-#
-# for x in range(0,int(sample_freq_pert-sample_lpf_bw/2)):
-#     p_filtered[x]=0.0
-#
-# for x in range(int((sample_freq_pert+sample_lpf_bw/2)-1),int(nod-sample_freq_pert-sample_lpf_bw/2)):
-#     p_filtered[x]=0.0
-#
-# for x in range(int((nod-sample_freq_pert+sample_lpf_bw/2)-1),nod):
-#     p_filtered[x]=0.0
-#
-# #time domain waveform
-# p_wave = np.fft.ifft(p_filtered)
-# p_wave = p_wave.real
-
-
-##################################
-
-# Karina: implement conc function
-
 def conc(a, b, c, area):
+    # conc = (-b + sqrt(b^2-4*a*(c-value)))/(2*a)
+    # value = area
+
+    # if conc > (-b/2a) * 0.85
+    # High concentration, out of calibration range
     return 0

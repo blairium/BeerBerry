@@ -22,7 +22,7 @@ import file
 import maths
 from gui import (
     create_main_window,
-    create_insert_parameters_window,
+    create_parameters_window,
     draw_figure,
     destroy_figure,
     load_parameters,
@@ -93,6 +93,9 @@ EXCITATION_KEYS_TO_ELEMENT_KEYS = {
     'v2': '-V2-',
     'v3': '-V3-'}
 
+# raw or post
+TYPE = 'RAW'
+
 # Initialising empty variables so they can remain within the whole program
 # scope
 t, i, f, Imag, Imagfilt, ifilt, ienv, int_ienv, ienv_filtered = (
@@ -102,6 +105,7 @@ fig_canvas_agg = None
 df = None
 df_Post = None
 data = None
+fname = None
 password_attempt = None
 window, parameters, exc_parameters = None, load_parameters(
     PARAMETERS_FILE, DEFAULT_SETTINGS, PARAMETER_KEYS_TO_ELEMENT_KEYS), load_parameters(
@@ -116,14 +120,12 @@ while True:
         window = create_main_window(parameters, password_attempt, PASSWORD)
 
     event, values = window.read()
-    fname = values['-FILENAME-']
 
     print(event)
     if event == sg.WIN_CLOSED or event == 'Exit':
         break
 
-    if event == '-FILENAME-':
-        data = file.readFile(fname, 0)
+    if event == 'Filename':
         window.find_element('Load').Update(disabled=False)
 
     elif event == 'Harmonics' or event == 'r1' or event == 'r2' or event == 'r3' or event == 'r4' or event == 'r5':
@@ -198,11 +200,113 @@ while True:
 
         fig_canvas_agg, toolbar = draw_figure(window['-CANVAS-'].TKCanvas, fig)
 
+###############################################################################
+
+    elif event == 'Record Data':
+        exc_event, exc_values = create_excitation_parameters_window(
+            exc_parameters, EXCITATION_KEYS_TO_ELEMENT_KEYS).read(close=True)
+        if exc_event == 'Record':
+            layout2 = [[sg.Text('Loading')],
+                       [sg.ProgressBar(1, orientation='h', size=(
+                           20, 20), key='progress', style='winnative')],
+                       ]
+
+            # This Creates the Physical Window
+            window2 = sg.Window('File Load', layout2).Finalize()
+            progress_bar = window2.FindElement('progress')
+            progress_bar.UpdateBar(0, 5)
+            time.sleep(1)
+            progress_bar.UpdateBar(1, 5)
+            save_parameters(
+                EXCITATION_PARAMETER,
+                exc_parameters,
+                exc_values,
+                EXCITATION_KEYS_TO_ELEMENT_KEYS)
+
+            progress_bar.UpdateBar(3, 5)
+
+            data = maths.excitation(exc_parameters)
+            progress_bar.UpdateBar(4, 5)
+            time.sleep(1)
+            progress_bar.UpdateBar(5, 5)
+            time.sleep(1)
+            window2.close()
+            sg.PopupOK("Recording Complete")
+            window.find_element('Load').Update(disabled=False)
+
+    
+    elif event == 'Load Raw Data':
+        TYPE = 'RAW'
+        fname = values['Load Raw Data']
+
+        if fname is not None:
+            window.find_element('Filename').Update(fname)
+            window.find_element('Load').Update(disabled=False)
+            data = file.readFile(fname, 0)
+
+    elif event == 'Load Processed Data':
+        TYPE = 'POST'
+        fname = values['Load Processed Data']
+
+        if fname is not None:
+            window.find_element('Filename').Update(fname)
+            window.find_element('Load').Update(disabled=False)
+            df_Post = file.readFile(fname, 1)
+
+    elif event == 'Save Raw Data':
+        outFile = values['Save Raw Data']
+        file.writeFile(outFile, data, 0)
+
+
+    elif event == 'Save Processed Data':
+        outFile = values['Save Processed Data']
+        file.writeFile(outFile, df_Post, 1)
+
+
+    elif event == 'Authenticate':
+        # logout
+        if password_attempt == PASSWORD:
+            password_attempt = None
+            window.find_element('Authenticate').Update("Login")
+            window.find_element('Parameters').Update(disabled=True)
+            window.find_element('Load Raw Data').Update(disabled=True)
+            window.find_element('Save Raw Data').Update(disabled=True)
+
+        # login
+        else:
+            password_attempt = sg.popup_get_text('Password', '')
+            while password_attempt != PASSWORD and password_attempt is not None:
+                password_attempt = sg.popup_get_text('Password is incorrect', '')
+            if password_attempt == PASSWORD:
+                window.find_element('Authenticate').Update("Logout")
+                window.find_element('Load Raw Data').Update(disabled=False)
+                if fname is not None:
+                    window.find_element('Parameters').Update(disabled=False)
+                if data is not None:
+                    window.find_element('Save Raw Data').Update(disabled=False)
+
+
+    elif event == 'Parameters':
+        param_event, values = create_parameters_window(
+            parameters, PARAMETER_KEYS_TO_ELEMENT_KEYS).read(
+            close=True)
+        if param_event == 'Save':
+            save_parameters(
+                PARAMETERS_FILE,
+                parameters,
+                values,
+                PARAMETER_KEYS_TO_ELEMENT_KEYS)
+            sg.popup('Parameters saved')
+            
+
+    #################################################################################
+
     elif event == 'Load':
 
         # this is for the Layout Design of the Window
         layout2 = [[sg.Text('Loading')],
-                   [sg.ProgressBar(1, orientation='h', size=(20, 20), key='progress', style='winnative')],
+                   [sg.ProgressBar(1, orientation='h', size=(
+                       20, 20), key='progress', style='winnative')],
                    ]
 
         # This Creates the Physical Window
@@ -215,11 +319,9 @@ while True:
         # adding time.sleep(length in Seconds) has been used to Simulate adding your script in between Bar Updates
         time.sleep(.5)
 
-        tmp = window['OP1'].get()
-
         # if default radio button is clicked, returns true for precalc
-        if tmp:
-
+        if TYPE is 'RAW':
+            
             if len(data.columns) == 2:
                 # Column 1: Voltage
                 v = data.iloc[:, 0].values
@@ -326,8 +428,9 @@ while True:
                 }
                 df_Post = pd.DataFrame(d)
                 if df_Post is not None:
-                    window.find_element(
-                        'save').Update(disabled=False)
+                    if password_attempt == PASSWORD:
+                        window.find_element('Save Raw Data').Update(disabled=False)
+                    window.find_element('Save Processed Data').Update(disabled=False)
 
             elif len(data.columns) == 11:
                 sg.popup_error(
@@ -335,7 +438,7 @@ while True:
             else:
                 sg.popup_error('Error: Incompatible Data File')
         else:
-            df_Post = file.readFile(fname, 1)
+            
             print(df_Post)
             print(len(df_Post.columns))
             if len(df_Post.columns) == 11:
@@ -353,8 +456,7 @@ while True:
 
                 window.find_element('Harmonics').Update(disabled=False)
                 window.find_element('Time Domain').Update(disabled=False)
-                window.find_element(
-                    'Freq Domain').Update(disabled=False)
+                window.find_element('Freq Domain').Update(disabled=False)
                 window.find_element('Cumulative Sum').Update(disabled=False)
 
                 time.sleep(0.1)
@@ -369,68 +471,57 @@ while True:
                 window2.Close()
 
                 if df_Post is not None:
-                    window.find_element('save').Update(disabled=False)
+                    if password_attempt == PASSWORD:
+                        window.find_element('Save Raw Data').Update(disabled=False)
+                    window.find_element('Save Processed Data').Update(disabled=False)
+
             elif len(df_Post.columns) == 2:
                 sg.popup_error('Error: Select Raw Data to Load Raw Data files')
+                
             else:
                 sg.popup_error('Error: Incompatible Data File')
-
-    elif event == 'Record Data':
-
-
-
-        exc_event, exc_values = create_excitation_parameters_window(
-            exc_parameters, EXCITATION_KEYS_TO_ELEMENT_KEYS).read(close=True)
-        if exc_event == 'Record':
-            layout2 = [[sg.Text('Loading')],
-                       [sg.ProgressBar(1, orientation='h', size=(20, 20), key='progress', style='winnative')],
-                       ]
-
-            # This Creates the Physical Window
-            window2 = sg.Window('File Load', layout2).Finalize()
-            progress_bar = window2.FindElement('progress')
-            progress_bar.UpdateBar(0, 5)
-            time.sleep(1)
-            progress_bar.UpdateBar(1, 5)
-            save_parameters(
-                EXCITATION_PARAMETER,
-                exc_parameters,
-                exc_values,
-                EXCITATION_KEYS_TO_ELEMENT_KEYS)
-
-            progress_bar.UpdateBar(3, 5)
-
-            data = maths.excitation(exc_parameters)
-            progress_bar.UpdateBar(4, 5)
-            time.sleep(1)
-            progress_bar.UpdateBar(5, 5)
-            time.sleep(1)
-            window2.close()
-            sg.PopupOK("Recording Complete")
-            window.find_element('Load').Update(disabled=False)
+        
 
 
 
-    elif event == 'save':
 
-        tmp = window['OP2'].get()
-        outFile = values['save']
-        if tmp:
 
-            file.writeFile(outFile, data, 0)
 
-        else:
+    
 
-            file.writeFile(outFile, df_Post, 1)
+    elif event == 'Envelope':
+        fig = plt.figure()
+        if window['r1'].get():
+            envelope = pk.envelope(harm_one, deg=5, max_it=None, tol=1e-3)
+            plt.plot(t, envelope, color='b')
+        if window['r2'].get():
+            envelope = pk.envelope(harm_two, deg=5, max_it=None, tol=1e-3)
+            plt.plot(t, envelope, color='#40BAD3')
+        if window['r3'].get():
+            envelope = pk.envelope(harm_three, deg=5, max_it=None, tol=1e-3)
+            plt.plot(t, envelope, color='orange')
+        if window['r4'].get():
+            envelope = pk.envelope(harm_four, deg=5, max_it=100, tol=1e-3)
+            plt.plot(t, envelope, color='g')
+        if window['r5'].get():
+            envelope = pk.envelope(harm_five, deg=5, max_it=100, tol=1e-3)
+            plt.plot(t, envelope, color='y')
+
+        fig.suptitle('Envelope', fontsize=16)
+        fig.set_size_inches(9, 6)
+        fig.set_dpi(100)
+        destroy_figure(fig_canvas_agg, toolbar)
+        fig_canvas_agg, toolbar = draw_figure(window['-CANVAS-'].TKCanvas, fig)
+    
 
     elif event == 'Define baseline':
         if (len(xdata) >= 2):
             xdata = []
             ydata = []
         clickEvent = fig_canvas_agg.mpl_connect('button_press_event', onclick)
-        window.find_element('Map baseline').Update(disabled=False)
+        window.find_element('Calculate Result').Update(disabled=False)
 
-    elif event == 'Map baseline':
+    elif event == 'Calculate Result':
         fig = plt.figure()
         if window['r1'].get():
             plt.plot(t, harm_one, color='b')
@@ -497,57 +588,6 @@ while True:
         fig.set_size_inches(9, 6)
         fig.set_dpi(100)
         print("Here")
-        destroy_figure(fig_canvas_agg, toolbar)
-        fig_canvas_agg, toolbar = draw_figure(window['-CANVAS-'].TKCanvas, fig)
-
-    elif event == 'Log in':
-        password_attempt = sg.popup_get_text('Password', '')
-        while password_attempt != PASSWORD and password_attempt is not None:
-            password_attempt = sg.popup_get_text('Password is incorrect', '')
-        if password_attempt == PASSWORD:
-            window.find_element('Logout').Update(visible=True)
-            window.find_element('Log in').Update(visible=False)
-            window.find_element('Insert Parameters').Update(visible=True)
-
-    elif event == 'Logout':
-        password_attempt = None
-        window.find_element('Logout').Update(visible=False)
-        window.find_element('Log in').Update(visible=True)
-        window.find_element('Insert Parameters').Update(visible=False)
-
-    elif event == 'Insert Parameters':
-        param_event, values = create_insert_parameters_window(
-            parameters, PARAMETER_KEYS_TO_ELEMENT_KEYS).read(
-            close=True)
-        if param_event == 'Save':
-            save_parameters(
-                PARAMETERS_FILE,
-                parameters,
-                values,
-                PARAMETER_KEYS_TO_ELEMENT_KEYS)
-            sg.popup('Parameters saved')
-
-    elif event == 'Envelope':
-        fig = plt.figure()
-        if window['r1'].get():
-            envelope = pk.envelope(harm_one, deg=5, max_it=None, tol=1e-3)
-            plt.plot(t, envelope, color='b')
-        if window['r2'].get():
-            envelope = pk.envelope(harm_two, deg=5, max_it=None, tol=1e-3)
-            plt.plot(t, envelope, color='#40BAD3')
-        if window['r3'].get():
-            envelope = pk.envelope(harm_three, deg=5, max_it=None, tol=1e-3)
-            plt.plot(t, envelope, color='orange')
-        if window['r4'].get():
-            envelope = pk.envelope(harm_four, deg=5, max_it=100, tol=1e-3)
-            plt.plot(t, envelope, color='g')
-        if window['r5'].get():
-            envelope = pk.envelope(harm_five, deg=5, max_it=100, tol=1e-3)
-            plt.plot(t, envelope, color='y')
-
-        fig.suptitle('Envelope', fontsize=16)
-        fig.set_size_inches(9, 6)
-        fig.set_dpi(100)
         destroy_figure(fig_canvas_agg, toolbar)
         fig_canvas_agg, toolbar = draw_figure(window['-CANVAS-'].TKCanvas, fig)
 

@@ -17,6 +17,9 @@ matplotlib.use('TkAgg')
 
 ####### Creating the Main Window ################################
 
+# helper text label
+def TextLabel(text, justification = 'r', width = 30):
+        return sg.Text(text + ':', justification=justification, size=(width, 1))
 
 def create_main_window(parameters, password_attempt, PASSWORD):
     sg.theme(parameters['theme'])  # sets colour theme of window
@@ -29,43 +32,67 @@ def create_main_window(parameters, password_attempt, PASSWORD):
 
     # creates layout of the window
     layout = [
-        # elements in the top row (radio buttons for loading raw data or
-        # calculated data, file browser, login button)
-        [sg.Radio('Raw Data', 'RAD1', default=True, font=['Helvetica', 10], key='OP1'),
-         sg.Radio('Post Calculation', 'RAD1', font=['Helvetica', 10]),
-         sg.In(key='-FILENAME-', enable_events=True), sg.FileBrowse(),
-         sg.Button('Record Data'),
-         sg.Button('Load', disabled=True),
-         sg.Button(
-            'Log in',
-            visible=False if password_attempt == PASSWORD else True),
-            sg.Button(
-            'Logout',
-            visible=True if password_attempt == PASSWORD else False),
-            sg.Button('Insert Parameters', visible=True if password_attempt == PASSWORD else False)],
+        
+        # Row 1: record/load data, parameters, login
+        [
+            sg.Column([[
+                sg.Column([[sg.Button('Record Data')]], element_justification='center',),
+                sg.Column([[sg.FileBrowse(button_text='Load Raw Data', key="Load Raw Data", enable_events=True)]]),
+                sg.Column([[sg.FileBrowse(button_text='Load Processed Data', key='Load Processed Data', enable_events=True)]]),
+                sg.Column([[sg.Button('Parameters', disabled=True)]]),
+                sg.Column([[sg.Button('Load', disabled=True)]]),
+                sg.Column([[sg.Button('Login', key='Authenticate')]]),
+                
+            ]], justification='center')
+        ],
 
+        # Row 2: selected filename, optional
+        [
+            sg.Column([
+                [TextLabel('File', 'center', None), sg.Input(key='Filename', disabled=True)]
+            ], justification='center')
+        ],
 
+        # Row 3: graph controls, canvas and results
+        [
+            sg.Frame('Graphs', 
+                [
+                    [sg.Button('Harmonics', disabled=True, auto_size_button=True)],
+                    [sg.Button('Time Domain', disabled=True, auto_size_button=True)],
+                    [sg.Button('Freq Domain', disabled=True, auto_size_button=True)],
+                    [sg.Button('Cumulative Sum', disabled=True, auto_size_button=True)],
+                    [sg.Button('Envelope', disabled=True, auto_size_button=True)]
+                ]), 
+                            
+            sg.Canvas(size=(898, 634), key='-CANVAS-'),
+         
+            sg.Frame('Results', 
+                [
+                    [sg.Text('Conc: 25ppm')], 
+                    [sg.Text('Peak Area: 50')], 
+                    [sg.Text('Peak Height: 10')]
+                ])
+        ],
 
+        # Row 4: harmonic checkboxes
+        [
+            sg.Column([[
+                sg.Checkbox('1st Harmonic', enable_events=True, key='r1'), 
+                sg.Checkbox('2nd Harmonic', enable_events=True, key='r2', default=True), 
+                sg.Checkbox('3rd Harmonic', enable_events=True, key='r3'),
+                sg.Checkbox('4th Harmonic', enable_events=True, key='r4'), 
+                sg.Checkbox('5th Harmonic', enable_events=True, key='r5')
+            ]], justification='center')
+        ],
 
-        # third row contains the canvas for the graphs
-        [sg.Canvas(size=(898, 634), key='-CANVAS-')],
-
-        # elements in the fourth row are (buttons to switch different graphs, the define baseline button,
-        # map baseline button, save button, radio buttons saving raw or calculated data, and an exit button)
-        [sg.Checkbox('1st Harmonic', enable_events=True, key='r1'), sg.Checkbox('2nd Harmonic', default=True, enable_events=True, key='r2'), sg.Checkbox('3rd Harmonic', enable_events=True, key='r3'),
-         sg.Checkbox('4th Harmonic', enable_events=True, key='r4'), sg.Checkbox('5th Harmonic', enable_events=True, key='r5')],
-        [sg.Button('Harmonics', disabled=True, auto_size_button=True), sg.Button('Time Domain', disabled=True, auto_size_button=True),
-         sg.Button('Freq Domain', disabled=True, ), sg.Button(
-             'Cumulative Sum', disabled=True), sg.Button('Envelope', disabled=True),
-         sg.Button('Define baseline', disabled=True, auto_size_button=True), sg.Button(
-             'Map baseline', disabled=True, auto_size_button=True),
-
-         sg.FileSaveAs(button_text='Save', disabled=True, target='save', enable_events=True, key='save',
-                       file_types=(('DATA', '.data'), ('BIN', '.bin'), ('CSV', '.csv'), ('All Files', '*.*')), auto_size_button=True),
-         sg.Radio('Raw Data', 'RAD2', default=True,
-                  font=['Helvetica', 10], key='OP2'),
-         sg.Radio('Post Calculation', 'RAD2', font=['Helvetica', 10]),
-         sg.Button('Exit', auto_size_button=True)]
+        # Row 5: define baseline, calculate result, save data, exit
+        [
+            sg.Button('Define baseline', disabled=True, auto_size_button=True), 
+            sg.Button('Calculate Result', disabled=True, auto_size_button=True),
+            sg.FileSaveAs(button_text='Save Raw Data', key='Save Raw Data', target='Save Raw Data', disabled=True, enable_events=True, file_types=(('DATA', '.data'), ('BIN', '.bin'), ('CSV', '.csv'), ('All Files', '*.*')), auto_size_button=True),
+            sg.FileSaveAs(button_text='Save Processed Data', key='Save Processed Data', disabled=True, target='Save Processed Data', enable_events=True, file_types=(('DATA', '.data'), ('BIN', '.bin'), ('CSV', '.csv'), ('All Files', '*.*')), auto_size_button=True),
+            sg.Button('Exit', auto_size_button=True)
+        ]
     ]
 
     # return window with layout
@@ -78,8 +105,7 @@ def create_main_window(parameters, password_attempt, PASSWORD):
 
 ####### Creating parameters window ##############################
 
-
-def create_insert_parameters_window(
+def create_parameters_window(
         parameters,
         PARAMETER_KEYS_TO_ELEMENT_KEYS):
     sg.theme(parameters['theme'])
@@ -113,9 +139,8 @@ def create_insert_parameters_window(
 
     return window
 
-
 def create_excitation_parameters_window(
-        exc_parameters, 
+        exc_parameters,
         EXCITATION_KEYS_TO_ELEMENT_KEYS):
 
     def TextLabel(text):
@@ -171,6 +196,8 @@ def destroy_figure(fig_canvas_agg, toolbar):
 
 
 ###### Load/Save Parameters File ##########################################
+
+
 def load_parameters(
         parameters_file,
         default_parameters,
@@ -209,3 +236,4 @@ def save_parameters(
 
     with open(parameters_file, 'w') as f:
         jsondump(parameters, f)
+

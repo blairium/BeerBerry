@@ -95,8 +95,6 @@ class TestMethods(unittest.TestCase):
 
         # test is_y_valid ?
 
-        # test upper_envelope ?
-
         # test conc ?
 
     # **************** gui.py *******************
