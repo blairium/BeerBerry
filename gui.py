@@ -37,7 +37,7 @@ def create_main_window(parameters, password_attempt, PASSWORD):
         [
             sg.Column([[
                 sg.Column([[sg.Button('Record Data')]], element_justification='center',),
-                sg.Column([[sg.FileBrowse(button_text='Load Raw Data', key="Load Raw Data", enable_events=True)]]),
+                sg.Column([[sg.FileBrowse(button_text='Load Raw Data', key="Load Raw Data", enable_events=True, disabled=True)]]),
                 sg.Column([[sg.FileBrowse(button_text='Load Processed Data', key='Load Processed Data', enable_events=True)]]),
                 sg.Column([[sg.Button('Parameters', disabled=True)]]),
                 sg.Column([[sg.Button('Load', disabled=True)]]),

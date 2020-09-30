@@ -280,8 +280,7 @@ while True:
             if password_attempt == PASSWORD:
                 window.find_element('Authenticate').Update("Logout")
                 window.find_element('Load Raw Data').Update(disabled=False)
-                if fname is not None:
-                    window.find_element('Parameters').Update(disabled=False)
+                window.find_element('Parameters').Update(disabled=False)
                 if data is not None:
                     window.find_element('Save Raw Data').Update(disabled=False)
 
@@ -471,8 +470,6 @@ while True:
                 window2.Close()
 
                 if df_Post is not None:
-                    if password_attempt == PASSWORD:
-                        window.find_element('Save Raw Data').Update(disabled=False)
                     window.find_element('Save Processed Data').Update(disabled=False)
 
             elif len(df_Post.columns) == 2:
