@@ -129,6 +129,8 @@ while True:
         window.find_element('Load').Update(disabled=False)
 
     elif event == 'Harmonics' or event == 'r1' or event == 'r2' or event == 'r3' or event == 'r4' or event == 'r5':
+        window.find_element('Harmonic Container').Update(visible=True)
+
         if fig_canvas_agg:
             destroy_figure(fig_canvas_agg, toolbar)
 
@@ -145,17 +147,20 @@ while True:
         if window['r5'].get():
             plt.plot(t, harm_five, color='y')
 
-        fig.suptitle('Selected Harmonics', fontsize=16)
+        fig.suptitle('Harmonics', fontsize=16)
         fig.set_size_inches(9, 6)
         fig.set_dpi(100)
         fig_canvas_agg, toolbar = draw_figure(window['-CANVAS-'].TKCanvas, fig)
 
     elif event == 'Time Domain':
+        window.find_element('Harmonic Container').Update(visible=False)
+
         if fig_canvas_agg:
             destroy_figure(fig_canvas_agg, toolbar)
 
         window.find_element('Define baseline').Update(disabled=True)
         fig = matplotlib.figure.Figure(figsize=(9, 6), dpi=100)
+        fig.suptitle('Time Domain', fontsize=16)
         fig.add_subplot(
             111,
             xlabel='Time (s)',
@@ -167,12 +172,15 @@ while True:
         fig_canvas_agg, toolbar = draw_figure(window['-CANVAS-'].TKCanvas, fig)
 
     elif event == 'Freq Domain':
+        window.find_element('Harmonic Container').Update(visible=False)
+
         if fig_canvas_agg:
             destroy_figure(fig_canvas_agg, toolbar)
 
         window.find_element('Define baseline').Update(disabled=True)
 
         fig = matplotlib.figure.Figure(figsize=(9, 6), dpi=100)
+        fig.suptitle('Freq Domain', fontsize=16)
         fig.add_subplot(111,
                         xlim=(0,
                               int(parameters['freq_pert']) * 10),
@@ -184,12 +192,15 @@ while True:
         fig_canvas_agg, toolbar = draw_figure(window['-CANVAS-'].TKCanvas, fig)
 
     elif event == 'Cumulative Sum':
+        window.find_element('Harmonic Container').Update(visible=False)
+
         if fig_canvas_agg:
             destroy_figure(fig_canvas_agg, toolbar)
 
         window.find_element('Define baseline').Update(disabled=True)
 
         fig = matplotlib.figure.Figure(figsize=(9, 6), dpi=100)
+        fig.suptitle('Cumulative Sum', fontsize=16)
         fig.add_subplot(
             111,
             xlabel='Time (s)',
@@ -241,7 +252,9 @@ while True:
 
         if fname is not None:
             window.find_element('Filename').Update(fname)
+            window.find_element('File Container').Update(visible=True)
             window.find_element('Load').Update(disabled=False)
+
             data = file.readFile(fname, 0)
 
     elif event == 'Load Processed Data':
@@ -250,6 +263,7 @@ while True:
 
         if fname is not None:
             window.find_element('Filename').Update(fname)
+            window.find_element('File Container').Update(visible=True)
             window.find_element('Load').Update(disabled=False)
             df_Post = file.readFile(fname, 1)
 
@@ -400,18 +414,15 @@ while True:
                 fig.add_subplot(
                     111, xlabel='Time (s)', ylabel='Current (S.U)').plot(
                     t, harm_two, c='#40BAD2')
-                fig.suptitle('Selected Harmonics', fontsize=16)
+                fig.suptitle('Harmonics', fontsize=16)
                 fig_canvas_agg, toolbar = draw_figure(
                     window['-CANVAS-'].TKCanvas, fig)
 
                 window.find_element('Harmonics').Update(disabled=False)
                 window.find_element('Time Domain').Update(disabled=False)
-                window.find_element(
-                    'Freq Domain').Update(disabled=False)
-                window.find_element(
-                    'Cumulative Sum').Update(disabled=False)
-                window.find_element(
-                    'Envelope').Update(disabled=False)
+                window.find_element('Freq Domain').Update(disabled=False)
+                window.find_element('Cumulative Sum').Update(disabled=False)
+                window.find_element('Envelope').Update(disabled=False)
                 d = {
                     't': t,
                     'i': i,
@@ -426,6 +437,8 @@ while True:
                     'ienv_filtered': ienv_filtered
                 }
                 df_Post = pd.DataFrame(d)
+
+                window.find_element('Harmonic Container').Update(visible=True)
                 if df_Post is not None:
                     if password_attempt == PASSWORD:
                         window.find_element('Save Raw Data').Update(disabled=False)

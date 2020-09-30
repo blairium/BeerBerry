@@ -50,7 +50,7 @@ def create_main_window(parameters, password_attempt, PASSWORD):
         [
             sg.Column([
                 [TextLabel('File', 'center', None), sg.Input(key='Filename', disabled=True)]
-            ], justification='center')
+            ], key='File Container', justification='center', visible=False)
         ],
 
         # Row 3: graph controls, canvas and results
@@ -82,7 +82,7 @@ def create_main_window(parameters, password_attempt, PASSWORD):
                 sg.Checkbox('3rd Harmonic', enable_events=True, key='r3'),
                 sg.Checkbox('4th Harmonic', enable_events=True, key='r4'), 
                 sg.Checkbox('5th Harmonic', enable_events=True, key='r5')
-            ]], justification='center')
+            ]], key='Harmonic Container', justification='center', visible=False)
         ],
 
         # Row 5: define baseline, calculate result, save data, exit
