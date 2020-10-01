@@ -5,6 +5,7 @@ import maths
 
 import time
 import pyautogui as gui
+
 gui.FAILSAFE = False
 
 
@@ -30,34 +31,37 @@ class TestMethods(unittest.TestCase):
     # **************** file.py ******************
 
     # test read .bin file
-    # def test_binRead(self):
-    # data = file.binary_Read("UnitTest.bin")
-    # self.assertTrue(data is None)
+    def test_binRead(self):
+        data = file.binary_Read("test/UnitTest.bin")
+        self.assertTrue(not data is None)
 
-    # with self.assertRaises(OSError):
-    # file.binary_Read("UnitTest.bin")
+    def test_binReadException(self):
+        with self.assertRaises(OSError):
+            data = file.binary_Read("test/NotARealFile.bin")
 
     # test read .csv file
-    # def test_csvRead(self):
-    # data = file.binary_Read("UnitTest.csv")
-    # self.assertTrue(data is None)
+    def test_csvRead(self):
+        data = file.binary_Read("test/UnitTest.csv")
+        self.assertTrue(not data is None)
 
-    # with self.assertRaises(OSError):
-    # file.binary_Read("UnitTest.csv")
+    def test_csvReadException(self):
+        with self.assertRaises(OSError):
+            data = file.csv_Read("test/NotARealFile.csv")
 
     # test read .data file
-    # def test_dataRead(self):
-    # data = file.binary_Read("UnitTest.data")
-    # self.assertTrue(data is None)
+    def test_csvRead(self):
+        data = file.data_read("test/UnitTest.data")
+        self.assertTrue(not data is None)
 
-    # with self.assertRaises(OSError):
-    # file.binary_Read("UnitTest.data")
+    def test_csvReadException(self):
+        with self.assertRaises(OSError):
+            data = file.data_read("test/NotARealFile.data")
 
     # test read file 1
-    # def test_readFile1(self):
-    # post_calc = 1
-    # data = file.readFile("UnitTest.data", post_calc)
-    # self.assertEqual(data, None)
+    def test_readFile1(self):
+        post_calc = 1
+        data = file.readFile("test/unitTest.data", post_calc)
+        self.assertTrue(not data is None)
 
     # test read file 2
     def test_readFile2(self):
@@ -65,8 +69,9 @@ class TestMethods(unittest.TestCase):
         self.assertFalse(post_calc < 1)
         self.assertFalse(post_calc > 2)
         self.assertTrue(post_calc == 1 or post_calc == 2)
-        # with self.assertIsNone():
-        # data = file.readFile("UnitTest.data", post_calc)
+        post_calc = 1;
+        data = file.readFile("test/unitTest_Post.data", post_calc)
+        self.assertTrue(not data is None)
 
     # **************** maths.py *****************
 
@@ -119,7 +124,7 @@ class TestMethods(unittest.TestCase):
         gui.click()
 
         # screenWidth, screenHeight = gui.size()
-        #gui.moveTo(0, screenHeight)
+        # gui.moveTo(0, screenHeight)
         # gui.click()
 
         thisText = gui.locateOnScreen("test/m9jr7NQ.png")
