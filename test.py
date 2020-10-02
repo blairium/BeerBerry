@@ -69,7 +69,7 @@ class TestMethods(unittest.TestCase):
         self.assertFalse(post_calc < 1)
         self.assertFalse(post_calc > 2)
         self.assertTrue(post_calc == 1 or post_calc == 2)
-        post_calc = 1;
+        post_calc = 1
         data = file.readFile("test/unitTest_Post.data", post_calc)
         self.assertTrue(not data is None)
 
@@ -82,77 +82,27 @@ class TestMethods(unittest.TestCase):
 
         # test blanking_first_samples
         v, i = maths.blanking_first_samples(4000, v, i)
+        self.assertEqual(len(i), len(v))
 
         # test get_time_values
         f, t = maths.get_time_values(i, 44100)
+        self.assertEqual(len(f), len(t))
 
         # test get_ienv
         harmonic = maths.get_ienv(i, 60, 1, 10, 8000, 10, t)
+        self.assertTrue(not harmonic is None)
 
         # test magnitude_of_current
         Imag = maths.magnitude_of_current(i, i.size)
+        self.assertTrue(not Imag is None)
 
         # test cumulative_sum_ienv
         int_ienv = maths.cumulative_sum_ienv(harmonic)
+        self.assertTrue(not int_ienv is None)
 
         # test filter_ienv
         ienv_filtered = maths.filter_ienv(harmonic, 200)
-
-        # test is_y_valid ?
-
-        # test conc ?
-
-    # **************** gui.py *******************
-    def test_guiTest(self):
-        print("yes")
-
-        time.sleep(0.5)
-        gui.moveTo(1254, 205)
-        time.sleep(0.5)
-        gui.click()
-        time.sleep(0.5)
-        gui.write("100ppm.data")
-        time.sleep(0.5)
-        gui.moveTo(1022, 679)
-        time.sleep(0.5)
-        gui.click()
-        time.sleep(3)
-        gui.moveTo(1370, 165)
-        gui.click()
-        time.sleep(1)
-        gui.moveTo(1466, 207)
-        gui.click()
-
-        # screenWidth, screenHeight = gui.size()
-        # gui.moveTo(0, screenHeight)
-        # gui.click()
-
-        thisText = gui.locateOnScreen("test/m9jr7NQ.png")
-        self.assertTrue(not thisText is None)
-
-    def test_guiTest_login(self):
-        gui.moveTo(1546, 209)
-        gui.click()
-        gui.write("1245")
-        gui.moveTo(835, 598)
-        gui.click()
-        print("no")
-        thisText = gui.locateOnScreen("test/YNhrNcM.png")
-        self.assertTrue(thisText)
-
-    def test_guiTest_Harmonics(self):
-        gui.moveTo(519, 893)
-        gui.click()
-
-        gui.moveTo(707, 892)
-        gui.click()
-        gui.moveTo(895, 890)
-        gui.click()
-        gui.moveTo(1076, 889)
-        gui.click()
-        gui.moveTo(1256, 890)
-        gui.click()
-
+        self.assertTrue(not ienv_filtered is None)
 
 if __name__ == '__main__':
     unittest.main()
