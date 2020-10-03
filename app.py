@@ -129,31 +129,15 @@ while True:
         window.find_element('Load').Update(disabled=False)
 
     elif event == 'Harmonics' or event == 'r1' or event == 'r2' or event == 'r3' or event == 'r4' or event == 'r5':
-        window.find_element('Harmonic Container').Update(visible=True)
-
-        if fig_canvas_agg:
-            destroy_figure(fig_canvas_agg, toolbar)
-
-        fig = plt.figure()
-        window.find_element('Define baseline').Update(disabled=False)
-        if window['r1'].get():
-            plt.plot(t, harm_one, color='b')
-        if window['r2'].get():
-            plt.plot(t, harm_two, color='#40BAD3')
-        if window['r3'].get():
-            plt.plot(t, harm_three, color='orange')
-        if window['r4'].get():
-            plt.plot(t, harm_four, color='g')
-        if window['r5'].get():
-            plt.plot(t, harm_five, color='y')
-
-        fig.suptitle('Harmonics', fontsize=16)
-        fig.set_size_inches(9, 6)
-        fig.set_dpi(100)
-        fig_canvas_agg, toolbar = draw_figure(window['-CANVAS-'].TKCanvas, fig)
+        if (not xdata and not ydata):
+            fig_canvas_agg, toolbar = show_harmonics(fig_canvas_agg, toolbar)
+        else:
+            print('calc')
+            fig_canvas_agg, toolbar = calculate_results(fig_canvas_agg, toolbar)
+        
 
     elif event == 'Time Domain':
-        window.find_element('Harmonic Container').Update(visible=False)
+        disable_harmonics()
 
         if fig_canvas_agg:
             destroy_figure(fig_canvas_agg, toolbar)
@@ -172,7 +156,7 @@ while True:
         fig_canvas_agg, toolbar = draw_figure(window['-CANVAS-'].TKCanvas, fig)
 
     elif event == 'Freq Domain':
-        window.find_element('Harmonic Container').Update(visible=False)
+        disable_harmonics()
 
         if fig_canvas_agg:
             destroy_figure(fig_canvas_agg, toolbar)
@@ -192,7 +176,7 @@ while True:
         fig_canvas_agg, toolbar = draw_figure(window['-CANVAS-'].TKCanvas, fig)
 
     elif event == 'Cumulative Sum':
-        window.find_element('Harmonic Container').Update(visible=False)
+        disable_harmonics()
 
         if fig_canvas_agg:
             destroy_figure(fig_canvas_agg, toolbar)
@@ -209,6 +193,34 @@ while True:
             int_ienv,
             c='#40BAD2')
 
+        fig_canvas_agg, toolbar = draw_figure(window['-CANVAS-'].TKCanvas, fig)
+
+    elif event == 'Envelope':
+        enable_harmonics()
+
+        if fig_canvas_agg:
+            destroy_figure(fig_canvas_agg, toolbar)
+
+        fig = plt.figure()
+        if window['r1'].get():
+            envelope = pk.envelope(harm_one, deg=5, max_it=None, tol=1e-3)
+            plt.plot(t, envelope, color='b')
+        if window['r2'].get():
+            envelope = pk.envelope(harm_two, deg=5, max_it=None, tol=1e-3)
+            plt.plot(t, envelope, color='#40BAD3')
+        if window['r3'].get():
+            envelope = pk.envelope(harm_three, deg=5, max_it=None, tol=1e-3)
+            plt.plot(t, envelope, color='orange')
+        if window['r4'].get():
+            envelope = pk.envelope(harm_four, deg=5, max_it=100, tol=1e-3)
+            plt.plot(t, envelope, color='g')
+        if window['r5'].get():
+            envelope = pk.envelope(harm_five, deg=5, max_it=100, tol=1e-3)
+            plt.plot(t, envelope, color='y')
+
+        fig.suptitle('Envelope', fontsize=16)
+        fig.set_size_inches(9, 6)
+        fig.set_dpi(100)
         fig_canvas_agg, toolbar = draw_figure(window['-CANVAS-'].TKCanvas, fig)
 
 ###############################################################################
@@ -244,6 +256,8 @@ while True:
             window2.close()
             sg.PopupOK("Recording Complete")
             window.find_element('Load').Update(disabled=False)
+
+            event = 'Load'
 
     
     elif event == 'Load Raw Data':
@@ -332,6 +346,8 @@ while True:
         # adding time.sleep(length in Seconds) has been used to Simulate adding your script in between Bar Updates
         time.sleep(.5)
 
+        enable_harmonics()
+
         # if default radio button is clicked, returns true for precalc
         if TYPE is 'RAW':
             
@@ -399,30 +415,16 @@ while True:
                 ienv_filtered = maths.filter_ienv(
                     harm_two, 200)
 
-                window['r1'].update(value=False)
-                window['r2'].update(value=True)
-                window['r3'].update(value=False)
-                window['r4'].update(value=False)
-                window['r5'].update(value=False)
+                # open harmonic with 2nd selected
+                window.find_element("r2").Update(value=True)
+                fig_canvas_agg, toolbar = show_harmonics(fig_canvas_agg, toolbar)
 
-                if fig_canvas_agg:
-                    destroy_figure(fig_canvas_agg, toolbar)
-
-                fig = matplotlib.figure.Figure(
-                    figsize=(9, 6), dpi=100)
-                fig.add_subplot(
-                    111, xlabel='Time (s)', ylabel='Current (S.U)').plot(
-                    t, harm_two, c='#40BAD2')
-                fig.suptitle('Harmonics', fontsize=16)
-                fig_canvas_agg, toolbar = draw_figure(
-                    window['-CANVAS-'].TKCanvas, fig)
-
-                window.find_element('Graph Controls').Update(visible=True)
-                window.find_element('Harmonics').Update(disabled=False)
+                window.find_element('Harmonics').Update(disabled=False, value=True)
                 window.find_element('Time Domain').Update(disabled=False)
                 window.find_element('Freq Domain').Update(disabled=False)
                 window.find_element('Cumulative Sum').Update(disabled=False)
                 window.find_element('Envelope').Update(disabled=False)
+
                 d = {
                     't': t,
                     'i': i,
@@ -466,11 +468,16 @@ while True:
                 int_ienv = df_Post['int_ienv']
                 ienv_filtered = df_Post['ienv_filtered']
 
-                window.find_element('Graph Controls').Update(visible=True)
-                window.find_element('Harmonics').Update(disabled=False)
+                # open harmonic with 2nd selected
+                window.find_element("r2").Update(value=True)
+                fig_canvas_agg, toolbar = show_harmonics(fig_canvas_agg, toolbar)
+
+                window.find_element('Harmonics').Update(disabled=False, value=True)
                 window.find_element('Time Domain').Update(disabled=False)
                 window.find_element('Freq Domain').Update(disabled=False)
                 window.find_element('Cumulative Sum').Update(disabled=False)
+                # test
+                window.find_element('Envelope').Update(disabled=False)
 
                 time.sleep(0.1)
                 progress_bar.UpdateBar(1, 5)
@@ -492,37 +499,10 @@ while True:
             else:
                 sg.popup_error('Error: Incompatible Data File')
         
+        # disable load button
+        window.find_element("Load").Update(disabled=True)
+        
 
-
-
-
-
-
-    
-
-    elif event == 'Envelope':
-        fig = plt.figure()
-        if window['r1'].get():
-            envelope = pk.envelope(harm_one, deg=5, max_it=None, tol=1e-3)
-            plt.plot(t, envelope, color='b')
-        if window['r2'].get():
-            envelope = pk.envelope(harm_two, deg=5, max_it=None, tol=1e-3)
-            plt.plot(t, envelope, color='#40BAD3')
-        if window['r3'].get():
-            envelope = pk.envelope(harm_three, deg=5, max_it=None, tol=1e-3)
-            plt.plot(t, envelope, color='orange')
-        if window['r4'].get():
-            envelope = pk.envelope(harm_four, deg=5, max_it=100, tol=1e-3)
-            plt.plot(t, envelope, color='g')
-        if window['r5'].get():
-            envelope = pk.envelope(harm_five, deg=5, max_it=100, tol=1e-3)
-            plt.plot(t, envelope, color='y')
-
-        fig.suptitle('Envelope', fontsize=16)
-        fig.set_size_inches(9, 6)
-        fig.set_dpi(100)
-        destroy_figure(fig_canvas_agg, toolbar)
-        fig_canvas_agg, toolbar = draw_figure(window['-CANVAS-'].TKCanvas, fig)
     
 
     elif event == 'Define baseline':
@@ -533,6 +513,58 @@ while True:
         window.find_element('Calculate Result').Update(disabled=False)
 
     elif event == 'Calculate Result':
+        fig_canvas_agg, toolbar = calculate_results(fig_canvas_agg, toolbar)
+    
+    def disable_harmonics():
+        window.find_element("r1").Update(disabled=True)
+        window.find_element("r2").Update(disabled=True)
+        window.find_element("r3").Update(disabled=True)
+        window.find_element("r4").Update(disabled=True)
+        window.find_element("r5").Update(disabled=True)
+    
+    def enable_harmonics():
+        window.find_element("r1").Update(disabled=False)
+        window.find_element("r2").Update(disabled=False)
+        window.find_element("r3").Update(disabled=False)
+        window.find_element("r4").Update(disabled=False)
+        window.find_element("r5").Update(disabled=False)
+
+
+
+
+
+    def show_harmonics(fig_canvas_agg, toolbar):
+        enable_harmonics()
+
+        if fig_canvas_agg:
+            destroy_figure(fig_canvas_agg, toolbar)
+
+        fig = plt.figure()
+        window.find_element('Define baseline').Update(disabled=False)
+
+        if window['r1'].get():
+            plt.plot(t, harm_one, color='b')
+        if window['r2'].get():
+            plt.plot(t, harm_two, color='#40BAD3')
+        if window['r3'].get():
+            plt.plot(t, harm_three, color='orange')
+        if window['r4'].get():
+            plt.plot(t, harm_four, color='g')
+        if window['r5'].get():
+            plt.plot(t, harm_five, color='y')
+
+        fig.suptitle('Harmonics', fontsize=16)
+        fig.set_size_inches(9, 6)
+        fig.set_dpi(100)
+
+        fig_canvas_agg, toolbar = draw_figure(window['-CANVAS-'].TKCanvas, fig)
+        return fig_canvas_agg, toolbar
+    
+
+    
+    def calculate_results(fig_canvas_agg, toolbar):
+        enable_harmonics()
+
         fig = plt.figure()
         if window['r1'].get():
             plt.plot(t, harm_one, color='b')
@@ -602,6 +634,14 @@ while True:
         destroy_figure(fig_canvas_agg, toolbar)
         fig_canvas_agg, toolbar = draw_figure(window['-CANVAS-'].TKCanvas, fig)
 
-        window.find_element('Results').Update(visible = True)
+        # window.find_element('Results').Update(visible = True)
+        window.find_element('Envelope').Update(disabled=False)
+        window.find_element('PPM').Update('5 ppm free So2. Peak Area = 50', text_color='Green')
+
+        # disable calc button
+        window.find_element('Calculate Result').Update(disabled=True)
+        window.find_element('Define baseline').Update(disabled=False)
+
+        return fig_canvas_agg, toolbar
 
 window.close()
