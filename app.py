@@ -134,7 +134,7 @@ while True:
         else:
             print('calc')
             fig_canvas_agg, toolbar = calculate_results(fig_canvas_agg, toolbar)
-        
+
 
     elif event == 'Time Domain':
         disable_harmonics()
@@ -259,7 +259,7 @@ while True:
 
             event = 'Load'
 
-    
+
     elif event == 'Load Raw Data':
         TYPE = 'RAW'
         fname = values['Load Raw Data']
@@ -324,7 +324,7 @@ while True:
                 values,
                 PARAMETER_KEYS_TO_ELEMENT_KEYS)
             sg.popup('Parameters saved')
-            
+
 
     #################################################################################
 
@@ -350,7 +350,7 @@ while True:
 
         # if default radio button is clicked, returns true for precalc
         if TYPE is 'RAW':
-            
+
             if len(data.columns) == 2:
                 # Column 1: Voltage
                 v = data.iloc[:, 0].values
@@ -452,7 +452,7 @@ while True:
             else:
                 sg.popup_error('Error: Incompatible Data File')
         else:
-            
+
             print(df_Post)
             print(len(df_Post.columns))
             if len(df_Post.columns) == 11:
@@ -495,15 +495,15 @@ while True:
 
             elif len(df_Post.columns) == 2:
                 sg.popup_error('Error: Select Raw Data to Load Raw Data files')
-                
+
             else:
                 sg.popup_error('Error: Incompatible Data File')
-        
+
         # disable load button
         window.find_element("Load").Update(disabled=True)
-        
 
-    
+
+
 
     elif event == 'Define baseline':
         if (len(xdata) >= 2):
@@ -514,14 +514,14 @@ while True:
 
     elif event == 'Calculate Result':
         fig_canvas_agg, toolbar = calculate_results(fig_canvas_agg, toolbar)
-    
+
     def disable_harmonics():
         window.find_element("r1").Update(disabled=True)
         window.find_element("r2").Update(disabled=True)
         window.find_element("r3").Update(disabled=True)
         window.find_element("r4").Update(disabled=True)
         window.find_element("r5").Update(disabled=True)
-    
+
     def enable_harmonics():
         window.find_element("r1").Update(disabled=False)
         window.find_element("r2").Update(disabled=False)
@@ -559,9 +559,9 @@ while True:
 
         fig_canvas_agg, toolbar = draw_figure(window['-CANVAS-'].TKCanvas, fig)
         return fig_canvas_agg, toolbar
-    
 
-    
+
+
     def calculate_results(fig_canvas_agg, toolbar):
         enable_harmonics()
 
@@ -590,9 +590,8 @@ while True:
                 plt.plot(t, curve_2, color='#40BAD3')
                 plt.plot([t[index_of_peak], t[index_of_peak]], [
                     curve_2[index_of_peak], curve_1[index_of_peak]], color='r')
-
                 plt.fill_between(t, curve_1, curve_2, alpha=0.3)
-                print("Harm Two")
+            print("Harm Two")
         if window['r3'].get():
             plt.plot(t, harm_three, color='orange')
             if maths.is_y_valid(t, harm_three, xdata, ydata):
