@@ -12,6 +12,14 @@ from matplotlib.widgets import PolygonSelector
 from matplotlib.backends.backend_tkagg import (
     FigureCanvasTkAgg, NavigationToolbar2Tk)
 
+"""
+This file contains all of the gui related functions for the app.
+
+Last Updated: 04/10/2020
+Author: Michael Graps
+Contributors: Joshua Failla, Andrew Durnford, Nathan Gillbanks
+"""
+
 # use tkinter
 matplotlib.use('TkAgg')
 

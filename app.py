@@ -17,6 +17,15 @@ from matplotlib.widgets import PolygonSelector
 from matplotlib.backends.backend_tkagg import (
     FigureCanvasTkAgg, NavigationToolbar2Tk)
 
+"""
+This file contains the main processes and functions of the app.
+Graphing functionality is also contained here.
+
+Last Updated: 04/10/2020
+Author: Joshua Failla
+Contributors: Michael Graps, Andrew Durnford, Nathan Gillbanks
+"""
+
 # local modules
 import file
 import maths
@@ -170,6 +179,8 @@ def show_harmonics():
         fig.suptitle('Harmonics', fontsize=16)
         fig.set_size_inches(9, 6)
         fig.set_dpi(100)
+        plt.xlabel('Time (s)')
+        plt.ylabel('Current (S.U)')
 
         fig_canvas_agg, toolbar = draw_figure(window['-CANVAS-'].TKCanvas, fig)
 
@@ -207,6 +218,8 @@ def show_envelope():
     fig.suptitle('Envelope', fontsize=16)
     fig.set_size_inches(9, 6)
     fig.set_dpi(100)
+    plt.xlabel('Time (s)')
+    plt.ylabel('Current (S.U)')
     fig_canvas_agg, toolbar = draw_figure(window['-CANVAS-'].TKCanvas, fig)
 
 def start():
@@ -398,7 +411,7 @@ def start():
 
             elif len(df_Post.columns) == 2:
                 sg.popup_error('Error: Select Raw Data to Load Raw Data files')
-                
+
             else:
                 sg.popup_error('Error: Incompatible Data File')
         
@@ -444,7 +457,7 @@ while True:
         fig.add_subplot(
             111,
             xlabel='Time (s)',
-            ylabel='Current').plot(
+            ylabel='Current (S.U)').plot(
             t,
             i,
             c='#40BAD2')
@@ -464,7 +477,7 @@ while True:
         fig.add_subplot(111,
                         xlim=(0,
                               int(parameters['freq_pert']) * 10),
-                        xlabel='frequency',
+                        xlabel='Frequency (hz)',
                         ylabel='Magnitude of Current').plot(f,
                                                             Imag,
                                                             c='#40BAD2')
@@ -650,10 +663,8 @@ while True:
                 plt.plot(t, curve_2, color='#40BAD3')
                 plt.plot([t[index_of_peak], t[index_of_peak]], [
                     curve_2[index_of_peak], curve_1[index_of_peak]], color='r')
-
                 plt.fill_between(t, curve_1, curve_2, alpha=0.3)
 
-                print(area_between_curves)
                 area = area_between_curves
                 height = peak_height
 
@@ -695,7 +706,6 @@ while True:
         fig.suptitle('Harmonics', fontsize=16)
         fig.set_size_inches(9, 6)
         fig.set_dpi(100)
-        print("Here")
         destroy_figure(fig_canvas_agg, toolbar)
         fig_canvas_agg, toolbar = draw_figure(window['-CANVAS-'].TKCanvas, fig)
 
@@ -706,15 +716,18 @@ while True:
         ret = ''
 
         # results
-        ppm, high = maths.conc(float(parameters['a']), float(parameters['b']), float(parameters['c']), area)
+        ppm = maths.conc(float(parameters['a']), float(parameters['b']), float(parameters['c']), area)
 
-        if high is True:
+        if ppm < 0:
             window.find_element('PPM').Update(text_color=RED)
             ret = 'Concentration too high, out of range of calibration'
         else:
             window.find_element('PPM').Update(text_color=GREEN)
             ret = str(ppm) + 'ppm free SO2'
             ret += '. Peak area ' + str(area)
+
+            # move peak height to graph
+            # move peak area to graph
 
             if password_attempt == PASSWORD:
                 ret += '. Peak height ' + str(height)

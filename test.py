@@ -1,32 +1,19 @@
 import unittest
+import maths
+import time
 
 import file
-import maths
 
-import time
-import pyautogui as gui
+"""
+This file contains all of the unit tests for functions of the app.
+Tests cover file.py and maths.py.
 
-gui.FAILSAFE = False
-
+Last Updated: 02/10/2020
+Author: Nathan Gillbanks
+Contributors: Andrew Durnford
+"""
 
 class TestMethods(unittest.TestCase):
-
-    # example test 1
-    def test_upper(self):
-        self.assertEqual('foo'.upper(), 'FOO')
-
-    # example test 2
-    def test_isupper(self):
-        self.assertTrue('FOO'.isupper())
-        self.assertFalse('Foo'.isupper())
-
-    # example test 3
-    def test_split(self):
-        s = 'hello world'
-        self.assertEqual(s.split(), ['hello', 'world'])
-        # check that s.split fails when the separator is not a string
-        with self.assertRaises(TypeError):
-            s.split(2)
 
     # **************** file.py ******************
 

@@ -1,3 +1,11 @@
+"""
+This file contains all of the math related functions for the app.
+The calculation for processing the data is contained in get_ienv.
+
+Last Updated: 04/10/2020
+Author: Joshua Failla
+Contributors: Michael Graps
+"""
 import time
 
 import numpy as np
@@ -17,6 +25,7 @@ import ntpath
 
 
 def blanking_first_samples(blank_samples, v, i):
+    """Blanks samples to clean the data"""
     for x in range(0, blank_samples):
         v[x] = 0
         i[x] = 0
@@ -24,23 +33,31 @@ def blanking_first_samples(blank_samples, v, i):
 
 
 def magnitude_of_current(i, nod):
-    # Magnitude of Current (Absolute value of fourier transform)
+    """Computes Magnitude of Current (Absolute value of fourier transform)"""
     Imag = (np.absolute(np.fft.fft(i) / nod * 2))
     return Imag
-
+    
 
 def get_ienv(i, freq_pert, harm_num, harm_bandwith, sample_rate, lpf_bw, t):
+    """The main computational function
+    Mirrors the functionality of the AC_Volt_modified_V5.m file.
+
+    Keyword arguments:
+    i -- The raw data of the current
+    freq_pert -- Frequency perturbation
+    harm_num -- Harmonic number
+    lpf_bw -- Low pass filter bandwidth
+    t -- Time
+    """
     # Filter size
     n = 2046
     nod = i.size
     # Low pass cut off
     fc = freq_pert * harm_num
-    bw = harm_bandwith
-
     fs2 = sample_rate / 2
     # Full ADC rate
-    if fc == bw:
-        ff = [0.0, ((fc + bw) / fs2), ((fc + bw) / fs2 * 1.01), 1.0]
+    if fc == harm_bandwith:
+        ff = [0.0, ((fc + harm_bandwith) / fs2), ((fc + harm_bandwith) / fs2 * 1.01), 1.0]
         m = [0, 1, 0, 0]
         n_freq_in = int(2**(np.ceil(np.log(n) / np.log(2))))
         b = sp.signal.firwin2(
@@ -53,10 +70,10 @@ def get_ienv(i, freq_pert, harm_num, harm_bandwith, sample_rate, lpf_bw, t):
     else:
         ff = [
             0.0,
-            ((fc - bw) / fs2 * 0.99),
-            ((fc - bw) / fs2),
-            ((fc + bw) / fs2),
-            ((fc + bw) / fs2 * 1.01),
+            ((fc - harm_bandwith) / fs2 * 0.99),
+            ((fc - harm_bandwith) / fs2),
+            ((fc + harm_bandwith) / fs2),
+            ((fc + harm_bandwith) / fs2 * 1.01),
             1.0]
         m = [0, 0, 1, 1, 0, 0]
         n_freq_in = int(2**(np.ceil(np.log(n) / np.log(2))))
@@ -108,12 +125,13 @@ def get_ienv(i, freq_pert, harm_num, harm_bandwith, sample_rate, lpf_bw, t):
 
 
 def cumulative_sum_ienv(ienv):
+    """Calculates the cumulative sum of the parsed array"""
     int_ienv = np.cumsum(ienv)
     return int_ienv
 
 
 def filter_ienv(ienv, filter_length):
-    #filter_length = 200
+    """Uses a digital zero-phased filter on the parsed array (ienv)"""
     ienv_filtered = np.copy(ienv)
     ienv_filtered = sp.signal.filtfilt(
         np.ones(filter_length) / filter_length, 1, ienv_filtered)
@@ -121,6 +139,7 @@ def filter_ienv(ienv, filter_length):
 
 
 def get_time_values(amps, sample_rate):
+    """Evaluates the amount of time the test took. Found by no. of data points/sample rate"""
     dt = 1 / float(sample_rate)
     nod = amps.size
     df = sample_rate / nod
@@ -131,17 +150,30 @@ def get_time_values(amps, sample_rate):
 
 
 def map_baseline(t, ienv, xdata, ydata):
+    """Computes and returns the peak_height, the curve including the baseline (curve_2),
+        the index of the peak and the difference between the curves.
+
+    Keyword arguments:
+    t -- time
+    ienv -- Processed harmonic data
+    xdata -- 2 size array containing the first and last user-selected x values
+    ydata -- 2 size array containing the first and last user-selected y values
+    """
+
+    # This segment identifies at which index the clicked position is closest to
+    # due to the fact that the clicked position could not be an exact position.
+    # Making an array of size t that is populated with the xdata[0] value
     copy_t = np.full(np.size(t), xdata[0])
     copy_t = copy_t - t
     copy_t = np.abs(copy_t)
     x_start = np.where(copy_t == (np.min(np.abs(copy_t))))
-    xdata[0] = x_start[0][0]
+    xdata[0] = x_start[0][0] # The starting x index is held within xdata[0]
 
     copy_t = np.full(np.size(t), xdata[1])
     copy_t = copy_t - t
     copy_t = np.abs(copy_t)
     x_end = np.where(copy_t == (np.min(np.abs(copy_t))))
-    xdata[1] = x_end[0][0]
+    xdata[1] = x_end[0][0] # The ending x index is held within xdata[0]
 
     xdata = [int(i) for i in xdata]
 
@@ -155,9 +187,8 @@ def map_baseline(t, ienv, xdata, ydata):
         ydata[0], ydata[1], xdata[1] - xdata[0])
     diff_curves = curve_1 - curve_2
 
-    print('curve: ' + str(area_under_curve))
-    print('baseline: ' + str(area_under_baseline))
-    print('dif curves: ' + str(diff_curves))
+    print('area_under_curve: ' + str(area_under_curve))
+    print('area_under_baseline: ' + str(area_under_baseline))
     print('area: ' + str(area_between_curves))
 
     peak_height = np.max(diff_curves)
@@ -168,7 +199,20 @@ def map_baseline(t, ienv, xdata, ydata):
 
 
 def is_y_valid(t, ienv, xdata, ydata):
+    """Checks to see if the baseline was drawn above or below the graph.
+    If the baseline is drawn entirely above the graph then it is not valid for that
+    graph and thus will not be drawn.
+
+    Keyword arguments:
+    t -- time
+    ienv -- Processed harmonic data
+    xdata -- 2 size array containing the first and last user-selected x values
+    ydata -- 2 size array containing the first and last user-selected y values
+    """
     print("Checking if y is valid")
+
+    # This segment identifies at which index the clicked position is closest to
+    # due to the fact that the clicked position could not be an exact position.
     copy_t = np.full(np.size(t), xdata[0])
     copy_t = copy_t - t
     copy_t = np.abs(copy_t)
@@ -183,6 +227,12 @@ def is_y_valid(t, ienv, xdata, ydata):
     to_compare = np.linspace(
         ydata[0], ydata[1], x_end[0][0] - x_start[0][0])
     valid = -1
+
+    # This statement checks if the subset is a Series data type
+    # which occurs when the post calculated data is loaded
+    # It pulls just the values which are then referenced properly from 0
+    if isinstance(subset, pd.core.series.Series):
+        subset = subset.values
     for i in range(x_end[0][0] - x_start[0][0]):
         if subset[i] - to_compare[i] > valid:
             valid = subset[i] - to_compare[i]
@@ -192,6 +242,9 @@ def is_y_valid(t, ienv, xdata, ydata):
 
 
 def excitation(exc_parameters):
+    """Creates excitation file based off of the parameters parsed.
+    Described below.
+    """
     # settings
     # This is as a fraction of the maximum amplitude 1 = 2.96 V
     amplitude = float(exc_parameters['amplitude'])
@@ -263,17 +316,18 @@ def excitation(exc_parameters):
     return df
 
 
-def conc(a, b, c, value):
-    tmp = (-b + math.sqrt(math.pow(b,2-4*a*(c-value))))/(2*a)
-    # value = area
+def conc(a, b, c, area):
+    """Computes concentration result  using the below equation.
+    conc = (-b + sqrt(b^2-4*a*(c-value)))/(2*a)
+    Keyword arguments:
+    a, b, c -- calibration constants
+    area -- Peak Area from baseline
+    """
+    conc = (-b + np.sqrt(b**(2-4*a*(c-area))))/(2*a)
 
-    #tmp = 2 * a
+    print('conc: ' + str(conc))
 
-    high = False
+    if conc > (-b/(2*a)) * 0.85:
+        return -1
 
-    if tmp > (-b / (2 * a)) * 0.85:
-        high = True
-
-    # if conc > (-b/2a) * 0.85
-    # High concentration, out of calibration range
-    return tmp, high
+    return conc

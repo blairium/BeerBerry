@@ -6,6 +6,14 @@ import numpy as np
 import matplotlib.pyplot as plt
 import PySimpleGUI as sg
 
+"""
+This file contains all of the file i/o related functions for the app.
+
+Last Updated: 04/10/2020
+Author: Nathan Gillbanks
+Contributors: Michael Graps
+"""
+
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
 # use tkinter
