@@ -108,6 +108,7 @@ GREEN = '#32cd32'
 GREY = '#adadad'
 TEAL = '#40bad2'
 RED = '#ff3232'
+BLUE = '#1f75fe'
 
 # Initialising empty variables so they can remain within the whole program
 # scope
@@ -242,6 +243,8 @@ def start():
         global harm_three 
         global harm_four 
         global harm_five
+
+        window.find_element('PPM').Update('')
 
         # this is for the Layout Design of the Window
         layout2 = [[sg.Text('Loading')],
@@ -497,7 +500,7 @@ while True:
         fig.add_subplot(
             111,
             xlabel='Time (s)',
-            ylabel='int_ienv').plot(
+            ylabel='Ienv').plot(
             t,
             int_ienv,
             c='#40BAD2')
@@ -644,7 +647,7 @@ while True:
             if maths.is_y_valid(t, harm_one, xdata, ydata):
                 copy_x_data = np.copy(xdata)
                 copy_y_data = np.copy(ydata)
-                curve_1, curve_2, peak_height, index_of_peak, diff_curves = maths.map_baseline(
+                curve_1, curve_2, peak_height, index_of_peak, diff_curves, area_between_curves = maths.map_baseline(
                     t, harm_one, copy_x_data, copy_y_data)
                 plt.plot(t, curve_2, color='b')
                 plt.plot([t[index_of_peak], t[index_of_peak]], [
@@ -662,8 +665,9 @@ while True:
                     t, harm_two, copy_x_data, copy_y_data)
                 plt.plot(t, curve_2, color='#40BAD3')
                 plt.plot([t[index_of_peak], t[index_of_peak]], [
-                    curve_2[index_of_peak], curve_1[index_of_peak]], color='r')
-                plt.fill_between(t, curve_1, curve_2, alpha=0.3)
+                    curve_2[index_of_peak], curve_1[index_of_peak]], color='r', label='Height: ' + str(peak_height))
+                plt.fill_between(t, curve_1, curve_2, alpha=0.3, label='Area: ' + str(area_between_curves))
+                plt.legend(loc="upper left")
 
                 area = area_between_curves
                 height = peak_height
@@ -674,7 +678,7 @@ while True:
             if maths.is_y_valid(t, harm_three, xdata, ydata):
                 copy_x_data = np.copy(xdata)
                 copy_y_data = np.copy(ydata)
-                curve_1, curve_2, peak_height, index_of_peak, diff_curves = maths.map_baseline(
+                curve_1, curve_2, peak_height, index_of_peak, diff_curves, area_between_curves = maths.map_baseline(
                     t, harm_three, copy_x_data, copy_y_data)
                 plt.plot(t, curve_2, color='orange')
                 plt.plot([t[index_of_peak], t[index_of_peak]], [
@@ -685,7 +689,7 @@ while True:
             if maths.is_y_valid(t, harm_four, xdata, ydata):
                 copy_x_data = np.copy(xdata)
                 copy_y_data = np.copy(ydata)
-                curve_1, curve_2, peak_height, index_of_peak, diff_curves = maths.map_baseline(
+                curve_1, curve_2, peak_height, index_of_peak, diff_curves, area_between_curves = maths.map_baseline(
                     t, harm_four, copy_x_data, copy_y_data)
                 plt.plot(t, curve_2, color='g')
                 plt.plot([t[index_of_peak], t[index_of_peak]], [
@@ -696,7 +700,7 @@ while True:
             if maths.is_y_valid(t, harm_five, xdata, ydata):
                 copy_x_data = np.copy(xdata)
                 copy_y_data = np.copy(ydata)
-                curve_1, curve_2, peak_height, index_of_peak, diff_curves = maths.map_baseline(
+                curve_1, curve_2, peak_height, index_of_peak, diff_curves, area_between_curves = maths.map_baseline(
                     t, harm_five, copy_x_data, copy_y_data)
                 plt.plot(t, curve_2, color='y')
                 plt.plot([t[index_of_peak], t[index_of_peak]], [
@@ -733,25 +737,48 @@ while True:
                 #ret += '. Peak height ' + str(height)
         
         window.find_element('PPM').Update(ret)
+        window.find_element('Define baseline').Update(disabled=False)
 
 
     def onclick(event):
         global fig_canvas_agg
         global toolbar
+        global window
+        
+        tmp = 'Please select second point on the graph'
+        window.find_element('PPM').Update(tmp, text_color=BLUE)
 
         if (len(xdata) < 2):
             xdata.append(event.xdata)
             ydata.append(event.ydata)
+            
 
             if (len(xdata) == 2):
+                # enable graphs
+                window.find_element('Harmonics').Update(disabled=False)
+                window.find_element('Time Domain').Update(disabled=False)
+                window.find_element('Freq Domain').Update(disabled=False)
+                window.find_element('Cumulative Sum').Update(disabled=False)
+                window.find_element('Envelope').Update(disabled=False)
                 calculate_results()
 
     if event == 'Define baseline':
+        window.find_element('Define baseline').Update(disabled=True)
+
+        # disable graphs
+        window.find_element('Harmonics').Update(disabled=True)
+        window.find_element('Time Domain').Update(disabled=True)
+        window.find_element('Freq Domain').Update(disabled=True)
+        window.find_element('Cumulative Sum').Update(disabled=True)
+        window.find_element('Envelope').Update(disabled=True)
+
+        tmp = 'Please select first point on the graph'
+        window.find_element('PPM').Update(tmp, text_color=BLUE)
         if (len(xdata) >= 2):
             xdata = []
             ydata = []
         clickEvent = fig_canvas_agg.mpl_connect('button_press_event', onclick)
-    
+
 
     
     
