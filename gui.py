@@ -22,7 +22,7 @@ def TextLabel(text, justification = 'r', width = 30):
         return sg.Text(text + ':', justification=justification, size=(width, 1))
 
 def create_main_window(parameters, password_attempt, PASSWORD):
-    sg.theme(parameters['theme'])  # sets colour theme of window
+    sg.theme('BeerBerry')  # sets colour theme of window
     radio_choices = [
         '1st Harmonic',
         '2nd Harmonic',
@@ -38,10 +38,8 @@ def create_main_window(parameters, password_attempt, PASSWORD):
             [
                 sg.Column([[
                     sg.Column([[sg.Button('Record Data')]], element_justification='center',),
-                    sg.Column([[sg.FileBrowse(button_text='Load Raw Data', key="Load Raw Data", enable_events=True, disabled=True)]]),
-                    sg.Column([[sg.FileBrowse(button_text='Load Processed Data', key='Load Processed Data', enable_events=True)]]),
-                    sg.Column([[sg.Button('Parameters', disabled=True)]]),
-                    sg.Column([[sg.Button('Load', disabled=True)]]),
+                    sg.Column([[sg.FileBrowse(button_text='Select Data File', key="Select Data File", enable_events=True)]]),
+                    sg.Column([[sg.Button('Parameters', disabled=True, button_color=('white','#adadad'))]]),
                     sg.Column([[sg.Button('Login', key='Authenticate')]]),
                     
                 ]], justification='center')
@@ -52,6 +50,16 @@ def create_main_window(parameters, password_attempt, PASSWORD):
                 sg.Column([
                     [TextLabel('File', 'center', None), sg.Input(key='Filename', disabled=True)]
                 ], key='File Container', justification='center')
+            ],
+
+            # hidden: baseline coords
+            [
+                sg.Column([
+                    [sg.Input(key="x1")],
+                    [sg.Input(key="y1")],
+                    [sg.Input(key="x2")],
+                    [sg.Input(key="y2")],
+                ], visible=False)
             ],
 
             # Row 3: graph controls, canvas and results
@@ -98,13 +106,12 @@ def create_main_window(parameters, password_attempt, PASSWORD):
 
             # Row 6: define baseline, calculate result, save data, exit
             [
-                sg.Button('Define baseline', disabled=True, auto_size_button=True), 
-                sg.Button('Calculate Result', disabled=True, auto_size_button=True),
+                sg.Button('Define Baseline', key='Define baseline', disabled=True, auto_size_button=True), 
                 sg.FileSaveAs(button_text='Save Raw Data', key='Save Raw Data', target='Save Raw Data', disabled=True, enable_events=True, file_types=(('DATA', '.data'), ('BIN', '.bin'), ('CSV', '.csv'), ('All Files', '*.*')), auto_size_button=True),
                 sg.FileSaveAs(button_text='Save Processed Data', key='Save Processed Data', disabled=True, target='Save Processed Data', enable_events=True, file_types=(('DATA', '.data'), ('BIN', '.bin'), ('CSV', '.csv'), ('All Files', '*.*')), auto_size_button=True),
                 sg.Button('Exit', auto_size_button=True)
             ]
-        ], element_justification='center', justification='center', scrollable=True, size=(1045, 930))]]
+        ], element_justification='center', justification='center', scrollable=True, size=(935, 930))]]
 
     # return window with layout
     return sg.Window(
@@ -119,19 +126,19 @@ def create_main_window(parameters, password_attempt, PASSWORD):
 def create_parameters_window(
         parameters,
         PARAMETER_KEYS_TO_ELEMENT_KEYS):
-    sg.theme(parameters['theme'])
+
 
     def TextLabel(text):
         return sg.Text(text + ':', justification='r', size=(30, 1))
 
     layout = [[sg.Text('Parameters', justification='center', font='Helvetica 18')],
-              [TextLabel('Frequency perturbation'),
-               sg.Input(key='-FREQ PERT-')],
+              [TextLabel('Frequency perturbation'), sg.Input(key='-FREQ PERT-')],
               [TextLabel('Band-width window'), sg.Input(key='-BW WINDOW-')],
               [TextLabel('Env lpf bandwidth'), sg.Input(key='-LPF BW-')],
               [TextLabel('Sample Rate'), sg.Input(key='-SAMPLE RATE-')],
-              [TextLabel('Theme'), sg.Combo(
-                  sg.theme_list(), size=(20, 20), key='-THEME-')],
+              [TextLabel('Callibration A'), sg.Input(key='-A-')],
+              [TextLabel('Callibration B'), sg.Input(key='-B-')],
+              [TextLabel('Callibration C'), sg.Input(key='-C-')],
               [sg.Button('Save'), sg.Button('Exit')]]
 
     window = sg.Window(

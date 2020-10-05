@@ -7,6 +7,7 @@ import matplotlib.pyplot as plt
 import sounddevice as sd
 import scipy.io.wavfile as wf
 import os
+import math
 
 from scipy import signal
 from datetime import datetime
@@ -147,18 +148,23 @@ def map_baseline(t, ienv, xdata, ydata):
     area_under_curve = np.trapz(
         t[xdata[0]:xdata[1]], ienv[xdata[0]:xdata[1]])
     area_under_baseline = np.trapz(xdata, ydata)
-    area_between_curves = area_under_curve - area_under_curve
+    area_between_curves = area_under_curve - area_under_baseline
     curve_1 = np.copy(ienv)
     curve_2 = np.copy(ienv)
     curve_2[xdata[0]:xdata[1]] = np.linspace(
         ydata[0], ydata[1], xdata[1] - xdata[0])
     diff_curves = curve_1 - curve_2
 
+    print('curve: ' + str(area_under_curve))
+    print('baseline: ' + str(area_under_baseline))
+    print('dif curves: ' + str(diff_curves))
+    print('area: ' + str(area_between_curves))
+
     peak_height = np.max(diff_curves)
-    print(peak_height)
+    #print(peak_height)
     index_of_peak = np.where(peak_height == diff_curves)[0][0]
 
-    return curve_1, curve_2, peak_height, index_of_peak, diff_curves
+    return curve_1, curve_2, peak_height, index_of_peak, diff_curves, area_between_curves
 
 
 def is_y_valid(t, ienv, xdata, ydata):
@@ -257,10 +263,17 @@ def excitation(exc_parameters):
     return df
 
 
-def conc(a, b, c, area):
-    # conc = (-b + sqrt(b^2-4*a*(c-value)))/(2*a)
+def conc(a, b, c, value):
+    tmp = (-b + math.sqrt(math.pow(b,2-4*a*(c-value))))/(2*a)
     # value = area
+
+    #tmp = 2 * a
+
+    high = False
+
+    if tmp > (-b / (2 * a)) * 0.85:
+        high = True
 
     # if conc > (-b/2a) * 0.85
     # High concentration, out of calibration range
-    return 0
+    return tmp, high
