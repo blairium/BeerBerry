@@ -159,7 +159,9 @@ def map_baseline(t, ienv, xdata, ydata):
     xdata -- 2 size array containing the first and last user-selected x values
     ydata -- 2 size array containing the first and last user-selected y values
     """
-
+    Ax = np.copy(xdata)
+    Ay = np.copy(ydata)
+    
     # This segment identifies at which index the clicked position is closest to
     # due to the fact that the clicked position could not be an exact position.
     # Making an array of size t that is populated with the xdata[0] value
@@ -173,23 +175,31 @@ def map_baseline(t, ienv, xdata, ydata):
     copy_t = copy_t - t
     copy_t = np.abs(copy_t)
     x_end = np.where(copy_t == (np.min(np.abs(copy_t))))
-    xdata[1] = x_end[0][0] # The ending x index is held within xdata[0]
+    xdata[1] = x_end[0][0] # The ending x index is held within xdata[1]
 
     xdata = [int(i) for i in xdata]
 
+   
     area_under_curve = np.trapz(
         t[xdata[0]:xdata[1]], ienv[xdata[0]:xdata[1]])
-    area_under_baseline = np.trapz(xdata, ydata)
-    area_between_curves = area_under_curve - area_under_baseline
     curve_1 = np.copy(ienv)
     curve_2 = np.copy(ienv)
     curve_2[xdata[0]:xdata[1]] = np.linspace(
         ydata[0], ydata[1], xdata[1] - xdata[0])
     diff_curves = curve_1 - curve_2
 
+    area_under_baseline = np.trapz(t[xdata[0]:xdata[1]],curve_2[xdata[0]:xdata[1]])
+    area_between_curves = area_under_curve - area_under_baseline
+
     print('area_under_curve: ' + str(area_under_curve))
     print('area_under_baseline: ' + str(area_under_baseline))
     print('area: ' + str(area_between_curves))
+
+    diff = 0
+    for x in diff_curves:
+        diff += x
+    
+    print(diff)
 
     peak_height = np.max(diff_curves)
     #print(peak_height)

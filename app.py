@@ -724,13 +724,13 @@ while True:
         else:
             window.find_element('PPM').Update(text_color=GREEN)
             ret = str(ppm) + 'ppm free SO2'
-            ret += '. Peak area ' + str(area)
+            #ret += '. Peak area ' + str(area)
 
             # move peak height to graph
             # move peak area to graph
 
-            if password_attempt == PASSWORD:
-                ret += '. Peak height ' + str(height)
+            #if password_attempt == PASSWORD:
+                #ret += '. Peak height ' + str(height)
         
         window.find_element('PPM').Update(ret)
 
