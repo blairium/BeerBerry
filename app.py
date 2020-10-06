@@ -200,6 +200,10 @@ def show_envelope():
         destroy_figure(fig_canvas_agg, toolbar)
 
     fig = plt.figure()
+
+    fig.clf()
+
+    print(plt.xlim())
     
     if window['r1'].get():
         envelope = pk.envelope(harm_one, deg=5, max_it=None, tol=1e-3)
@@ -470,23 +474,32 @@ while True:
 
     elif event == 'Freq Domain':
         disable_harmonics()
-
+        
         if fig_canvas_agg:
             destroy_figure(fig_canvas_agg, toolbar)
-
+        
         window.find_element('Define baseline').Update(disabled=True)
 
+        # split data to limit
+        limit = int(parameters['freq_pert']) * 100
+        newF = np.copy(f[:limit])
+        newImag = np.copy(Imag[:limit])
+        
         fig = matplotlib.figure.Figure(figsize=(9, 6), dpi=100)
+        
         fig.suptitle('Freq Domain', fontsize=16)
-        fig.add_subplot(111,
-                        xlim=(0,
-                              int(parameters['freq_pert']) * 10),
-                        xlabel='Frequency (hz)',
-                        ylabel='Magnitude of Current').plot(f,
-                                                            Imag,
-                                                            c='#40BAD2')
+        
+        ax = fig.add_subplot(
+            111,
+            #xlim=(0.0, 1.0),
+                #(int(parameters['freq_pert']) * 10)),
+            xlabel='Frequency (hz)',
+            ylabel='Magnitude of Current')
+
+        ax.plot(newF, newImag, c='#40BAD2')
 
         fig_canvas_agg, toolbar = draw_figure(window['-CANVAS-'].TKCanvas, fig)
+        
 
     elif event == 'Cumulative Sum':
         disable_harmonics()
@@ -525,7 +538,7 @@ while True:
             proceed = True
 
         if proceed == True:
-            layout2 = [[sg.Text('Loading')],
+            layout2 = [[sg.Text('Recording')],
                         [sg.ProgressBar(1, orientation='h', size=(
                             20, 20), key='progress', style='winnative')],
                         ]
@@ -559,7 +572,7 @@ while True:
     elif event == 'Select Data File':
         fname = values['Select Data File']
 
-        if fname is not None:
+        if fname:
             # determine file type
             success = False
             temp = file.readFile(fname, 0)

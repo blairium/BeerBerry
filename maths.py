@@ -334,8 +334,9 @@ def conc(a, b, c, area):
     a, b, c -- calibration constants
     area -- Peak Area from baseline
     """
-    conc = (-b + np.sqrt(b**(2-4*a*(c-area))))/(2*a)
+    conc = (-b + np.sqrt((b**2)-(4*a*(c-area))))/(2*a)
 
+    print('area: ' + str(area))
     print('conc: ' + str(conc))
 
     if conc > (-b/(2*a)) * 0.85:
