@@ -200,6 +200,7 @@ def show_envelope():
         destroy_figure(fig_canvas_agg, toolbar)
 
     fig = plt.figure()
+    
     if window['r1'].get():
         envelope = pk.envelope(harm_one, deg=5, max_it=None, tol=1e-3)
         plt.plot(t, envelope, color='b')

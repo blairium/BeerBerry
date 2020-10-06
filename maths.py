@@ -180,15 +180,16 @@ def map_baseline(t, ienv, xdata, ydata):
     xdata = [int(i) for i in xdata]
 
    
-    area_under_curve = np.trapz(
-        t[xdata[0]:xdata[1]], ienv[xdata[0]:xdata[1]])
+    area_under_curve = np.trapz( ienv[xdata[0]:xdata[1]], t[xdata[0]:xdata[1]])
+    
     curve_1 = np.copy(ienv)
     curve_2 = np.copy(ienv)
     curve_2[xdata[0]:xdata[1]] = np.linspace(
         ydata[0], ydata[1], xdata[1] - xdata[0])
     diff_curves = curve_1 - curve_2
 
-    area_under_baseline = np.trapz(t[xdata[0]:xdata[1]],curve_2[xdata[0]:xdata[1]])
+    area_under_baseline = np.trapz(curve_2[xdata[0]:xdata[1]], t[xdata[0]:xdata[1]] )
+
     area_between_curves = area_under_curve - area_under_baseline
 
     print('area_under_curve: ' + str(area_under_curve))
