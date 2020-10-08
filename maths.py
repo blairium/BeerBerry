@@ -334,7 +334,14 @@ def conc(a, b, c, area):
     a, b, c -- calibration constants
     area -- Peak Area from baseline
     """
-    conc = (-b + np.sqrt((b**2)-(4*a*(c-area))))/(2*a)
+
+    check = np.absolute(((b**2) - 4 * a * c)/(4 * a))
+
+    if area >= check:
+        return -2
+
+    z = (b**2)-(4*a*(c-area))
+    conc = (-b + np.sqrt(z))/(2*a)
 
     print('area: ' + str(area))
     print('conc: ' + str(conc))

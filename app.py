@@ -736,7 +736,10 @@ while True:
         # results
         ppm = maths.conc(float(parameters['a']), float(parameters['b']), float(parameters['c']), area)
 
-        if ppm < 0:
+        if ppm == -2:
+            window.find_element('PPM').Update(text_color=RED)
+            ret = 'Signal beyond calibration range defined by constants'
+        elif ppm == -1:
             window.find_element('PPM').Update(text_color=RED)
             ret = 'Concentration too high, out of range of calibration'
         else:
