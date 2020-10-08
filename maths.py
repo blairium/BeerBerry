@@ -2,7 +2,7 @@
 This file contains all of the math related functions for the app.
 The calculation for processing the data is contained in get_ienv.
 
-Last Updated: 04/10/2020
+Last Updated: 08/10/2020
 Author: Joshua Failla
 Contributors: Michael Graps
 """

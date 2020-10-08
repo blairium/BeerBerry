@@ -15,7 +15,7 @@ from matplotlib.backends.backend_tkagg import (
 """
 This file contains all of the gui related functions for the app.
 
-Last Updated: 04/10/2020
+Last Updated: 08/10/2020
 Author: Michael Graps
 Contributors: Joshua Failla, Andrew Durnford, Nathan Gillbanks
 """
@@ -51,13 +51,6 @@ def create_main_window(parameters, password_attempt, PASSWORD):
                     sg.Column([[sg.Button('Login', key='Authenticate')]]),
                     
                 ]], justification='center')
-            ],
-
-            # Row 2: selected filename, optional
-            [
-                sg.Column([
-                    [TextLabel('File', 'center', None), sg.Input(key='Filename', disabled=True)]
-                ], key='File Container', justification='center')
             ],
 
             # hidden: baseline coords
@@ -115,7 +108,7 @@ def create_main_window(parameters, password_attempt, PASSWORD):
             # Row 6: define baseline, calculate result, save data, exit
             [
                 sg.Button('Define Baseline', key='Define baseline', disabled=True, auto_size_button=True), 
-                sg.FileSaveAs(button_text='Save Raw Data', key='Save Raw Data', target='Save Raw Data', disabled=True, enable_events=True, file_types=(('DATA', '.data'), ('BIN', '.bin'), ('CSV', '.csv'), ('All Files', '*.*')), auto_size_button=True),
+                sg.FileSaveAs(button_text='Save Raw Data', key='Save Raw Data', target='Save Raw Data', disabled=True, enable_events=True, file_types=(('DATA', '.data'), ('BIN', '.bin'), ('CSV', '.csv'), ('All Files', '*.*')), auto_size_button=True, button_color=('white','#adadad')),
                 sg.FileSaveAs(button_text='Save Processed Data', key='Save Processed Data', disabled=True, target='Save Processed Data', enable_events=True, file_types=(('DATA', '.data'), ('BIN', '.bin'), ('CSV', '.csv'), ('All Files', '*.*')), auto_size_button=True),
                 sg.Button('Exit', auto_size_button=True)
             ]
@@ -134,10 +127,6 @@ def create_main_window(parameters, password_attempt, PASSWORD):
 def create_parameters_window(
         parameters,
         PARAMETER_KEYS_TO_ELEMENT_KEYS):
-
-
-    def TextLabel(text):
-        return sg.Text(text + ':', justification='r', size=(30, 1))
 
     layout = [[sg.Text('Parameters', justification='center', font='Helvetica 18')],
               [TextLabel('Frequency perturbation'), sg.Input(key='-FREQ PERT-')],
@@ -170,9 +159,6 @@ def create_parameters_window(
 def create_excitation_parameters_window(
         exc_parameters,
         EXCITATION_KEYS_TO_ELEMENT_KEYS):
-
-    def TextLabel(text):
-        return sg.Text(text + ':', justification='r', size=(30, 1))
 
     layout = [[sg.Text('Parameters', justification='center', font='Helvetica 18')],
               [TextLabel('amplitude'), sg.Input(key='-AMPLITUDE-')],
