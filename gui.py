@@ -26,7 +26,7 @@ matplotlib.use('TkAgg')
 ####### Creating the Main Window ################################
 
 # helper text label
-def TextLabel(text, justification = 'r', width = 30):
+def TextLabel(text, justification = 'r', width = 20): #was 30
         return sg.Text(text + ':', justification=justification, size=(width, 1))
 
 def create_main_window(parameters, password_attempt, PASSWORD):
@@ -74,10 +74,12 @@ def create_main_window(parameters, password_attempt, PASSWORD):
                         sg.Radio('Envelope', key='Envelope', group_id='graph_control_radio', disabled=True, enable_events=True, font='Helvetica 12')
                     ],
                     [
-                        sg.Canvas(size=(898, 634), key='-CANVAS-'),
+                        sg.Canvas(size=(449, 317), key='-CANVAS-'),
                     ]
                 ], key='Graph Controls', element_justification='center', justification='center'),
 
+            ],
+            [
                 sg.Column([[
                     #sg.Frame('Results', 
                     #    [
@@ -97,7 +99,7 @@ def create_main_window(parameters, password_attempt, PASSWORD):
                     sg.Checkbox('3rd Harmonic', enable_events=True, key='r3', disabled=True),
                     sg.Checkbox('4th Harmonic', enable_events=True, key='r4', disabled=True), 
                     sg.Checkbox('5th Harmonic', enable_events=True, key='r5', disabled=True)
-                ]], key='Harmonic Container', justification='center')
+                ]], key='Harmonic Container', justification='right')
             ],
 
             # Ro 5: graph controls
@@ -112,7 +114,7 @@ def create_main_window(parameters, password_attempt, PASSWORD):
                 sg.FileSaveAs(button_text='Save Processed Data', key='Save Processed Data', disabled=True, target='Save Processed Data', enable_events=True, file_types=(('DATA', '.data'), ('BIN', '.bin'), ('CSV', '.csv'), ('All Files', '*.*')), auto_size_button=True),
                 sg.Button('Exit', auto_size_button=True)
             ]
-        ], element_justification='center', justification='center', scrollable=True, size=(935, 930))]]
+        ], element_justification='center', justification='center', scrollable=True, size=(965, 930))]]
 
     # return window with layout
     return sg.Window(
@@ -142,6 +144,7 @@ def create_parameters_window(
         'Insert Parameters',
         layout,
         keep_on_top=True,
+        auto_size_buttons=True,
         finalize=True,
         grab_anywhere=True
         )

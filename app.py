@@ -122,7 +122,8 @@ df_Post = None
 data = None
 fname = None
 password_attempt = None
-window, parameters, exc_parameters = None, load_parameters(
+
+window, parameters, exc_parameters=None, load_parameters(
     PARAMETERS_FILE, DEFAULT_SETTINGS, PARAMETER_KEYS_TO_ELEMENT_KEYS), load_parameters(
     EXCITATION_PARAMETER, EXCITATION_SETTINGS, EXCITATION_KEYS_TO_ELEMENT_KEYS)
 xdata = []
@@ -193,7 +194,7 @@ def show_harmonics_graph():
         plt.plot(t, harm_five, color='y')
 
     fig.suptitle('Harmonics', fontsize=16)
-    fig.set_size_inches(9, 6)
+    fig.set_size_inches(6, 4) #original 9,6
     fig.set_dpi(100)
     plt.xlabel('Time (s)')
     plt.ylabel('Current (S.U)')
@@ -238,7 +239,7 @@ def show_envelope_graph():
         plt.plot(t, envelope, color='y')
 
     fig.suptitle('Envelope', fontsize=16)
-    fig.set_size_inches(9, 6)
+    fig.set_size_inches(6, 4) #orig 9,6
     fig.set_dpi(100)
     plt.xlabel('Time (s)')
     plt.ylabel('Current (S.U)')
@@ -732,7 +733,7 @@ while True:
                 plt.fill_between(t, curve_1, curve_2, alpha=0.3)
 
         fig.suptitle('Harmonics', fontsize=16)
-        fig.set_size_inches(9, 6)
+        fig.set_size_inches(6, 4) #orig 9,6
         fig.set_dpi(100)
         destroy_figure(fig_canvas_agg, toolbar)
         fig_canvas_agg, toolbar = draw_figure(window['-CANVAS-'].TKCanvas, fig)
