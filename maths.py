@@ -27,8 +27,8 @@ import ntpath
 def blanking_first_samples(blank_samples, v, i):
     """Blanks samples to clean the data"""
     for x in range(0, blank_samples):
-        v[x] = 0
-        i[x] = 0
+        v[0:x] = 0
+        i[0:x] = 0
     return v, i
 
 
@@ -120,6 +120,7 @@ def get_ienv(i, freq_pert, harm_num, harm_bandwith, sample_rate, lpf_bw, t):
     ixcosin_filt = sp.signal.lfilter(c, 1, ixcosin)
 
     ienv = 2 * np.sqrt(ixsin_filt * ixsin_filt + ixcosin_filt * ixcosin_filt)
+    ienv[0:8000] = 0 
     print("pass")
     return ienv
 
@@ -279,9 +280,9 @@ def excitation(exc_parameters):
 
     # stable duration
     # Left channel wave form
-    xls = np.linspace(0, stable * 2 * np.pi, int(stable * sample_rate))
+    xls = np.zeros(int(stable * sample_rate))
     # Right Channel waveform
-    xrs = np.linspace(0, stable * 2 * np.pi, int(stable * sample_rate))
+    xrs = np.zeros(int(stable * sample_rate))
 
     s_left_channel = np.sin(frequency * xls) * amplitude
     s_right_channel = np.sin(frequency * xrs + np.pi) * amplitude

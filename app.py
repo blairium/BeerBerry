@@ -295,7 +295,7 @@ def start():
             v = data.iloc[:, 0].values
             i = data.iloc[:, 1].values
 
-            v, i = maths.blanking_first_samples(4000, v, i)
+            #v, i = maths.blanking_first_samples(8000, v, i) #changed to 8000
             f, t = maths.get_time_values(
                 i, float(parameters['sample_rate']))
             Imag = maths.magnitude_of_current(i, i.size)
