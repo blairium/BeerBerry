@@ -116,7 +116,7 @@ def writeFile(fileName, data, post):
         elif ext == ".bin":
             binary_Write_Post(fileName, data)
         elif ext == ".csv":
-            csv_WritePost(fileName +'.csv', data)
+            csv_WritePost(fileName, data)
         #else:
             #sg.popup_error(
                # 'Error: Invalid File Extension (Valid extensions are: .data, .csv, .bin)')
@@ -127,7 +127,7 @@ def writeFile(fileName, data, post):
         elif ext == ".bin":
             binary_Write(fileName, data)
         elif ext == ".csv":
-            csv_Write(fileName+ '.csv', data)
+            csv_Write(fileName, data)
         #else:
             #sg.popup_error(
                # 'Error: Invalid File Extension (Valid extensions are: .data, .csv, .bin)')
