@@ -572,6 +572,7 @@ while True:
             progress_bar.UpdateBar(3, 5)
 
             data = maths.excitation(exc_parameters)
+            volt = data = maths.time2volt(exc_parameters)
             progress_bar.UpdateBar(4, 5)
             time.sleep(1)
             progress_bar.UpdateBar(5, 5)
