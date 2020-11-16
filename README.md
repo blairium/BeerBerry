@@ -1,6 +1,6 @@
 # pi-so2
 
-This is the repository for the pi-so2 project for team K. The application is a **pysimplegui** application that performs a variety of mathematical and analytical tasks on a dataset, and displays results in different graph formats. The project will run on a _Raspberry Pi_ microcomputer, but can also run and be developed on Windows, MacOS, and Linux due to its cross-platform nature.
+This repository builds upon the work of Team K. The application is a **pysimplegui** application that performs a variety of mathematical and analytical tasks on a dataset, and displays results in different graph formats. The project will run on a _Raspberry Pi_ microcomputer, but can also run and be developed on Windows, MacOS, and Linux due to its cross-platform nature.
 
 ## Requirements
 
