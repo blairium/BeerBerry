@@ -302,49 +302,48 @@ def start():
 
             window.find_element('Define baseline').Update(disabled=False)
 
-            harm_one = maths.get_ienv(
+            harm_one = maths. filter_ienv(maths.get_ienv(
                 i, int(
                     parameters['freq_pert']), 1, int(
                     parameters['bandwith_window']), float(
                     parameters['sample_rate']), int(
-                    parameters['lpf_bw']), t)
+                    parameters['lpf_bw']), t),200)
 
             progress_bar.UpdateBar(1, 5)
 
-            harm_two = maths.get_ienv(
+            harm_two = maths. filter_ienv(maths.get_ienv(
                 i, int(
                     parameters['freq_pert']), 2, int(
                     parameters['bandwith_window']), float(
                     parameters['sample_rate']), int(
-                    parameters['lpf_bw']), t)
+                    parameters['lpf_bw']), t),200)
 
             progress_bar.UpdateBar(2, 5)
             time.sleep(.5)
 
-            harm_three = maths.get_ienv(
+            harm_three = maths. filter_ienv(maths.get_ienv(
                 i, int(
                     parameters['freq_pert']), 3, int(
                     parameters['bandwith_window']), float(
                     parameters['sample_rate']), int(
-                    parameters['lpf_bw']), t)
+                    parameters['lpf_bw']), t),200)
 
             progress_bar.UpdateBar(3, 5)
 
-            harm_four = maths.get_ienv(
+            harm_four = maths. filter_ienv(maths.get_ienv(
                 i, int(
                     parameters['freq_pert']), 4, int(
                     parameters['bandwith_window']), float(
                     parameters['sample_rate']), int(
-                    parameters['lpf_bw']), t)
+                    parameters['lpf_bw']), t),200)
             progress_bar.UpdateBar(4, 5)
 
-            harm_five = maths.get_ienv(
+            harm_five = maths. filter_ienv(maths.get_ienv(
                 i, int(
                     parameters['freq_pert']), 5, int(
                     parameters['bandwith_window']), float(
                     parameters['sample_rate']), int(
-                    parameters['lpf_bw']), t)
-            progress_bar.UpdateBar(5, 5)
+                    parameters['lpf_bw']), t),200)
 
             time.sleep(0.5)
             # This will Close The Window
@@ -572,7 +571,7 @@ while True:
             progress_bar.UpdateBar(3, 5)
 
             data = maths.excitation(exc_parameters)
-            volt = data = maths.time2volt(exc_parameters)
+            #volt = data = maths.time2volt(exc_parameters)
             progress_bar.UpdateBar(4, 5)
             time.sleep(1)
             progress_bar.UpdateBar(5, 5)

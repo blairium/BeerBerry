@@ -353,25 +353,25 @@ def conc(a, b, c, area):
 
     return conc
 
-def time2volt(exc_parameters)
-    conversion_factor = -0.845
-    amplitude = conversion_factor * float(exc_parameters['amplitude'])
-    stable = float(exc_parameters['stable'])  # stable duration in seconds
-    # Doesn't necessarily work for other sample rates
-    sample_rate = float(exc_parameters['sample_rate'])
-    # recording duration in seconds
-    duration = float(exc_parameters['duration'])
-    frequency = float(exc_parameters['frequency'])  # Frequency
-    # Stable "Voltage" actually a fraction of max output positive values only
-    v1 = conversion_factor * float(exc_parameters['v1'])
-    # Recording Start "Voltage" actually a fraction of max output 0.1 = ~0.045V
-    v2 = conversion_factor *  float(exc_parameters['v2'])
-    # Recording stop "Voltage" actually a fraction of max output 1.0 = ~1.265
-    v3 = conversion_factor * float(exc_parameters['v3'])
+# def time2volt(exc_parameters)
+#     conversion_factor = -0.845
+#     amplitude = conversion_factor * float(exc_parameters['amplitude'])
+#     stable = float(exc_parameters['stable'])  # stable duration in seconds
+#     # Doesn't necessarily work for other sample rates
+#     sample_rate = float(exc_parameters['sample_rate'])
+#     # recording duration in seconds
+#     duration = float(exc_parameters['duration'])
+#     frequency = float(exc_parameters['frequency'])  # Frequency
+#     # Stable "Voltage" actually a fraction of max output positive values only
+#     v1 = conversion_factor * float(exc_parameters['v1'])
+#     # Recording Start "Voltage" actually a fraction of max output 0.1 = ~0.045V
+#     v2 = conversion_factor *  float(exc_parameters['v2'])
+#     # Recording stop "Voltage" actually a fraction of max output 1.0 = ~1.265
+#     v3 = conversion_factor * float(exc_parameters['v3'])
 
-    time = stable + duration 
-    scan_rate = ((v3-v2)/duration)
-    stable_volt = np.ones(duration*sample_rate)*stable
-    excite_volt = np.linspace(v2, v3,duration*sample_rate)
-    total_volt = np.append(stable_volt,excite_volt)
+#     time = stable + duration 
+#     scan_rate = ((v3-v2)/duration)
+#     stable_volt = np.ones(duration*sample_rate)*stable
+#     excite_volt = np.linspace(v2, v3,duration*sample_rate)
+#     total_volt = np.append(stable_volt,excite_volt)
     return total_volt
