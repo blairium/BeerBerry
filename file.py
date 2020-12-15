@@ -128,6 +128,8 @@ def writeFile(fileName, data, post):
             binary_Write(fileName, data)
         elif ext == ".csv":
             csv_Write(fileName, data)
+        elif ext == ".png" or ".jpg" or ".pdf":
+            plt.savefig(fileName, dpi=500)
         #else:
             #sg.popup_error(
                # 'Error: Invalid File Extension (Valid extensions are: .data, .csv, .bin)')

@@ -17,6 +17,10 @@ from matplotlib.widgets import PolygonSelector
 from matplotlib.backends.backend_tkagg import (
     FigureCanvasTkAgg, NavigationToolbar2Tk)
 
+
+plt.style.use(['science','ieee'])
+plt.ioff()
+
 """
 This file contains the main processes and functions of the app.
 Graphing functionality is also contained here.
@@ -475,17 +479,30 @@ while True:
             destroy_figure(fig_canvas_agg, toolbar)
 
         window.find_element('Define baseline').Update(disabled=True)
-        fig = matplotlib.figure.Figure(figsize=(9, 6), dpi=100)
-        fig.suptitle('Time Domain', fontsize=16)
-        fig.add_subplot(
-            111,
-            xlabel='Time (s)',
-            ylabel='Current (S.U)').plot(
-            t,
-            i,
-            c='#40BAD2')
 
+        fig = plt.figure()
+
+        fig.clf()
+
+        plt.plot(t,i)
+        fig.suptitle('Raw Signal', fontsize=16)
+        fig.set_size_inches(6, 4) #orig 9,6
+        fig.set_dpi(100)
+        plt.xlabel('Time (s)')
+        plt.ylabel('Current (S.U)')
         fig_canvas_agg, toolbar = draw_figure(window['-CANVAS-'].TKCanvas, fig)
+
+        # fig = matplotlib.figure.Figure(figsize=(9, 6), dpi=100)
+        # fig.suptitle('Time Domain', fontsize=16)
+        # fig.add_subplot(
+        #     111,
+        #     xlabel='Time (s)',
+        #     ylabel='Current (S.U)').plot(
+        #     t,
+        #     i,
+        #     c='#40BAD2')
+
+        # fig_canvas_agg, toolbar = draw_figure(window['-CANVAS-'].TKCanvas, fig)
 
     elif event == 'Freq Domain':
         disable_harmonics()
@@ -499,19 +516,32 @@ while True:
         limit = int(parameters['freq_pert']) * 100
         newF = np.copy(f[:limit])
         newImag = np.copy(Imag[:limit])
+        
+        
+        fig = plt.figure()
 
-        fig = matplotlib.figure.Figure(figsize=(9, 6), dpi=100)
+        fig.clf()
 
-        fig.suptitle('Freq Domain', fontsize=16)
-
-        ax = fig.add_subplot(
-            111,
-            xlabel='Frequency (hz)',
-            ylabel='Magnitude of Current')
-
-        ax.plot(newF, newImag, c='#40BAD2')
-
+        plt.plot(newF, newImag)
+        fig.suptitle('Frequency Domain', fontsize=16)
+        fig.set_size_inches(6, 4) #orig 9,6
+        fig.set_dpi(100)
+        plt.xlabel('Frequency (Hz)')
+        plt.ylabel('Magnitude of Current')
         fig_canvas_agg, toolbar = draw_figure(window['-CANVAS-'].TKCanvas, fig)
+
+        # fig = matplotlib.figure.Figure(figsize=(9, 6), dpi=100)
+
+        # fig.suptitle('Freq Domain', fontsize=16)
+
+        # ax = fig.add_subplot(
+        #     111,
+        #     xlabel='Frequency (hz)',
+        #     ylabel='Magnitude of Current')
+
+        # ax.plot(newF, newImag, c='#40BAD2')
+
+        # fig_canvas_agg, toolbar = draw_figure(window['-CANVAS-'].TKCanvas, fig)
 
     elif event == 'Cumulative Sum':
         disable_harmonics()
@@ -520,7 +550,8 @@ while True:
             destroy_figure(fig_canvas_agg, toolbar)
 
         window.find_element('Define baseline').Update(disabled=True)
-
+        
+        
         fig = matplotlib.figure.Figure(figsize=(9, 6), dpi=100)
         fig.suptitle('Cumulative Sum', fontsize=16)
         fig.add_subplot(
@@ -583,6 +614,7 @@ while True:
             start()
 
     elif event == 'Select Data File':
+        
         if fname != values['Select Data File']:
             fname = values['Select Data File']
 
@@ -609,7 +641,7 @@ while True:
                     # window.find_element('Filename').Update(fname)
                     window.TKroot.title('BeerBerry - ' + fname)
                     start()
-
+ 
     elif event == 'Save Raw Data':
         outFile = values['Save Raw Data']
         file.writeFile(outFile, data, 0)
@@ -617,6 +649,10 @@ while True:
     elif event == 'Save Processed Data':
         outFile = values['Save Processed Data']
         file.writeFile(outFile, df_Post, 1)
+
+    elif event == 'Save Figure':
+        outFile = values['Save Figure']
+        file.writeFile(outFile, data, 0)
 
     elif event == 'Authenticate':
         # logout

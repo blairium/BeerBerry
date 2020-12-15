@@ -112,6 +112,7 @@ def create_main_window(parameters, password_attempt, PASSWORD):
                 sg.Button('Define Baseline', key='Define baseline', disabled=True, auto_size_button=True), 
                 sg.FileSaveAs(button_text='Save Raw Data', key='Save Raw Data', target='Save Raw Data', disabled=True, enable_events=True, file_types=(('DATA', '.data'), ('BIN', '.bin'), ('CSV', '.csv'), ('All Files', '*.*')), auto_size_button=True, button_color=('white','#adadad')),
                 sg.FileSaveAs(button_text='Save Processed Data', key='Save Processed Data', disabled=True, target='Save Processed Data', enable_events=True, file_types=(('DATA', '.data'), ('BIN', '.bin'), ('CSV', '.csv'), ('All Files', '*.*')), auto_size_button=True),
+                sg.FileSaveAs(button_text='Save Figure', key='Save Figure', target='Save Figure', enable_events=True, file_types=(('PNG', '.png'), ('PDF', '.pdf'), ('JPG', '.jpg'), ('All Files', '*.*')), auto_size_button=True),
                 sg.Button('Exit', auto_size_button=True)
             ]
         ], element_justification='center', justification='center', scrollable=True, size=(965, 930))]]
