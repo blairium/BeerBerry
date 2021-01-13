@@ -74,7 +74,7 @@ def create_main_window(parameters, password_attempt, PASSWORD):
                         sg.Radio('Envelope', key='Envelope', group_id='graph_control_radio', disabled=True, enable_events=True, font='Helvetica 12')
                     ],
                     [
-                        sg.Canvas(size=(449, 317), key='-CANVAS-'),
+                        sg.Canvas( key='-CANVAS-'), #size=(600, 400),
                     ]
                 ], key='Graph Controls', element_justification='center', justification='center'),
 
@@ -199,7 +199,7 @@ def draw_figure(canvas, figure, toolbar=None):
     figure_canvas_agg = FigureCanvasTkAgg(figure, canvas)
     toolbar = NavigationToolbar2Tk(figure_canvas_agg, canvas)  # create toolbar
     figure_canvas_agg.get_tk_widget().pack(
-        side='top', fill='both', expand=1)  # pack figure and toolbar into canvas
+        side='top', fill='both', expand=0)  # pack figure and toolbar into canvas
 
     # return canvas and toolbar
     return figure_canvas_agg, toolbar
