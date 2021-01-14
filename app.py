@@ -18,7 +18,7 @@ from matplotlib.backends.backend_tkagg import (
     FigureCanvasTkAgg, NavigationToolbar2Tk)
 
 
-plt.style.use(['science','ieee'])
+plt.style.use(['science','ieee','no-latex'])
 plt.ioff()
 
 """
@@ -516,8 +516,8 @@ while True:
         limit = int(parameters['freq_pert']) * 100
         newF = np.copy(f[:limit])
         newImag = np.copy(Imag[:limit])
-        
-        
+
+
         fig = plt.figure()
 
         fig.clf()
@@ -550,8 +550,8 @@ while True:
             destroy_figure(fig_canvas_agg, toolbar)
 
         window.find_element('Define baseline').Update(disabled=True)
-        
-        
+
+
         fig = matplotlib.figure.Figure(figsize=(9, 6), dpi=100)
         fig.suptitle('Cumulative Sum', fontsize=14)
         fig.add_subplot(
@@ -614,7 +614,7 @@ while True:
             start()
 
     elif event == 'Select Data File':
-        
+
         if fname != values['Select Data File']:
             fname = values['Select Data File']
 
@@ -641,7 +641,7 @@ while True:
                     # window.find_element('Filename').Update(fname)
                     window.TKroot.title('BeerBerry - ' + fname)
                     start()
- 
+
     elif event == 'Save Raw Data':
         outFile = values['Save Raw Data']
         file.writeFile(outFile, data, 0)
@@ -775,10 +775,10 @@ while True:
         fig_canvas_agg, toolbar = draw_figure(window['-CANVAS-'].TKCanvas, fig)
 
         window.find_element('Envelope').Update(disabled=False)
-        
+
         # handle results
         ret = ''
-       
+
         ppm = maths.conc(float(parameters['a']), float(
             parameters['b']), float(parameters['c']), area)
 
