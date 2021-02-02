@@ -1,6 +1,13 @@
+######################  TO DO ########################
+##                                                  ##
+##   ADD A CONVERSION FACTOR TO RECORD PARAMETERS   ##
+##                                                  ##
+######################################################
+
+
 import codecs
 import matplotlib
-
+import pyperclip
 import PySimpleGUI as sg
 import pandas as pd
 import numpy as np
@@ -18,7 +25,7 @@ from matplotlib.backends.backend_tkagg import (
     FigureCanvasTkAgg, NavigationToolbar2Tk)
 
 
-plt.style.use(['science','ieee'])
+plt.style.use(['science','ieee','no-latex'])
 plt.ioff()
 
 """
@@ -197,9 +204,9 @@ def show_harmonics_graph():
     if window['r5'].get():
         plt.plot(t, harm_five, color='y')
 
-    fig.suptitle('Harmonics', fontsize=14)
-    fig.set_size_inches(6,4) #original 9,6
-    fig.set_dpi(120)
+    fig.suptitle('Harmonics', fontsize=16)
+    fig.set_size_inches(6, 4) #original 9,6
+    fig.set_dpi(100)
     plt.xlabel('Time (s)')
     plt.ylabel('Current (S.U)')
 
@@ -242,9 +249,9 @@ def show_envelope_graph():
         envelope = pk.envelope(harm_five, deg=5, max_it=100, tol=1e-3)
         plt.plot(t, envelope, color='y')
 
-    fig.suptitle('Envelope', fontsize=14)
-    fig.set_size_inches(6,4) #orig 9,6
-    fig.set_dpi(120)
+    fig.suptitle('Envelope', fontsize=16)
+    fig.set_size_inches(6, 4) #orig 9,6
+    fig.set_dpi(100)
     plt.xlabel('Time (s)')
     plt.ylabel('Current (S.U)')
     fig_canvas_agg, toolbar = draw_figure(window['-CANVAS-'].TKCanvas, fig)
@@ -485,15 +492,15 @@ while True:
         fig.clf()
 
         plt.plot(t,i)
-        fig.suptitle('Raw Signal', fontsize=14)
-        fig.set_size_inches(6,4) #orig 9,6
-        fig.set_dpi(120)
+        fig.suptitle('Raw Signal', fontsize=16)
+        fig.set_size_inches(6, 4) #orig 9,6
+        fig.set_dpi(100)
         plt.xlabel('Time (s)')
         plt.ylabel('Current (S.U)')
         fig_canvas_agg, toolbar = draw_figure(window['-CANVAS-'].TKCanvas, fig)
 
         # fig = matplotlib.figure.Figure(figsize=(9, 6), dpi=100)
-        # fig.suptitle('Time Domain', fontsize=14)
+        # fig.suptitle('Time Domain', fontsize=16)
         # fig.add_subplot(
         #     111,
         #     xlabel='Time (s)',
@@ -523,16 +530,16 @@ while True:
         fig.clf()
 
         plt.plot(newF, newImag)
-        fig.suptitle('Frequency Domain', fontsize=14)
-        fig.set_size_inches(6,4) #orig 9,6
-        fig.set_dpi(120)
+        fig.suptitle('Frequency Domain', fontsize=16)
+        fig.set_size_inches(6, 4) #orig 9,6
+        fig.set_dpi(100)
         plt.xlabel('Frequency (Hz)')
         plt.ylabel('Magnitude of Current')
         fig_canvas_agg, toolbar = draw_figure(window['-CANVAS-'].TKCanvas, fig)
 
         # fig = matplotlib.figure.Figure(figsize=(9, 6), dpi=100)
 
-        # fig.suptitle('Freq Domain', fontsize=14)
+        # fig.suptitle('Freq Domain', fontsize=16)
 
         # ax = fig.add_subplot(
         #     111,
@@ -553,7 +560,7 @@ while True:
         
         
         fig = matplotlib.figure.Figure(figsize=(9, 6), dpi=100)
-        fig.suptitle('Cumulative Sum', fontsize=14)
+        fig.suptitle('Cumulative Sum', fontsize=16)
         fig.add_subplot(
             111,
             xlabel='Time (s)',
@@ -654,6 +661,12 @@ while True:
         outFile = values['Save Figure']
         file.writeFile(outFile, data, 0)
 
+    elif event == 'Copy Height':
+        pyperclip.copy(str(height))
+    
+    elif event == 'Copy Area':
+        pyperclip.copy(str(area))
+
     elif event == 'Authenticate':
         # logout
         if password_attempt == PASSWORD:
@@ -696,7 +709,8 @@ while True:
     def calculate_results():
         global fig_canvas_agg
         global toolbar
-
+        global height
+        global area
         enable_harmonics()
         area = 0
         height = 0
@@ -768,9 +782,9 @@ while True:
                     curve_2[index_of_peak], curve_1[index_of_peak]], color='r')
                 plt.fill_between(t, curve_1, curve_2, alpha=0.3)
 
-        fig.suptitle('Harmonics', fontsize=14)
-        fig.set_size_inches(6,4) #orig 9,6
-        fig.set_dpi(120)
+        fig.suptitle('Harmonics', fontsize=16)
+        fig.set_size_inches(6, 4) #orig 9,6
+        fig.set_dpi(100)
         destroy_figure(fig_canvas_agg, toolbar)
         fig_canvas_agg, toolbar = draw_figure(window['-CANVAS-'].TKCanvas, fig)
 

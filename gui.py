@@ -74,7 +74,7 @@ def create_main_window(parameters, password_attempt, PASSWORD):
                         sg.Radio('Envelope', key='Envelope', group_id='graph_control_radio', disabled=True, enable_events=True, font='Helvetica 12')
                     ],
                     [
-                        sg.Canvas( key='-CANVAS-'), #size=(600, 400),
+                        sg.Canvas(size=(449, 317), key='-CANVAS-'),
                     ]
                 ], key='Graph Controls', element_justification='center', justification='center'),
 
@@ -110,8 +110,10 @@ def create_main_window(parameters, password_attempt, PASSWORD):
             # Row 6: define baseline, calculate result, save data, exit
             [
                 sg.Button('Define Baseline', key='Define baseline', disabled=True, auto_size_button=True), 
-                sg.FileSaveAs(button_text='Save Raw Data', key='Save Raw Data', target='Save Raw Data', disabled=True, enable_events=True, file_types=(('DATA', '.data'), ('BIN', '.bin'), ('CSV', '.csv'), ('All Files', '*.*')), auto_size_button=True, button_color=('white','#adadad')),
-                sg.FileSaveAs(button_text='Save Processed Data', key='Save Processed Data', disabled=True, target='Save Processed Data', enable_events=True, file_types=(('DATA', '.data'), ('BIN', '.bin'), ('CSV', '.csv'), ('All Files', '*.*')), auto_size_button=True),
+                sg.Button('Copy Area', key='Copy Area', target='Copy Area',  auto_size_button=True), 
+                sg.Button('Copy Height', key='Copy Height', target = 'Copy Height', auto_size_button=True), 
+                sg.FileSaveAs(button_text='Save Raw Data', key='Save Raw Data', target='Save Raw Data', disabled=True, enable_events=True, file_types=(('CSV', '.csv'),('DATA', '.data'), ('BIN', '.bin'),  ('All Files', '*.*')), auto_size_button=True, button_color=('white','#adadad')),
+                sg.FileSaveAs(button_text='Save Processed Data', key='Save Processed Data', disabled=True, target='Save Processed Data', enable_events=True, file_types=(('CSV', '.csv'),('DATA', '.data'), ('BIN', '.bin'),  ('All Files', '*.*')), auto_size_button=True),
                 sg.FileSaveAs(button_text='Save Figure', key='Save Figure', target='Save Figure', enable_events=True, file_types=(('PNG', '.png'), ('PDF', '.pdf'), ('JPG', '.jpg'), ('All Files', '*.*')), auto_size_button=True),
                 sg.Button('Exit', auto_size_button=True)
             ]
@@ -173,6 +175,8 @@ def create_excitation_parameters_window(
               [TextLabel('v1'), sg.Input(key='-V1-')],
               [TextLabel('v2'), sg.Input(key='-V2-')],
               [TextLabel('v3'), sg.Input(key='-V3-')],
+              [TextLabel('File Name'), sg.Input(key='-fname-')],
+              [sg.Checkbox('Auto Save Data', default=False)],
               [sg.Button('Record'), sg.Button('Cancel')]]
 
     window = sg.Window(
@@ -199,7 +203,7 @@ def draw_figure(canvas, figure, toolbar=None):
     figure_canvas_agg = FigureCanvasTkAgg(figure, canvas)
     toolbar = NavigationToolbar2Tk(figure_canvas_agg, canvas)  # create toolbar
     figure_canvas_agg.get_tk_widget().pack(
-        side='top', fill='both', expand=0)  # pack figure and toolbar into canvas
+        side='top', fill='both', expand=1)  # pack figure and toolbar into canvas
 
     # return canvas and toolbar
     return figure_canvas_agg, toolbar
