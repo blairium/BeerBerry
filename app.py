@@ -1,6 +1,8 @@
 ######################  TO DO ########################
 ##                                                  ##
 ##   ADD A CONVERSION FACTOR TO RECORD PARAMETERS   ##
+##   FIX AUTOSAVE                                   ##
+##   ADD KEYBOARD SHORTCUTS                         ##
 ##                                                  ##
 ######################################################
 
@@ -300,7 +302,7 @@ def start():
     enable_harmonics()
 
     # if default radio button is clicked, returns true for precalc
-    if TYPE is 'RAW':
+    if TYPE == 'RAW':
         if len(data.columns) == 2:
             # Column 1: Voltage
             v = data.iloc[:, 0].values
