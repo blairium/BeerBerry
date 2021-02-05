@@ -3,7 +3,6 @@ import time
 import numpy as np
 import pandas as pd
 import scipy as sp
-from scipy import signal 
 
 
 class analyse:

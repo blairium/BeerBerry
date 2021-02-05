@@ -167,12 +167,12 @@ class analyse:
         x[0:self.blank_samples]=0
         y[0:self.blank_samples]=0
 
-        return x,y # where x is time and y is current
-""" Example
-a = analyse('FeCOOH_0_2mM_0_2M_PDS_S6_Run1.csv')
-print(a.freq_pert)
-x,y = a.analyse()
-plt.plot(x,y)
-plt.show()
+        return x,y,ienv_filtered, # where x is time and y is current
 
-"""
+
+
+#a = analyse('FeCOOH_0_2mM_0_2M_PDS_S6_Run1.csv')
+#print(a.freq_pert)
+#x,y = a.analyse()
+#plt.plot(x,y)
+#plt.show()
