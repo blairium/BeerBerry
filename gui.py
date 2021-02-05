@@ -20,6 +20,9 @@ Author: Michael Graps
 Contributors: Joshua Failla, Andrew Durnford, Nathan Gillbanks
 """
 
+screen_width = 1080 #Get screen width/height from computer settings
+screen_height = 1920 #
+
 # use tkinter
 matplotlib.use('TkAgg')
 
@@ -74,7 +77,7 @@ def create_main_window(parameters, password_attempt, PASSWORD):
                         sg.Radio('Envelope', key='Envelope', group_id='graph_control_radio', disabled=True, enable_events=True, font='Helvetica 12')
                     ],
                     [
-                        sg.Canvas(size=(449, 317), key='-CANVAS-'),
+                        sg.Canvas(size=(.5*screen_width, .5*screen_height), key='-CANVAS-'),#
                     ]
                 ], key='Graph Controls', element_justification='center', justification='center'),
 
@@ -99,7 +102,8 @@ def create_main_window(parameters, password_attempt, PASSWORD):
                     sg.Checkbox('3rd Harmonic', enable_events=True, key='r3', disabled=True),
                     sg.Checkbox('4th Harmonic', enable_events=True, key='r4', disabled=True), 
                     sg.Checkbox('5th Harmonic', enable_events=True, key='r5', disabled=True)
-                ]], key='Harmonic Container', justification='right')
+                ]]
+                , key='Harmonic Container', justification='centre')
             ],
 
             # Ro 5: graph controls
@@ -112,12 +116,15 @@ def create_main_window(parameters, password_attempt, PASSWORD):
                 sg.Button('Define Baseline', key='Define baseline', disabled=True, auto_size_button=True), 
                 sg.Button('Copy Area', key='Copy Area', target='Copy Area',  auto_size_button=True), 
                 sg.Button('Copy Height', key='Copy Height', target = 'Copy Height', auto_size_button=True), 
-                sg.FileSaveAs(button_text='Save Raw Data', key='Save Raw Data', target='Save Raw Data', disabled=True, enable_events=True, file_types=(('CSV', '.csv'),('DATA', '.data'), ('BIN', '.bin'),  ('All Files', '*.*')), auto_size_button=True, button_color=('white','#adadad')),
+                #sg.FileSaveAs(button_text='Save Raw Data', key='Save Raw Data', target='Save Raw Data', disabled=True, enable_events=True, file_types=(('CSV', '.csv'),('DATA', '.data'), ('BIN', '.bin'),  ('All Files', '*.*')), auto_size_button=True, button_color=('white','#adadad')),
                 sg.FileSaveAs(button_text='Save Processed Data', key='Save Processed Data', disabled=True, target='Save Processed Data', enable_events=True, file_types=(('CSV', '.csv'),('DATA', '.data'), ('BIN', '.bin'),  ('All Files', '*.*')), auto_size_button=True),
                 sg.FileSaveAs(button_text='Save Figure', key='Save Figure', target='Save Figure', enable_events=True, file_types=(('PNG', '.png'), ('PDF', '.pdf'), ('JPG', '.jpg'), ('All Files', '*.*')), auto_size_button=True),
                 sg.Button('Exit', auto_size_button=True)
+            ],
+             [
+                sg.Canvas(size=(.75*screen_width, .75*screen_height), key='-Graph-'),#
             ]
-        ], element_justification='center', justification='center', scrollable=True, size=(965, 930))]]
+        ], element_justification='center', justification='center', scrollable=False, size=(screen_width,screen_height))]] #, size=965, 930
 
     # return window with layout
     return sg.Window(
@@ -175,8 +182,9 @@ def create_excitation_parameters_window(
               [TextLabel('v1'), sg.Input(key='-V1-')],
               [TextLabel('v2'), sg.Input(key='-V2-')],
               [TextLabel('v3'), sg.Input(key='-V3-')],
-              [TextLabel('File Name'), sg.Input(key='-fname-')],
-              [sg.Checkbox('Auto Save Data', default=False)],
+              [TextLabel('Conversion Factor'), sg.Input(key='-cfact-')],
+              #[sg.Radio('Auto Save Name', key='-autosave-', group_id='excitation_radio', disabled=False, enable_events=True)],
+             # [TextLabel('Save Name'), sg.Input(key='-name-')],
               [sg.Button('Record'), sg.Button('Cancel')]]
 
     window = sg.Window(

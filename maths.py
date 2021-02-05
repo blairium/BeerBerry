@@ -259,7 +259,7 @@ def excitation(exc_parameters):
     """
     # settings
     # This is as a fraction of the maximum amplitude 1 = 2.96 V
-    conversion_factor = -0.845
+    conversion_factor = float(exc_parameters['cfact'])#-0.845
     amplitude = conversion_factor * float(exc_parameters['amplitude'])
     stable = float(exc_parameters['stable'])  # stable duration in seconds
     # Doesn't necessarily work for other sample rates
@@ -278,7 +278,10 @@ def excitation(exc_parameters):
                         )  # ramp for stable period
     ramp = np.linspace(v2, v3, int(duration * sample_rate)
                        )  # ramp for excitation
-
+    volt_range =         np.append(
+            sramp,
+            ramp,
+            axis=0)
     # stable duration
     # Left channel wave form
     xls = np.ones(int(stable * sample_rate))
@@ -326,7 +329,7 @@ def excitation(exc_parameters):
     df.insert(loc=1, column=1, value=rec_data)
     blank_samples = 4000
     df.iloc[0:blank_samples, 1] = 0
-    return df
+    return df, volt_range
 
 
 def conc(a, b, c, area):

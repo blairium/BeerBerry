@@ -102,7 +102,9 @@ EXCITATION_SETTINGS = {
     'frequency': 60.0,
     'v1': 0.0,
     'v2': 0.0,
-    'v3': 0.7}
+    'v3': 0.7,
+    'cfact' : -1,
+    'name' : 'test'}
 # "Map" from the settings dictionary keys to the window's element keys
 EXCITATION_KEYS_TO_ELEMENT_KEYS = {
     'amplitude': '-AMPLITUDE-',
@@ -112,7 +114,11 @@ EXCITATION_KEYS_TO_ELEMENT_KEYS = {
     'frequency': '-FREQ-',
     'v1': '-V1-',
     'v2': '-V2-',
-    'v3': '-V3-'}
+    'v3': '-V3-',
+    'cfact' : '-cfact-'
+   # 'name' : '-name-',
+    #'autosave' : '-autosave-'
+    }
 
 # raw or post data type
 TYPE = None
@@ -196,20 +202,20 @@ def show_harmonics_graph():
     window.find_element('Define baseline').Update(disabled=False)
 
     if window['r1'].get():
-        plt.plot(t, harm_one, color='b')
+        plt.plot(volt_range, harm_one, color='b')
     if window['r2'].get():
-        plt.plot(t, harm_two, color='#40BAD3')
+        plt.plot(volt_range, harm_two, color='#40BAD3')
     if window['r3'].get():
-        plt.plot(t, harm_three, color='orange')
+        plt.plot(volt_range, harm_three, color='orange')
     if window['r4'].get():
-        plt.plot(t, harm_four, color='g')
+        plt.plot(volt_range, harm_four, color='g')
     if window['r5'].get():
-        plt.plot(t, harm_five, color='y')
+        plt.plot(volt_range, harm_five, color='y')
 
     fig.suptitle('Harmonics', fontsize=16)
     fig.set_size_inches(6, 4) #original 9,6
     fig.set_dpi(100)
-    plt.xlabel('Time (s)')
+    plt.xlabel('voltage(V)')
     plt.ylabel('Current (S.U)')
 
     fig_canvas_agg, toolbar = draw_figure(window['-CANVAS-'].TKCanvas, fig)
@@ -237,24 +243,24 @@ def show_envelope_graph():
 
     if window['r1'].get():
         envelope = pk.envelope(harm_one, deg=5, max_it=None, tol=1e-3)
-        plt.plot(t, envelope, color='b')
+        plt.plot(volt_range, envelope, color='b')
     if window['r2'].get():
         envelope = pk.envelope(harm_two, deg=5, max_it=None, tol=1e-3)
-        plt.plot(t, envelope, color='#40BAD3')
+        plt.plot(volt_range, envelope, color='#40BAD3')
     if window['r3'].get():
         envelope = pk.envelope(harm_three, deg=5, max_it=None, tol=1e-3)
-        plt.plot(t, envelope, color='orange')
+        plt.plot(volt_range, envelope, color='orange')
     if window['r4'].get():
         envelope = pk.envelope(harm_four, deg=5, max_it=100, tol=1e-3)
-        plt.plot(t, envelope, color='g')
+        plt.plot(volt_range, envelope, color='g')
     if window['r5'].get():
         envelope = pk.envelope(harm_five, deg=5, max_it=100, tol=1e-3)
-        plt.plot(t, envelope, color='y')
+        plt.plot(volt_range, envelope, color='y')
 
     fig.suptitle('Envelope', fontsize=16)
     fig.set_size_inches(6, 4) #orig 9,6
     fig.set_dpi(100)
-    plt.xlabel('Time (s)')
+    plt.xlabel('voltage(V)')
     plt.ylabel('Current (S.U)')
     fig_canvas_agg, toolbar = draw_figure(window['-CANVAS-'].TKCanvas, fig)
 
@@ -393,8 +399,8 @@ def start():
 
             window.find_element('Harmonic Container').Update(visible=True)
             if df_Post is not None:
-                if password_attempt == PASSWORD:
-                    window.find_element('Save Raw Data').Update(disabled=False)
+                #if password_attempt == PASSWORD:
+                 #   window.find_element('Save Raw Data').Update(disabled=False)
                 window.find_element(
                     'Save Processed Data').Update(disabled=False)
 
@@ -493,11 +499,11 @@ while True:
 
         fig.clf()
 
-        plt.plot(t,i)
+        plt.plot(volt_rangei)
         fig.suptitle('Raw Signal', fontsize=16)
         fig.set_size_inches(6, 4) #orig 9,6
         fig.set_dpi(100)
-        plt.xlabel('Time (s)')
+        plt.xlabel('voltage(V)')
         plt.ylabel('Current (S.U)')
         fig_canvas_agg, toolbar = draw_figure(window['-CANVAS-'].TKCanvas, fig)
 
@@ -507,7 +513,7 @@ while True:
         #     111,
         #     xlabel='Time (s)',
         #     ylabel='Current (S.U)').plot(
-        #     t,
+        #     volt_range,
         #     i,
         #     c='#40BAD2')
 
@@ -565,9 +571,9 @@ while True:
         fig.suptitle('Cumulative Sum', fontsize=16)
         fig.add_subplot(
             111,
-            xlabel='Time (s)',
+            xlabel='Voltage (V)',
             ylabel='Ienv').plot(
-            t,
+            volt_range,
             int_ienv,
             c='#40BAD2')
 
@@ -610,7 +616,7 @@ while True:
 
             progress_bar.UpdateBar(3, 5)
 
-            data = maths.excitation(exc_parameters)
+            data, volt_range = maths.excitation(exc_parameters)
             #volt = data = maths.time2volt(exc_parameters)
             progress_bar.UpdateBar(4, 5)
             time.sleep(1)
@@ -621,6 +627,11 @@ while True:
             TYPE = 'RAW'
             window.TKroot.title('BeerBerry')
             start()
+        # if window.find_element("=autosave-") == True:
+        #     outFile = values['Save Processed Data']
+        #     fileName = exc_parameters['name'] 
+        #     file.writeFile(outFile, df_Post, 2)
+
 
     elif event == 'Select Data File':
 
@@ -651,9 +662,9 @@ while True:
                     window.TKroot.title('BeerBerry - ' + fname)
                     start()
 
-    elif event == 'Save Raw Data':
-        outFile = values['Save Raw Data']
-        file.writeFile(outFile, data, 0)
+    # elif event == 'Save Raw Data':
+    #     outFile = values['Save Raw Data']
+    #     file.writeFile(outFile, data, 0)
 
     elif event == 'Save Processed Data':
         outFile = values['Save Processed Data']
@@ -675,7 +686,7 @@ while True:
             password_attempt = None
             window.find_element('Authenticate').Update("Login")
             disable_button_grey('Parameters')
-            disable_button_grey('Save Raw Data')
+           # disable_button_grey('Save Raw Data')
 
         # login
         else:
@@ -686,10 +697,10 @@ while True:
             if password_attempt == PASSWORD:
                 window.find_element('Authenticate').Update("Logout")
                 enable_button_teal('Parameters')
-                if data is not None:
-                    enable_button_teal('Save Raw Data')
-                else:
-                    disable_button_teal('Save Raw Data')
+                # if data is not None:
+                #     enable_button_teal('Save Raw Data')
+                # else:
+                #     disable_button_teal('Save Raw Data')
 
     elif event == 'Parameters':
         param_event, values = create_parameters_window(
@@ -719,30 +730,30 @@ while True:
 
         fig = plt.figure()
         if window['r1'].get():
-            plt.plot(t, harm_one, color='b')
-            if maths.is_y_valid(t, harm_one, xdata, ydata):
+            plt.plot(volt_range, harm_one, color='b')
+            if maths.is_y_valid(volt_range, harm_one, xdata, ydata):
                 copy_x_data = np.copy(xdata)
                 copy_y_data = np.copy(ydata)
                 curve_1, curve_2, peak_height, index_of_peak, diff_curves, area_between_curves = maths.map_baseline(
-                    t, harm_one, copy_x_data, copy_y_data)
-                plt.plot(t, curve_2, color='b')
-                plt.plot([t[index_of_peak], t[index_of_peak]], [
+                    volt_range, harm_one, copy_x_data, copy_y_data)
+                plt.plot(volt_range, curve_2, color='b')
+                plt.plot([volt_range,[index_of_peak], t[index_of_peak]], [
                     curve_2[index_of_peak], curve_1[index_of_peak]], color='r')
 
-                plt.fill_between(t, curve_1, curve_2, alpha=0.3)
+                plt.fill_between(volt_range, curve_1, curve_2, alpha=0.3)
                 print("Harm One")
 
         if window['r2'].get():
-            plt.plot(t, harm_two, color='#40BAD3')
-            if maths.is_y_valid(t, harm_two, xdata, ydata):
+            plt.plot(volt_range, harm_two, color='#40BAD3')
+            if maths.is_y_valid(volt_range, harm_two, xdata, ydata):
                 copy_x_data = np.copy(xdata)
                 copy_y_data = np.copy(ydata)
                 curve_1, curve_2, peak_height, index_of_peak, diff_curves, area_between_curves = maths.map_baseline(
-                    t, harm_two, copy_x_data, copy_y_data)
-                plt.plot(t, curve_2, color='#40BAD3')
-                plt.plot([t[index_of_peak], t[index_of_peak]], [
+                    volt_range, harm_two, copy_x_data, copy_y_data)
+                plt.plot(volt_range, curve_2, color='#40BAD3')
+                plt.plot([volt_range,[index_of_peak], volt_range,[index_of_peak]], [
                     curve_2[index_of_peak], curve_1[index_of_peak]], color='r', label='Height: ' + str(peak_height))
-                plt.fill_between(t, curve_1, curve_2, alpha=0.3,
+                plt.fill_between(volt_range, curve_1, curve_2, alpha=0.3,
                                  label='Area: ' + str(area_between_curves))
                 plt.legend(loc="upper left")
 
@@ -751,38 +762,38 @@ while True:
 
                 print("Harm Two")
         if window['r3'].get():
-            plt.plot(t, harm_three, color='orange')
-            if maths.is_y_valid(t, harm_three, xdata, ydata):
+            plt.plot(volt_range, harm_three, color='orange')
+            if maths.is_y_valid(volt_range, harm_three, xdata, ydata):
                 copy_x_data = np.copy(xdata)
                 copy_y_data = np.copy(ydata)
                 curve_1, curve_2, peak_height, index_of_peak, diff_curves, area_between_curves = maths.map_baseline(
-                    t, harm_three, copy_x_data, copy_y_data)
-                plt.plot(t, curve_2, color='orange')
-                plt.plot([t[index_of_peak], t[index_of_peak]], [
+                    volt_range, harm_three, copy_x_data, copy_y_data)
+                plt.plot(volt_range, curve_2, color='orange')
+                plt.plot([volt_range,[index_of_peak], volt_range,[index_of_peak]], [
                     curve_2[index_of_peak], curve_1[index_of_peak]], color='r')
-                plt.fill_between(t, curve_1, curve_2, alpha=0.3)
+                plt.fill_between(volt_range, curve_1, curve_2, alpha=0.3)
         if window['r4'].get():
-            plt.plot(t, harm_four, color='g')
-            if maths.is_y_valid(t, harm_four, xdata, ydata):
+            plt.plot(volt_range, harm_four, color='g')
+            if maths.is_y_valid(volt_range, harm_four, xdata, ydata):
                 copy_x_data = np.copy(xdata)
                 copy_y_data = np.copy(ydata)
                 curve_1, curve_2, peak_height, index_of_peak, diff_curves, area_between_curves = maths.map_baseline(
-                    t, harm_four, copy_x_data, copy_y_data)
-                plt.plot(t, curve_2, color='g')
-                plt.plot([t[index_of_peak], t[index_of_peak]], [
+                    volt_range, harm_four, copy_x_data, copy_y_data)
+                plt.plot(volt_range, curve_2, color='g')
+                plt.plot([volt_range,[index_of_peak], volt_range,[index_of_peak]], [
                     curve_2[index_of_peak], curve_1[index_of_peak]], color='r')
-                plt.fill_between(t, curve_1, curve_2, alpha=0.3)
+                plt.fill_between(volt_range, curve_1, curve_2, alpha=0.3)
         if window['r5'].get():
-            plt.plot(t, harm_five, color='y')
-            if maths.is_y_valid(t, harm_five, xdata, ydata):
+            plt.plot(volt_range, harm_five, color='y')
+            if maths.is_y_valid(volt_range, harm_five, xdata, ydata):
                 copy_x_data = np.copy(xdata)
                 copy_y_data = np.copy(ydata)
                 curve_1, curve_2, peak_height, index_of_peak, diff_curves, area_between_curves = maths.map_baseline(
-                    t, harm_five, copy_x_data, copy_y_data)
-                plt.plot(t, curve_2, color='y')
-                plt.plot([t[index_of_peak], t[index_of_peak]], [
+                    volt_range, harm_five, copy_x_data, copy_y_data)
+                plt.plot(volt_range, curve_2, color='y')
+                plt.plot([volt_range,[index_of_peak], volt_range,[index_of_peak]], [
                     curve_2[index_of_peak], curve_1[index_of_peak]], color='r')
-                plt.fill_between(t, curve_1, curve_2, alpha=0.3)
+                plt.fill_between(volt_range, curve_1, curve_2, alpha=0.3)
 
         fig.suptitle('Harmonics', fontsize=16)
         fig.set_size_inches(6, 4) #orig 9,6
