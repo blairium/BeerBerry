@@ -278,7 +278,7 @@ def excitation(exc_parameters):
                         )  # ramp for stable period
     ramp = np.linspace(v2, v3, int(duration * sample_rate)
                        )  # ramp for excitation
-    volt_range =         np.append(
+    volt_range =         -np.append(
             sramp,
             ramp,
             axis=0)

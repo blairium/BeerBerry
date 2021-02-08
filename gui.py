@@ -20,8 +20,8 @@ Author: Michael Graps
 Contributors: Joshua Failla, Andrew Durnford, Nathan Gillbanks
 """
 
-screen_width = 1080 #Get screen width/height from computer settings
-screen_height = 1920 #
+screen_width = 1080*0.9 #Get screen width/height from computer settings
+screen_height = 1920*0.9#
 
 # use tkinter
 matplotlib.use('TkAgg')
@@ -124,7 +124,7 @@ def create_main_window(parameters, password_attempt, PASSWORD):
              [
                 sg.Canvas(size=(.75*screen_width, .75*screen_height), key='-Graph-'),#
             ]
-        ], element_justification='center', justification='center', scrollable=False, size=(screen_width,screen_height))]] #, size=965, 930
+        ], element_justification='center', justification='center', scrollable=True, size=(screen_width,screen_height))]] #, size=965, 930
 
     # return window with layout
     return sg.Window(
