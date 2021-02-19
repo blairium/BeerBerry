@@ -20,8 +20,8 @@ Author: Michael Graps
 Contributors: Joshua Failla, Andrew Durnford, Nathan Gillbanks
 """
 
-screen_width = 1080*0.9 #Get screen width/height from computer settings
-screen_height = 1920*0.9#
+screen_width = 1080 #Get screen width/height from computer settings
+screen_height = 1920 #
 
 # use tkinter
 matplotlib.use('TkAgg')
@@ -48,7 +48,7 @@ def create_main_window(parameters, password_attempt, PASSWORD):
             # Row 1: record/load data, parameters, login
             [
                 sg.Column([[
-                    sg.Column([[sg.Button('Record Data')]], element_justification='center',),
+                    sg.Column([[sg.Button('Record Data',bind_return_key=True)]], element_justification='center',),
                     sg.Column([[sg.FileBrowse(button_text='Select Data File', key="Select Data File", enable_events=True)]]),
                     sg.Column([[sg.Button('Parameters', disabled=True, button_color=('white','#adadad'))]]),
                     sg.Column([[sg.Button('Login', key='Authenticate')]]),
@@ -148,7 +148,7 @@ def create_parameters_window(
               [TextLabel('Callibration A'), sg.Input(key='-A-')],
               [TextLabel('Callibration B'), sg.Input(key='-B-')],
               [TextLabel('Callibration C'), sg.Input(key='-C-')],
-              [sg.Button('Save'), sg.Button('Exit')]]
+              [sg.Button('Save',bind_return_key=True), sg.Button('Exit')]]
 
     window = sg.Window(
         'Insert Parameters',
@@ -185,7 +185,7 @@ def create_excitation_parameters_window(
               [TextLabel('Conversion Factor'), sg.Input(key='-cfact-')],
               #[sg.Radio('Auto Save Name', key='-autosave-', group_id='excitation_radio', disabled=False, enable_events=True)],
              # [TextLabel('Save Name'), sg.Input(key='-name-')],
-              [sg.Button('Record'), sg.Button('Cancel')]]
+              [sg.Button('Record',bind_return_key=True), sg.Button('Cancel')]]
 
     window = sg.Window(
         'Excitation Parameters',

@@ -1,9 +1,9 @@
 ######################  TO DO ########################
 ##                                                  ##
-##   ADD A CONVERSION FACTOR TO RECORD PARAMETERS   ##
+##   Fix voltage on x axis                          ##
 ##   FIX AUTOSAVE                                   ##
 ##   ADD KEYBOARD SHORTCUTS                         ##
-##                                                  ##
+##   ADD AUTO SELECT TO OK BUTTONS                  ##
 ######################################################
 
 
@@ -202,20 +202,20 @@ def show_harmonics_graph():
     window.find_element('Define baseline').Update(disabled=False)
 
     if window['r1'].get():
-        plt.plot(volt_range, harm_one, color='b')
+        plt.plot(t, harm_one, color='b')
     if window['r2'].get():
-        plt.plot(volt_range, harm_two, color='#40BAD3')
+        plt.plot(t, harm_two, color='#40BAD3')
     if window['r3'].get():
-        plt.plot(volt_range, harm_three, color='orange')
+        plt.plot(t, harm_three, color='orange')
     if window['r4'].get():
-        plt.plot(volt_range, harm_four, color='g')
+        plt.plot(t, harm_four, color='g')
     if window['r5'].get():
-        plt.plot(volt_range, harm_five, color='y')
+        plt.plot(t, harm_five, color='y')
 
     fig.suptitle('Harmonics', fontsize=16)
     fig.set_size_inches(6, 4) #original 9,6
     fig.set_dpi(100)
-    plt.xlabel('voltage(V)')
+    plt.xlabel('time (s)')
     plt.ylabel('Current (S.U)')
 
     fig_canvas_agg, toolbar = draw_figure(window['-CANVAS-'].TKCanvas, fig)
@@ -243,24 +243,24 @@ def show_envelope_graph():
 
     if window['r1'].get():
         envelope = pk.envelope(harm_one, deg=5, max_it=None, tol=1e-3)
-        plt.plot(volt_range, envelope, color='b')
+        plt.plot(t, envelope, color='b')
     if window['r2'].get():
         envelope = pk.envelope(harm_two, deg=5, max_it=None, tol=1e-3)
-        plt.plot(volt_range, envelope, color='#40BAD3')
+        plt.plot(t, envelope, color='#40BAD3')
     if window['r3'].get():
         envelope = pk.envelope(harm_three, deg=5, max_it=None, tol=1e-3)
-        plt.plot(volt_range, envelope, color='orange')
+        plt.plot(t, envelope, color='orange')
     if window['r4'].get():
         envelope = pk.envelope(harm_four, deg=5, max_it=100, tol=1e-3)
-        plt.plot(volt_range, envelope, color='g')
+        plt.plot(t, envelope, color='g')
     if window['r5'].get():
         envelope = pk.envelope(harm_five, deg=5, max_it=100, tol=1e-3)
-        plt.plot(volt_range, envelope, color='y')
+        plt.plot(t, envelope, color='y')
 
     fig.suptitle('Envelope', fontsize=16)
     fig.set_size_inches(6, 4) #orig 9,6
     fig.set_dpi(100)
-    plt.xlabel('voltage(V)')
+    plt.xlabel('time (s)')
     plt.ylabel('Current (S.U)')
     fig_canvas_agg, toolbar = draw_figure(window['-CANVAS-'].TKCanvas, fig)
 
@@ -499,11 +499,11 @@ while True:
 
         fig.clf()
 
-        plt.plot(volt_rangei)
+        plt.plot(ti)
         fig.suptitle('Raw Signal', fontsize=16)
         fig.set_size_inches(6, 4) #orig 9,6
         fig.set_dpi(100)
-        plt.xlabel('voltage(V)')
+        plt.xlabel('time (s)')
         plt.ylabel('Current (S.U)')
         fig_canvas_agg, toolbar = draw_figure(window['-CANVAS-'].TKCanvas, fig)
 
@@ -513,7 +513,7 @@ while True:
         #     111,
         #     xlabel='Time (s)',
         #     ylabel='Current (S.U)').plot(
-        #     volt_range,
+        #     t,
         #     i,
         #     c='#40BAD2')
 
@@ -573,7 +573,7 @@ while True:
             111,
             xlabel='Voltage (V)',
             ylabel='Ienv').plot(
-            volt_range,
+            t,
             int_ienv,
             c='#40BAD2')
 
@@ -616,14 +616,14 @@ while True:
 
             progress_bar.UpdateBar(3, 5)
 
-            data, volt_range = maths.excitation(exc_parameters)
+            data, t = maths.excitation(exc_parameters)
             #volt = data = maths.time2volt(exc_parameters)
             progress_bar.UpdateBar(4, 5)
             time.sleep(1)
             progress_bar.UpdateBar(5, 5)
             time.sleep(1)
             window2.close()
-            sg.PopupOK("Recording Complete")
+            #sg.PopupOK("Recording Complete")
             TYPE = 'RAW'
             window.TKroot.title('BeerBerry')
             start()
@@ -730,30 +730,30 @@ while True:
 
         fig = plt.figure()
         if window['r1'].get():
-            plt.plot(volt_range, harm_one, color='b')
-            if maths.is_y_valid(volt_range, harm_one, xdata, ydata):
+            plt.plot(t, harm_one, color='b')
+            if maths.is_y_valid(t, harm_one, xdata, ydata):
                 copy_x_data = np.copy(xdata)
                 copy_y_data = np.copy(ydata)
                 curve_1, curve_2, peak_height, index_of_peak, diff_curves, area_between_curves = maths.map_baseline(
-                    volt_range, harm_one, copy_x_data, copy_y_data)
-                plt.plot(volt_range, curve_2, color='b')
-                plt.plot([volt_range,[index_of_peak], t[index_of_peak]], [
+                    t, harm_one, copy_x_data, copy_y_data)
+                plt.plot(t, curve_2, color='b')
+                plt.plot([t[index_of_peak], t[index_of_peak]], [
                     curve_2[index_of_peak], curve_1[index_of_peak]], color='r')
 
-                plt.fill_between(volt_range, curve_1, curve_2, alpha=0.3)
+                plt.fill_between(t, curve_1, curve_2, alpha=0.3)
                 print("Harm One")
 
         if window['r2'].get():
-            plt.plot(volt_range, harm_two, color='#40BAD3')
-            if maths.is_y_valid(volt_range, harm_two, xdata, ydata):
+            plt.plot(t, harm_two, color='#40BAD3')
+            if maths.is_y_valid(t, harm_two, xdata, ydata):
                 copy_x_data = np.copy(xdata)
                 copy_y_data = np.copy(ydata)
                 curve_1, curve_2, peak_height, index_of_peak, diff_curves, area_between_curves = maths.map_baseline(
-                    volt_range, harm_two, copy_x_data, copy_y_data)
-                plt.plot(volt_range, curve_2, color='#40BAD3')
-                plt.plot([volt_range,[index_of_peak], volt_range,[index_of_peak]], [
+                    t, harm_two, copy_x_data, copy_y_data)
+                plt.plot(t, curve_2, color='#40BAD3')
+                plt.plot([t[index_of_peak], t[index_of_peak]], [
                     curve_2[index_of_peak], curve_1[index_of_peak]], color='r', label='Height: ' + str(peak_height))
-                plt.fill_between(volt_range, curve_1, curve_2, alpha=0.3,
+                plt.fill_between(t, curve_1, curve_2, alpha=0.3,
                                  label='Area: ' + str(area_between_curves))
                 plt.legend(loc="upper left")
 
@@ -762,38 +762,38 @@ while True:
 
                 print("Harm Two")
         if window['r3'].get():
-            plt.plot(volt_range, harm_three, color='orange')
-            if maths.is_y_valid(volt_range, harm_three, xdata, ydata):
+            plt.plot(t, harm_three, color='orange')
+            if maths.is_y_valid(t, harm_three, xdata, ydata):
                 copy_x_data = np.copy(xdata)
                 copy_y_data = np.copy(ydata)
                 curve_1, curve_2, peak_height, index_of_peak, diff_curves, area_between_curves = maths.map_baseline(
-                    volt_range, harm_three, copy_x_data, copy_y_data)
-                plt.plot(volt_range, curve_2, color='orange')
-                plt.plot([volt_range,[index_of_peak], volt_range,[index_of_peak]], [
+                    t, harm_three, copy_x_data, copy_y_data)
+                plt.plot(t, curve_2, color='orange')
+                plt.plot([t[index_of_peak], t[index_of_peak]], [
                     curve_2[index_of_peak], curve_1[index_of_peak]], color='r')
-                plt.fill_between(volt_range, curve_1, curve_2, alpha=0.3)
+                plt.fill_between(t, curve_1, curve_2, alpha=0.3)
         if window['r4'].get():
-            plt.plot(volt_range, harm_four, color='g')
-            if maths.is_y_valid(volt_range, harm_four, xdata, ydata):
+            plt.plot(t, harm_four, color='g')
+            if maths.is_y_valid(t, harm_four, xdata, ydata):
                 copy_x_data = np.copy(xdata)
                 copy_y_data = np.copy(ydata)
                 curve_1, curve_2, peak_height, index_of_peak, diff_curves, area_between_curves = maths.map_baseline(
-                    volt_range, harm_four, copy_x_data, copy_y_data)
-                plt.plot(volt_range, curve_2, color='g')
-                plt.plot([volt_range,[index_of_peak], volt_range,[index_of_peak]], [
+                    t, harm_four, copy_x_data, copy_y_data)
+                plt.plot(t, curve_2, color='g')
+                plt.plot([t[index_of_peak], t[index_of_peak]], [
                     curve_2[index_of_peak], curve_1[index_of_peak]], color='r')
-                plt.fill_between(volt_range, curve_1, curve_2, alpha=0.3)
+                plt.fill_between(t, curve_1, curve_2, alpha=0.3)
         if window['r5'].get():
-            plt.plot(volt_range, harm_five, color='y')
-            if maths.is_y_valid(volt_range, harm_five, xdata, ydata):
+            plt.plot(t, harm_five, color='y')
+            if maths.is_y_valid(t, harm_five, xdata, ydata):
                 copy_x_data = np.copy(xdata)
                 copy_y_data = np.copy(ydata)
                 curve_1, curve_2, peak_height, index_of_peak, diff_curves, area_between_curves = maths.map_baseline(
-                    volt_range, harm_five, copy_x_data, copy_y_data)
-                plt.plot(volt_range, curve_2, color='y')
-                plt.plot([volt_range,[index_of_peak], volt_range,[index_of_peak]], [
+                    t, harm_five, copy_x_data, copy_y_data)
+                plt.plot(t, curve_2, color='y')
+                plt.plot([t[index_of_peak], t[index_of_peak]], [
                     curve_2[index_of_peak], curve_1[index_of_peak]], color='r')
-                plt.fill_between(volt_range, curve_1, curve_2, alpha=0.3)
+                plt.fill_between(t, curve_1, curve_2, alpha=0.3)
 
         fig.suptitle('Harmonics', fontsize=16)
         fig.set_size_inches(6, 4) #orig 9,6
