@@ -56,7 +56,7 @@ matplotlib.use('TkAgg')
 
 
 ####### Parameter Info ################################
-sg.LOOK_AND_FEEL_TABLE['BeerBerry'] = {
+sg.LOOK_AND_FEEL_TABLE['PyStat'] = {
     'BACKGROUND': '#FFFFFF',
     'TEXT': '#000000',
     'INPUT': '#C4C4C4',
@@ -296,7 +296,7 @@ def start():
                ]
 
     # This Creates the Physical Window
-    window2 = sg.Window('File Load', layout2).Finalize()
+    window2 = sg.Window('File Load', layout2,icon="favicon.ico").Finalize()
     progress_bar = window2.FindElement('progress')
 
     # This Updates the Window
@@ -603,7 +603,7 @@ while True:
                        ]
 
             # This Creates the Physical Window
-            window2 = sg.Window('File Load', layout2).Finalize()
+            window2 = sg.Window('File Load', layout2, icon="favicon.ico").Finalize()
             progress_bar = window2.FindElement('progress')
             progress_bar.UpdateBar(0, 5)
             time.sleep(1)
@@ -625,11 +625,11 @@ while True:
             window2.close()
             #sg.PopupOK("Recording Complete")
             TYPE = 'RAW'
-            window.TKroot.title('BeerBerry')
+            window.TKroot.title('PyStat')
             start()
         # if window.find_element("=autosave-") == True:
         #     outFile = values['Save Processed Data']
-        #     fileName = exc_parameters['name'] 
+        #     fileName = exc_parameters['name']
         #     file.writeFile(outFile, df_Post, 2)
 
 
@@ -659,7 +659,7 @@ while True:
 
                 if success:
                     # window.find_element('Filename').Update(fname)
-                    window.TKroot.title('BeerBerry - ' + fname)
+                    window.TKroot.title('PyStat - ' + fname)
                     start()
 
     # elif event == 'Save Raw Data':
@@ -676,7 +676,7 @@ while True:
 
     elif event == 'Copy Height':
         pyperclip.copy(str(height))
-    
+
     elif event == 'Copy Area':
         pyperclip.copy(str(area))
 

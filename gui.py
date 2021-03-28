@@ -33,7 +33,7 @@ def TextLabel(text, justification = 'r', width = 20): #was 30
         return sg.Text(text + ':', justification=justification, size=(width, 1))
 
 def create_main_window(parameters, password_attempt, PASSWORD):
-    sg.theme('BeerBerry')  # sets colour theme of window
+    sg.theme('PyStat')  # sets colour theme of window
     radio_choices = [
         '1st Harmonic',
         '2nd Harmonic',
@@ -44,7 +44,7 @@ def create_main_window(parameters, password_attempt, PASSWORD):
     # creates layout of the window
     layout = [[
         sg.Column([
-        
+
             # Row 1: record/load data, parameters, login
             [
                 sg.Column([[
@@ -52,7 +52,7 @@ def create_main_window(parameters, password_attempt, PASSWORD):
                     sg.Column([[sg.FileBrowse(button_text='Select Data File', key="Select Data File", enable_events=True)]]),
                     sg.Column([[sg.Button('Parameters', disabled=True, button_color=('white','#adadad'))]]),
                     sg.Column([[sg.Button('Login', key='Authenticate')]]),
-                    
+
                 ]], justification='center')
             ],
 
@@ -84,10 +84,10 @@ def create_main_window(parameters, password_attempt, PASSWORD):
             ],
             [
                 sg.Column([[
-                    #sg.Frame('Results', 
+                    #sg.Frame('Results',
                     #    [
-                    #        [sg.Text('Conc: 25ppm')], 
-                    #        [sg.Text('Peak Area: 50')], 
+                    #        [sg.Text('Conc: 25ppm')],
+                    #        [sg.Text('Peak Area: 50')],
                     #        [sg.Text('Peak Height: 10')]
                     #    ])
                     TextLabel('Results', 'center', None), sg.Input(key='PPM', disabled=True)
@@ -97,10 +97,10 @@ def create_main_window(parameters, password_attempt, PASSWORD):
             # Row 4: harmonic checkboxes
             [
                 sg.Column([[
-                    sg.Checkbox('1st Harmonic', enable_events=True, key='r1', disabled=True), 
-                    sg.Checkbox('2nd Harmonic', enable_events=True, key='r2', disabled=True), 
+                    sg.Checkbox('1st Harmonic', enable_events=True, key='r1', disabled=True),
+                    sg.Checkbox('2nd Harmonic', enable_events=True, key='r2', disabled=True),
                     sg.Checkbox('3rd Harmonic', enable_events=True, key='r3', disabled=True),
-                    sg.Checkbox('4th Harmonic', enable_events=True, key='r4', disabled=True), 
+                    sg.Checkbox('4th Harmonic', enable_events=True, key='r4', disabled=True),
                     sg.Checkbox('5th Harmonic', enable_events=True, key='r5', disabled=True)
                 ]]
                 , key='Harmonic Container', justification='centre')
@@ -108,14 +108,14 @@ def create_main_window(parameters, password_attempt, PASSWORD):
 
             # Ro 5: graph controls
             #[
-                
+
             #],
 
             # Row 6: define baseline, calculate result, save data, exit
             [
-                sg.Button('Define Baseline', key='Define baseline', disabled=True, auto_size_button=True), 
-                sg.Button('Copy Area', key='Copy Area', target='Copy Area',  auto_size_button=True), 
-                sg.Button('Copy Height', key='Copy Height', target = 'Copy Height', auto_size_button=True), 
+                sg.Button('Define Baseline', key='Define baseline', disabled=True, auto_size_button=True),
+                sg.Button('Copy Area', key='Copy Area', target='Copy Area',  auto_size_button=True),
+                sg.Button('Copy Height', key='Copy Height', target = 'Copy Height', auto_size_button=True),
                 #sg.FileSaveAs(button_text='Save Raw Data', key='Save Raw Data', target='Save Raw Data', disabled=True, enable_events=True, file_types=(('CSV', '.csv'),('DATA', '.data'), ('BIN', '.bin'),  ('All Files', '*.*')), auto_size_button=True, button_color=('white','#adadad')),
                 sg.FileSaveAs(button_text='Save Processed Data', key='Save Processed Data', disabled=True, target='Save Processed Data', enable_events=True, file_types=(('CSV', '.csv'),('DATA', '.data'), ('BIN', '.bin'),  ('All Files', '*.*')), auto_size_button=True),
                 sg.FileSaveAs(button_text='Save Figure', key='Save Figure', target='Save Figure', enable_events=True, file_types=(('PNG', '.png'), ('PDF', '.pdf'), ('JPG', '.jpg'), ('All Files', '*.*')), auto_size_button=True),
@@ -128,11 +128,12 @@ def create_main_window(parameters, password_attempt, PASSWORD):
 
     # return window with layout
     return sg.Window(
-        'BeerBerry',
+        'PyStat',
         layout,
         element_justification='center',
         font='Helvetica 18',
-        resizable=True)
+        resizable=True,
+        icon="favicon.ico")
 
 ####### Creating parameters window ##############################
 
@@ -156,7 +157,8 @@ def create_parameters_window(
         keep_on_top=True,
         auto_size_buttons=True,
         finalize=True,
-        grab_anywhere=True
+        grab_anywhere=True,
+        icon="favicon.ico"
         )
 
     for key in PARAMETER_KEYS_TO_ELEMENT_KEYS:  # update window with the values read from settings file
@@ -191,7 +193,8 @@ def create_excitation_parameters_window(
         'Excitation Parameters',
         layout,
         keep_on_top=True,
-        finalize=True)
+        finalize=True,
+        icon="favicon.ico")
 
     for key in EXCITATION_KEYS_TO_ELEMENT_KEYS:  # update window with the values read from settings file
         try:
@@ -266,4 +269,3 @@ def save_parameters(
 
     with open(parameters_file, 'w') as f:
         jsondump(parameters, f)
-
