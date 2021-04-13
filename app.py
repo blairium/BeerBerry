@@ -27,8 +27,8 @@ from matplotlib.backends.backend_tkagg import (
     FigureCanvasTkAgg, NavigationToolbar2Tk)
 
 
-plt.style.use(['science','ieee','no-latex'])
-plt.ioff()
+#plt.style.use(['science','ieee','no-latex'])
+#plt.ioff()
 
 """
 This file contains the main processes and functions of the app.
@@ -57,14 +57,14 @@ matplotlib.use('TkAgg')
 
 ####### Parameter Info ################################
 sg.LOOK_AND_FEEL_TABLE['PyStat'] = {
-    'BACKGROUND': '#FFFFFF',
+    'BACKGROUND': '#F0EBE9',
     'TEXT': '#000000',
     'INPUT': '#C4C4C4',
     'TEXT_INPUT': '#000000',
     'SCROLL': '#c7e78b',
     'BUTTON': (
         'white',
-        '#40BAD2'),
+        '#030091'),
     'PROGRESS': (
         '#01826B',
         '#D0D0D0'),
@@ -499,7 +499,7 @@ while True:
 
         fig.clf()
 
-        plt.plot(ti)
+        plt.plot(i)
         fig.suptitle('Raw Signal', fontsize=16)
         fig.set_size_inches(6, 4) #orig 9,6
         fig.set_dpi(100)
@@ -625,7 +625,7 @@ while True:
             window2.close()
             #sg.PopupOK("Recording Complete")
             TYPE = 'RAW'
-            window.TKroot.title('PyStat')
+            window.TKroot.title(' PyStat')
             start()
         # if window.find_element("=autosave-") == True:
         #     outFile = values['Save Processed Data']
@@ -659,7 +659,7 @@ while True:
 
                 if success:
                     # window.find_element('Filename').Update(fname)
-                    window.TKroot.title('PyStat - ' + fname)
+                    window.TKroot.title(' PyStat - ' + fname)
                     start()
 
     # elif event == 'Save Raw Data':

@@ -128,7 +128,7 @@ def create_main_window(parameters, password_attempt, PASSWORD):
 
     # return window with layout
     return sg.Window(
-        'PyStat',
+        'PyStat - The Python Potentiostat',
         layout,
         element_justification='center',
         font='Helvetica 18',
