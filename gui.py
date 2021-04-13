@@ -20,8 +20,8 @@ Author: Michael Graps
 Contributors: Joshua Failla, Andrew Durnford, Nathan Gillbanks
 """
 
-screen_width = 1080 #Get screen width/height from computer settings
-screen_height = 1920 #
+screen_width = 1920*0.9#Get screen width/height from computer settings
+screen_height = 1080*0.9 #
 
 # use tkinter
 matplotlib.use('TkAgg')

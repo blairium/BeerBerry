@@ -4,6 +4,8 @@
 ##   FIX AUTOSAVE                                   ##
 ##   ADD KEYBOARD SHORTCUTS                         ##
 ##   ADD AUTO SELECT TO OK BUTTONS                  ##
+##   Rename time domain to raw signal, harmonics    ##
+##   to  harmonic envelope, remove envelope/cumsum  ##
 ######################################################
 
 
